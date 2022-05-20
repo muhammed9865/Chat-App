@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="#eee"
     tools:context=".MainActivity">
 
     <TextView
@@ -16,9 +17,12 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <com.google.android.material.bottomnavigation.BottomNavigationView
+        android:id="@+id/bot_nav"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-
+        android:background="@drawable/bot_nav_rounded"
+        app:backgroundTint="@color/white"
+        app:elevation="23dp"
         app:layout_constraintBottom_toBottomOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
