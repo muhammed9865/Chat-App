@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="SingleChatPersonImage">
+
+        <item name="cornerSize">35%</item>
+    </style>
+</resources>

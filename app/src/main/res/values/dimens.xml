@@ -1,4 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <dimen name="bot_nav_radius">12dp</dimen>
+    <dimen name="bot_nav_corners">20dp</dimen>
 </resources>

@@ -1,3 +1,10 @@
 <resources>
     <string name="app_name">ChatApp</string>
+    <string name="image">image</string>
+    <string name="chats">Chats</string>
+    <string name="calls">Calls</string>
+    <string name="communities">Communities</string>
+    <string name="more">More</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>

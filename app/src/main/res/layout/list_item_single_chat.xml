@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:paddingBottom="@dimen/_20sdp"
+    android:layout_height="wrap_content">
+
+    <com.google.android.material.imageview.ShapeableImageView
+        android:id="@+id/chat_profile_pic"
+        android:layout_width="@dimen/_50sdp"
+        android:layout_height="@dimen/_50sdp"
+        android:scaleType="centerCrop"
+        android:src="@drawable/ic_baseline_person_24"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:shapeAppearanceOverlay="@style/SingleChatPersonImage" />
+
+    <TextView
+        android:id="@+id/chat_person_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="#303030"
+        tools:text="Faris Awad"
+        android:fontFamily="@font/sf_bold"
+        android:textSize="@dimen/_14ssp"
+        android:layout_marginStart="@dimen/_8sdp"
+        app:layout_constraintStart_toEndOf="@+id/chat_profile_pic"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/chat_last_msg"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:ellipsize="end"
+        android:fontFamily="@font/sf_regular"
+        android:maxLength="70"
+        android:maxLines="2"
+        android:textColor="#686A8A"
+        android:textSize="@dimen/_10ssp"
+        app:layout_constraintBottom_toBottomOf="@+id/chat_profile_pic"
+        app:layout_constraintEnd_toStartOf="@+id/guideline3"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="@+id/chat_person_name"
+        app:layout_constraintTop_toBottomOf="@+id/chat_person_name"
+        app:layout_constraintVertical_bias="0.0"
+        tools:text="asasdkljasdklasjdlkasjdklasjdklasdjklasjdklasdjlkasdjklasdjklasdjlksadjasdkljdklsaj" />
+
+    <TextView
+        android:id="@+id/chat_last_msg_time"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="7:11PM"
+        app:layout_constraintBottom_toBottomOf="@+id/chat_person_name"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/chat_person_name" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_end="70dp" />
+
+    <TextView
+        android:id="@+id/chat_new_msgs_count"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/chat_newmsgs_count_bg"
+        android:backgroundTint="#2176FF"
+        android:paddingEnd="@dimen/_5sdp"
+        android:paddingStart="@dimen/_5sdp"
+        android:fontFamily="@font/sf_regular"
+        android:textColor="@color/white"
+        android:text="10"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/chat_last_msg_time" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

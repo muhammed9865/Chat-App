@@ -4,7 +4,12 @@
     <option name="filePathToZoomLevelMap">
       <map>
         <entry key="..\:/AndroidStudioProjects/ChatApp/app/src/main/res/drawable/bot_nav_rounded.xml" value="0.24" />
-        <entry key="..\:/AndroidStudioProjects/ChatApp/app/src/main/res/layout/activity_main.xml" value="0.40729166666666666" />
+        <entry key="..\:/AndroidStudioProjects/ChatApp/app/src/main/res/drawable/chat_newmsgs_count_bg.xml" value="0.24" />
+        <entry key="..\:/AndroidStudioProjects/ChatApp/app/src/main/res/drawable/icon_rounded_bg.xml" value="0.24" />
+        <entry key="..\:/AndroidStudioProjects/ChatApp/app/src/main/res/layout/activity_main.xml" value="0.33" />
+        <entry key="..\:/AndroidStudioProjects/ChatApp/app/src/main/res/layout/fragment_chats.xml" value="0.3932291666666667" />
+        <entry key="..\:/AndroidStudioProjects/ChatApp/app/src/main/res/layout/list_item_single_chat.xml" value="0.40729166666666666" />
+        <entry key="..\:/AndroidStudioProjects/ChatApp/app/src/main/res/menu/bot_nav_menu.xml" value="0.40729166666666666" />
       </map>
     </option>
   </component>

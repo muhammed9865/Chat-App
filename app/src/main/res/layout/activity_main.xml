@@ -1,28 +1,52 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#eee"
-    tools:context=".MainActivity">
+    tools:context=".presentation.activity.MainActivity">
 
-    <TextView
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/floatingActionButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Hello World!"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        android:contentDescription="@string/image"
+        android:src="@drawable/ic_chat"
 
-    <com.google.android.material.bottomnavigation.BottomNavigationView
+        app:backgroundTint="@color/primaryColor"
+        app:layout_anchor="@id/bot_nav"
+        app:layout_anchorGravity="center|top"
+        app:tint="@color/white" />
+
+    <androidx.fragment.app.FragmentContainerView
+        android:id="@+id/fragmentsContainer"
+        android:name="androidx.navigation.fragment.NavHostFragment"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:navGraph="@navigation/main_graph"
+        app:defaultNavHost="true"
+        app:layout_behavior="com.google.android.material.appbar.AppBarLayout$ScrollingViewBehavior" />
+
+    <com.google.android.material.bottomappbar.BottomAppBar
         android:id="@+id/bot_nav"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@drawable/bot_nav_rounded"
-        app:backgroundTint="@color/white"
-        app:elevation="23dp"
-        app:layout_constraintBottom_toBottomOf="parent" />
+        android:layout_height="@dimen/_70sdp"
+        android:layout_gravity="bottom"
+        app:elevation="4dp"
+        app:fabCradleMargin="10dp"
+        app:fabCradleRoundedCornerRadius="0dp"
+        app:layout_behavior="com.google.android.material.bottomappbar.BottomAppBar$Behavior">
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+        <com.google.android.material.bottomnavigation.BottomNavigationView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@drawable/bot_nav_rounded"
+            android:paddingStart="0dp"
+            android:paddingEnd="@dimen/_5sdp"
+            app:itemIconSize="@dimen/_17sdp"
+            app:itemPaddingBottom="@dimen/_15sdp"
+            app:itemPaddingTop="@dimen/_20sdp"
+            app:itemTextAppearanceActive="@style/Widget.BottomNavigationView"
+            app:menu="@menu/bot_nav_menu" />
+    </com.google.android.material.bottomappbar.BottomAppBar>
+</androidx.coordinatorlayout.widget.CoordinatorLayout>
