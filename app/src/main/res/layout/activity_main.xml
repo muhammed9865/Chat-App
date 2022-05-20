@@ -12,9 +12,8 @@
         android:layout_height="wrap_content"
         android:contentDescription="@string/image"
         android:src="@drawable/ic_chat"
-
         app:backgroundTint="@color/primaryColor"
-        app:layout_anchor="@id/bot_nav"
+        app:layout_anchor="@id/bot_bar"
         app:layout_anchorGravity="center|top"
         app:tint="@color/white" />
 
@@ -28,7 +27,7 @@
         app:layout_behavior="com.google.android.material.appbar.AppBarLayout$ScrollingViewBehavior" />
 
     <com.google.android.material.bottomappbar.BottomAppBar
-        android:id="@+id/bot_nav"
+        android:id="@+id/bot_bar"
         android:layout_width="match_parent"
         android:layout_height="@dimen/_70sdp"
         android:layout_gravity="bottom"
@@ -38,6 +37,7 @@
         app:layout_behavior="com.google.android.material.bottomappbar.BottomAppBar$Behavior">
 
         <com.google.android.material.bottomnavigation.BottomNavigationView
+            android:id="@+id/bot_nav"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:background="@drawable/bot_nav_rounded"

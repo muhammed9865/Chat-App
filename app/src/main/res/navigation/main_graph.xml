@@ -10,4 +10,14 @@
         android:name="com.muhammed.chatapp.presentation.fragments.ChatsFragment"
         android:label="fragment_chats"
         tools:layout="@layout/fragment_chats" />
+    <fragment
+        android:id="@+id/callsFragment"
+        android:name="com.muhammed.chatapp.presentation.fragments.CallsFragment"
+        android:label="fragment_calls"
+        tools:layout="@layout/fragment_calls" />
+    <fragment
+        android:id="@+id/communitiesFragment"
+        android:name="com.muhammed.chatapp.presentation.fragments.CommunitiesFragment"
+        android:label="fragment_communities"
+        tools:layout="@layout/fragment_communities" />
 </navigation>
