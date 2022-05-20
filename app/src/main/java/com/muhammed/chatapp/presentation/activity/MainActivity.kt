@@ -1,9 +1,8 @@
 package com.muhammed.chatapp.presentation.activity
 
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.MenuItem
-import androidx.appcompat.widget.Toolbar
+import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
 import com.google.android.material.navigation.NavigationBarView

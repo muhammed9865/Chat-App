@@ -1,7 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <style name="SingleChatPersonImage">
-
         <item name="cornerSize">35%</item>
+    </style>
+
+    <style name="EditTextHint" parent="">
+        <item name="android:textSize">@dimen/_10ssp</item>
     </style>
 </resources>
