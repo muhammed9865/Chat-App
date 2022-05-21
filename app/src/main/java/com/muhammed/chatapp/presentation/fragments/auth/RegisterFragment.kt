@@ -11,7 +11,6 @@ import androidx.core.widget.doOnTextChanged
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
-import androidx.navigation.NavOptions
 import androidx.navigation.fragment.findNavController
 import com.muhammed.chatapp.R
 import com.muhammed.chatapp.databinding.FragmentRegisterBinding
@@ -57,11 +56,8 @@ class RegisterFragment : Fragment() {
         binding.registerBtn.setOnTouchListener { _, motionEvent ->
             if (motionEvent.action == MotionEvent.ACTION_UP) {
                 binding.registerBtn.hideKeyboard()
-                /*binding.registerMotionLayout.transitionToEnd()
-                viewModel.doOnEvent(ValidationEvent.Submit)*/
-                findNavController().navigate(
-                    R.id.action_registerFragment_to_registerCompleteFragment
-                )
+                binding.registerMotionLayout.transitionToEnd()
+                viewModel.doOnEvent(ValidationEvent.Submit)
             }
             false
         }
