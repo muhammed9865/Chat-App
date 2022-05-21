@@ -7,24 +7,39 @@
 
     <fragment
         android:id="@+id/registerFragment"
-        android:name="com.muhammed.chatapp.presentation.fragments.RegisterFragment"
+        android:name="com.muhammed.chatapp.presentation.fragments.auth.RegisterFragment"
         android:label="fragment_register"
         tools:layout="@layout/fragment_register" >
         <action
             android:id="@+id/action_registerFragment_to_loginFragment"
             app:destination="@id/loginFragment"
             app:launchSingleTop="true"
-            app:popUpTo="@id/registerFragment" />
+            app:popUpTo="@id/loginFragment" />
+        <action
+            android:id="@+id/action_registerFragment_to_registerCompleteFragment"
+            app:destination="@id/registerCompleteFragment"
+            app:launchSingleTop="true"
+            app:popUpTo="@id/loginFragment" />
     </fragment>
     <fragment
         android:id="@+id/loginFragment"
-        android:name="com.muhammed.chatapp.presentation.fragments.LoginFragment"
+        android:name="com.muhammed.chatapp.presentation.fragments.auth.LoginFragment"
         android:label="fragment_login"
         tools:layout="@layout/fragment_login" >
         <action
             android:id="@+id/action_loginFragment_to_registerFragment"
             app:destination="@id/registerFragment"
-            app:popUpTo="@id/loginFragment"
             app:popUpToInclusive="false" />
+    </fragment>
+    <fragment
+        android:id="@+id/registerCompleteFragment"
+        android:name="com.muhammed.chatapp.presentation.fragments.auth.RegisterCompleteFragment"
+        android:label="fragment_register_complete"
+        tools:layout="@layout/fragment_register_complete" >
+        <action
+            android:id="@+id/action_registerCompleteFragment_to_loginFragment"
+            app:destination="@id/loginFragment"
+            app:popUpTo="@id/loginFragment"
+            app:popUpToInclusive="true" />
     </fragment>
 </navigation>

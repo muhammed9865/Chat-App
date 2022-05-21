@@ -9,5 +9,6 @@
     <color name="white">#FFFFFFFF</color>
 
     <color name="primaryColor">#2176FF</color>
+    <color name="error">#E30101</color>
 
 </resources>

@@ -7,4 +7,13 @@
     <style name="EditTextHint" parent="">
         <item name="android:textSize">@dimen/_10ssp</item>
     </style>
+
+    <style name="TextViewError">
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_width">0dp</item>
+        <item name="android:gravity">end</item>
+        <item name="android:textColor">@color/error</item>
+        <item name="fontFamily">@font/sf_regular</item>
+        <item name="android:textSize">@dimen/_10ssp</item>
+    </style>
 </resources>

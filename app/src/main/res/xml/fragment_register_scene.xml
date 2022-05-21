@@ -9,7 +9,7 @@
         motion:duration="300">
        <KeyFrameSet>
        </KeyFrameSet>
-        <OnClick motion:targetId="@+id/register_btn" />
+
     </Transition>
 
     <ConstraintSet android:id="@+id/start">

@@ -1,6 +1,6 @@
 package com.muhammed.chatapp.domain.validation
 
-data class ValidationResult(
+data class OperationResult(
     val isSuccessful: Boolean,
     val errorMessage: String? = null
 )

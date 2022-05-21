@@ -16,4 +16,6 @@
     <string name="repeat_password">Repeat Password</string>
     <string name="nickname">Nickname</string>
     <string name="login">Login</string>
+    <string name="have_an_account_already">Have an account Already?</string>
+    <string name="check_mail_message">Please check your email inbox or spam for verification</string>
 </resources>
