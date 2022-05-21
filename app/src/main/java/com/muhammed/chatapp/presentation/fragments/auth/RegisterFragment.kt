@@ -1,12 +1,14 @@
 package com.muhammed.chatapp.presentation.fragments.auth
 
 import android.annotation.SuppressLint
+import android.app.Activity.RESULT_OK
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
 import android.widget.EditText
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.widget.doOnTextChanged
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -14,7 +16,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.muhammed.chatapp.R
 import com.muhammed.chatapp.databinding.FragmentRegisterBinding
-import com.muhammed.chatapp.presentation.event.ValidationEvent
+import com.muhammed.chatapp.presentation.event.RegisterEvent
 import com.muhammed.chatapp.presentation.state.RegistrationState
 import com.muhammed.chatapp.presentation.state.ValidationState
 import com.muhammed.chatapp.presentation.viewmodel.RegisterViewModel
@@ -44,22 +46,29 @@ class RegisterFragment : Fragment() {
     }
     private val viewModel: RegisterViewModel by viewModels()
 
+
     @SuppressLint("ClickableViewAccessibility")
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        binding.registerToLoginBtn.setOnClickListener {
-            findNavController().navigate(R.id.action_registerFragment_to_loginFragment)
-        }
-
-        binding.registerBtn.setOnTouchListener { _, motionEvent ->
-            if (motionEvent.action == MotionEvent.ACTION_UP) {
-                binding.registerBtn.hideKeyboard()
-                binding.registerMotionLayout.transitionToEnd()
-                viewModel.doOnEvent(ValidationEvent.Submit)
+        with(binding) {
+            registerToLoginBtn.setOnClickListener {
+                findNavController().navigate(R.id.action_registerFragment_to_loginFragment)
             }
-            false
+
+            registerBtn.setOnTouchListener { _, motionEvent ->
+                if (motionEvent.action == MotionEvent.ACTION_UP) {
+                    binding.registerBtn.hideKeyboard()
+                    binding.registerMotionLayout.transitionToEnd()
+                    viewModel.doOnEvent(RegisterEvent.Submit)
+                }
+                false
+            }
+
+            googleSignup!!.setOnClickListener {
+                viewModel.doOnEvent(RegisterEvent.StartGoogleAuthentication)
+            }
         }
 
         onInputFieldsTextChanged()
@@ -79,18 +88,32 @@ class RegisterFragment : Fragment() {
 
                     is RegistrationState.RegistrationFailure -> {
                         binding.root.showError(it.error)
-                        // binding.registerMotionLayout.transitionToStart()
+                        binding.registerMotionLayout.transitionToStart()
                     }
 
                     is RegistrationState.ValidationSuccess -> {}
 
+
                     is RegistrationState.ValidationFailure -> {
                         lifecycleScope.launch {
                             onError(it.validationState)
-                            delay(50)
-                            //  binding.registerMotionLayout.transitionToStart()
+                            delay(30)
+                            binding.registerMotionLayout.transitionToStart()
                         }
 
+                    }
+
+                    is RegistrationState.OnGoogleAuthStart -> {
+                        googleSignInActivity.launch(it.client.signInIntent)
+                    }
+
+                    is RegistrationState.OnGoogleAuthSuccess -> {
+                        it.client.signOut()
+                        updateUI()
+                    }
+
+                    is RegistrationState.OnGoogleAuthFailure -> {
+                        binding.root.showError(it.error)
                     }
                 }
             }
@@ -110,18 +133,18 @@ class RegisterFragment : Fragment() {
     private fun onInputFieldsTextChanged() = with(viewModel) {
         with(binding) {
             registerNickname.doOnTextChanged { text, _, _, _ ->
-                doOnEvent(ValidationEvent.OnNicknameChanged(text.toString()))
+                doOnEvent(RegisterEvent.OnNicknameChanged(text.toString()))
             }
             registerEmail.doOnTextChanged { text, _, _, _ ->
-                doOnEvent(ValidationEvent.OnEmailChanged(text.toString()))
+                doOnEvent(RegisterEvent.OnEmailChanged(text.toString()))
                 enableRegisterButton()
             }
             registerPassword.doOnTextChanged { text, _, _, _ ->
-                doOnEvent(ValidationEvent.OnPasswordChanged(text.toString()))
+                doOnEvent(RegisterEvent.OnPasswordChanged(text.toString()))
                 enableRegisterButton()
             }
             registerRepeatedPassword.doOnTextChanged { text, _, _, _ ->
-                doOnEvent(ValidationEvent.OnRepeatedPassword(text.toString()))
+                doOnEvent(RegisterEvent.OnRepeatedPassword(text.toString()))
                 enableRegisterButton()
             }
         }
@@ -138,6 +161,7 @@ class RegisterFragment : Fragment() {
                 registerPassword.text,
                 registerRepeatedPassword.text
             ).any { it.isNullOrEmpty() }
+
             registerBtn.apply {
                 isEnabled = !isAnyEmptyField
                 isFocusable = !isAnyEmptyField
@@ -145,5 +169,22 @@ class RegisterFragment : Fragment() {
         }
     }
 
+    private val googleSignInActivity =
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
+            if (it.resultCode == RESULT_OK) {
+                it.data?.let { data ->
+                    viewModel.doOnEvent(RegisterEvent.OnGoogleCredentialsAvailable(data))
+                }
+            }
+        }
+
+    private fun updateUI() {
+        with(viewModel.states.value) {
+            binding.apply {
+                registerEmail.setText(email)
+                registerNickname.setText(nickname)
+            }
+        }
+    }
 
 }

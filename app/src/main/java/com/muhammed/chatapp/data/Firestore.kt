@@ -15,7 +15,7 @@ class Firestore @Inject constructor(private val mFirestore: FirebaseFirestore) {
         mFirestore.collection(Collections.USERS)
             .document(user.uid)
             .set(
-                User(user.uid, user.nickname, user.email, user.profile_picture)
+               user
             )
             .addOnSuccessListener {
                 flow = flow {

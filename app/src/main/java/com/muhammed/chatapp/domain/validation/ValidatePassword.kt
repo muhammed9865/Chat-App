@@ -8,7 +8,7 @@ class ValidatePassword {
                 errorMessage = "Password field can't be empty"
             )
         }
-        if (password.length < 8) {
+        if (password.length < 2) {
             return OperationResult(
                 isSuccessful = false,
                 errorMessage = "Password length can't be less than 8 characters"

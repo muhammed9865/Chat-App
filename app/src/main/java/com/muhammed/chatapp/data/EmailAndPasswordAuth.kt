@@ -6,7 +6,7 @@ import com.google.firebase.auth.FirebaseUser
 import com.muhammed.chatapp.domain.Callbacks
 import javax.inject.Inject
 
-class Auth @Inject constructor(private val mAuth: FirebaseAuth) {
+class EmailAndPasswordAuth @Inject constructor(private val mAuth: FirebaseAuth) {
 
     fun registerNewUser(email: String, password: String, authListener: Callbacks.AuthListener){
         mAuth.createUserWithEmailAndPassword(email, password).addOnSuccessListener {
@@ -29,9 +29,5 @@ class Auth @Inject constructor(private val mAuth: FirebaseAuth) {
 
     }
 
-   /* suspend fun loginUser(email: String, password: String): Flow<AuthResult> {
-        return flow {
-            emit(mAuth.signInWithEmailAndPassword(email, password).result)
-        }
-    }*/
+
 }

@@ -18,4 +18,5 @@
     <string name="login">Login</string>
     <string name="have_an_account_already">Have an account Already?</string>
     <string name="check_mail_message">Please check your email inbox or spam for verification</string>
+    <string name="or">or</string>
 </resources>
