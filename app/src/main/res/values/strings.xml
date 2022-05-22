@@ -19,4 +19,5 @@
     <string name="have_an_account_already">Have an account Already?</string>
     <string name="check_mail_message">Please check your email inbox or spam for verification</string>
     <string name="other_auth_options">Other Options</string>
+    <string name="google">Google</string>
 </resources>

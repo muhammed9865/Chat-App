@@ -7,8 +7,8 @@ import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.common.api.ApiException
 import javax.inject.Inject
 
-class GoogleAuth @Inject constructor(private val client: GoogleSignInClient) :
-    GoogleAuthCallback.Author {
+class GoogleAuth @Inject constructor(private val client: GoogleSignInClient)
+    {
     private var googleAuthCallback: GoogleAuthCallback.ViewModel? = null
     fun signIn() {
         googleAuthCallback?.onSigningStart(client)
@@ -18,7 +18,7 @@ class GoogleAuth @Inject constructor(private val client: GoogleSignInClient) :
         this.googleAuthCallback = listener
     }
 
-    override fun onTaskResult(data: Intent) {
+    fun onTaskResult(data: Intent) {
         val task = GoogleSignIn.getSignedInAccountFromIntent(data)
         try {
             val account = task.getResult(ApiException::class.java)
@@ -36,7 +36,4 @@ interface GoogleAuthCallback {
         fun onSigningFailure(error: String?)
     }
 
-    interface Author {
-        fun onTaskResult(data: Intent)
-    }
 }
