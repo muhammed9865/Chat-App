@@ -20,4 +20,7 @@
     <string name="check_mail_message">Please check your email inbox or spam for verification</string>
     <string name="other_auth_options">Other Options</string>
     <string name="google">Google</string>
+    <string name="welcome_back">Welcome back</string>
+    <string name="dont_have_account">New to Chato?</string>
+    <string name="remember_me">Remember me</string>
 </resources>
