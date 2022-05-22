@@ -66,7 +66,7 @@ class RegisterFragment : Fragment() {
                 false
             }
 
-            googleSignup!!.setOnClickListener {
+            googleSignup.setOnClickListener {
                 viewModel.doOnEvent(RegisterEvent.StartGoogleAuthentication)
             }
         }

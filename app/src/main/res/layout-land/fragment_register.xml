@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-    <androidx.constraintlayout.motion.widget.MotionLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.motion.widget.MotionLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/register_motionLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    app:layoutDescription="@xml/fragment_register_scene"
+    app:layoutDescription="@xml/fragment_register_scene_landscape"
     tools:context=".presentation.fragments.auth.RegisterFragment">
 
     <ImageView
@@ -21,7 +21,7 @@
         android:id="@+id/textView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="24dp"
+        android:layout_marginTop="16dp"
         android:fontFamily="@font/sf_medium"
         android:text="@string/welcome"
         android:textColor="@color/primaryColor"
@@ -159,7 +159,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        app:layout_constraintGuide_begin="106dp" />
+        app:layout_constraintGuide_begin="85dp" />
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/guideline4"
@@ -177,18 +177,19 @@
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/register_btn"
-        android:layout_width="@dimen/_100sdp"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="32dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="16dp"
         android:enabled="true"
         android:focusable="true"
         android:padding="@dimen/_10sdp"
         android:text="@string/register"
         app:cornerRadius="@dimen/_10sdp"
-        app:layout_constraintBottom_toBottomOf="@+id/textView3"
         app:layout_constraintEnd_toStartOf="@+id/guideline5"
-        app:layout_constraintTop_toBottomOf="@+id/textInputLayout2"
-        app:layout_constraintVertical_bias="0.0" />
+        app:layout_constraintStart_toEndOf="@+id/view"
+        app:layout_constraintTop_toBottomOf="@+id/textInputLayout2" />
 
     <ProgressBar
         android:id="@+id/register_pb"
@@ -207,12 +208,12 @@
         android:id="@+id/textView3"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="24dp"
         android:fontFamily="@font/sf_regular"
         android:text="@string/have_an_account_already"
         android:textSize="@dimen/_12ssp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="@+id/guideline4" />
+        app:layout_constraintStart_toStartOf="@+id/register_btn"
+        app:layout_constraintTop_toBottomOf="@+id/register_btn" />
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/register_to_login_btn"
@@ -226,5 +227,45 @@
         app:layout_constraintBottom_toBottomOf="@+id/textView3"
         app:layout_constraintStart_toEndOf="@+id/textView3"
         app:layout_constraintTop_toTopOf="@+id/textView3" />
+
+    <View
+        android:id="@+id/view"
+        android:layout_width="1dp"
+        android:layout_height="0dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="8dp"
+        android:background="#aaa"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="@+id/textInputLayout2"
+        app:layout_constraintEnd_toStartOf="@+id/textInputLayout3"
+        app:layout_constraintStart_toEndOf="@+id/textInputLayout2"
+        app:layout_constraintTop_toBottomOf="@+id/textInputLayout3" />
+
+    <TextView
+        android:id="@+id/textView6"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="24dp"
+        android:fontFamily="@font/sf_medium"
+        android:text="@string/other_auth_options"
+
+        android:textSize="@dimen/_11ssp"
+        app:layout_constraintStart_toStartOf="@+id/guideline4"
+        app:layout_constraintTop_toBottomOf="@+id/textInputLayout2" />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/google_signup"
+        style="@style/Widget.Material3.Button.OutlinedButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Google"
+        android:textSize="@dimen/_12ssp"
+        app:cornerRadius="@dimen/_10sdp"
+        app:icon="@drawable/googleg_standard_color_18"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="@+id/guideline4"
+        app:layout_constraintTop_toBottomOf="@+id/textView6"
+        app:layout_constraintVertical_bias="0.366"
+        app:strokeColor="@color/primaryColor" />
 
 </androidx.constraintlayout.motion.widget.MotionLayout>
