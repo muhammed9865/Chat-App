@@ -13,6 +13,7 @@ import com.muhammed.chatapp.presentation.event.AuthenticationEvent
 import com.muhammed.chatapp.presentation.state.AuthenticationState
 import com.muhammed.chatapp.presentation.viewmodel.LoginViewModel
 import com.muhammed.chatapp.showError
+import com.muhammed.chatapp.showSnackbar
 import com.muhammed.chatapp.toggleAuthError
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.delay
@@ -58,7 +59,7 @@ class LoginFragment : Fragment() {
                     is AuthenticationState.Idle -> {}
 
                     is AuthenticationState.AuthenticationSuccess -> {
-
+                        binding.root.showSnackbar("Welcome back Mr.Loly")
                     }
 
                     is AuthenticationState.AuthenticationFailure -> {

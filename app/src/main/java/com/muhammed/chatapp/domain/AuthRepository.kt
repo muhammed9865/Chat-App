@@ -28,7 +28,7 @@ class AuthRepository @Inject constructor(
                         uid = fUser.uid,
                         nickname = nickname,
                         email = email,
-                        password = encodePassword(password)
+                        password = Encoder.encodePassword(password)
                     )
                     // Sending Verification message and then send the user to Viewmodel
                     mEmailAndPasswordAuth.sendVerificationMessage(
@@ -64,7 +64,7 @@ class AuthRepository @Inject constructor(
                         uid = fUser.uid,
                         nickname = fUser.displayName ?: "None",
                         email = email,
-                        password = encodePassword(password)
+                        password = Encoder.encodePassword(password)
                     )
                     onComplete.onSuccess(user)
                 }
@@ -84,7 +84,4 @@ class AuthRepository @Inject constructor(
         }
     }
 
-    private fun encodePassword(password: String): String {
-        return password.encodeToByteArray().toString()
-    }
 }
