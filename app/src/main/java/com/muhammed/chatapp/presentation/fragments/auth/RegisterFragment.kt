@@ -7,7 +7,6 @@ import android.view.LayoutInflater
 import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
-import android.widget.EditText
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.widget.doOnTextChanged
 import androidx.fragment.app.Fragment
@@ -16,12 +15,12 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.muhammed.chatapp.R
 import com.muhammed.chatapp.databinding.FragmentRegisterBinding
-import com.muhammed.chatapp.presentation.event.RegisterEvent
-import com.muhammed.chatapp.presentation.state.RegistrationState
-import com.muhammed.chatapp.presentation.state.ValidationState
+import com.muhammed.chatapp.hideKeyboard
+import com.muhammed.chatapp.presentation.event.AuthenticationEvent
+import com.muhammed.chatapp.presentation.state.AuthenticationState
 import com.muhammed.chatapp.presentation.viewmodel.RegisterViewModel
-import com.muhammed.hideKeyboard
-import com.muhammed.showError
+import com.muhammed.chatapp.showError
+import com.muhammed.chatapp.toggleAuthError
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -61,60 +60,72 @@ class RegisterFragment : Fragment() {
                 if (motionEvent.action == MotionEvent.ACTION_UP) {
                     binding.registerBtn.hideKeyboard()
                     binding.registerMotionLayout.transitionToEnd()
-                    viewModel.doOnEvent(RegisterEvent.Submit)
+                    viewModel.doOnEvent(AuthenticationEvent.Submit)
                 }
                 false
             }
 
             googleSignup.setOnClickListener {
-                viewModel.doOnEvent(RegisterEvent.StartGoogleAuthentication)
+                viewModel.doOnEvent(AuthenticationEvent.StartGoogleAuthentication)
             }
         }
 
+        return binding.root
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
         onInputFieldsTextChanged()
         onStateChanged()
-
-        return binding.root
     }
 
 
     private fun onStateChanged() {
         lifecycleScope.launch {
-            viewModel.validationStates.collect {
+            viewModel.authStates.collect {
                 when (it) {
-                    is RegistrationState.Idle -> {}
+                    is AuthenticationState.Idle -> {}
 
-                    is RegistrationState.RegistrationSuccess -> {
+                    is AuthenticationState.AuthenticationSuccess -> {
                         findNavController().navigate(R.id.action_registerFragment_to_registerCompleteFragment)
                     }
 
-                    is RegistrationState.RegistrationFailure -> {
+                    is AuthenticationState.AuthenticationFailure -> {
                         binding.root.showError(it.error)
                         binding.registerMotionLayout.transitionToStart()
                     }
 
-                    is RegistrationState.ValidationSuccess -> {}
+                    is AuthenticationState.ValidationSuccess -> {}
 
 
-                    is RegistrationState.ValidationFailure -> {
+                    is AuthenticationState.ValidationFailure -> {
                         lifecycleScope.launch {
-                            onError(it.validationState)
+                            with(binding) {
+                                toggleAuthError(
+                                    email = registerEmail,
+                                    nickname = registerNickname,
+                                    password = registerPassword,
+                                    repeatedPassword = registerRepeatedPassword,
+                                    validationState = it.validationState
+                                )
+                            }
                             delay(30)
                             binding.registerMotionLayout.transitionToStart()
                         }
 
                     }
 
-                    is RegistrationState.OnGoogleAuthStart -> {
+                    is AuthenticationState.OnGoogleAuthStart -> {
                         googleSignInActivity.launch(it.client.signInIntent)
                     }
 
-                    is RegistrationState.OnGoogleAuthSuccess -> {
+                    is AuthenticationState.OnGoogleAuthSuccess -> {
                         it.client.signOut()
                         updateUI()
                     }
 
-                    is RegistrationState.OnGoogleAuthFailure -> {
+                    is AuthenticationState.OnGoogleAuthFailure -> {
                         binding.root.showError(it.error)
                     }
                 }
@@ -123,37 +134,25 @@ class RegisterFragment : Fragment() {
 
     }
 
-    private fun onError(validationState: ValidationState) {
-        with(binding) {
-            toggleError(registerNickname, validationState.nicknameError)
-            toggleError(registerEmail, validationState.emailError)
-            toggleError(registerPassword, validationState.passwordError)
-            toggleError(registerRepeatedPassword, validationState.repeatedPasswordError)
-        }
-    }
 
     private fun onInputFieldsTextChanged() = with(viewModel) {
         with(binding) {
             registerNickname.doOnTextChanged { text, _, _, _ ->
-                doOnEvent(RegisterEvent.OnNicknameChanged(text.toString()))
+                doOnEvent(AuthenticationEvent.OnNicknameChanged(text.toString()))
             }
             registerEmail.doOnTextChanged { text, _, _, _ ->
-                doOnEvent(RegisterEvent.OnEmailChanged(text.toString()))
+                doOnEvent(AuthenticationEvent.OnEmailChanged(text.toString()))
                 enableRegisterButton()
             }
             registerPassword.doOnTextChanged { text, _, _, _ ->
-                doOnEvent(RegisterEvent.OnPasswordChanged(text.toString()))
+                doOnEvent(AuthenticationEvent.OnPasswordChanged(text.toString()))
                 enableRegisterButton()
             }
             registerRepeatedPassword.doOnTextChanged { text, _, _, _ ->
-                doOnEvent(RegisterEvent.OnRepeatedPassword(text.toString()))
+                doOnEvent(AuthenticationEvent.OnRepeatedPassword(text.toString()))
                 enableRegisterButton()
             }
         }
-    }
-
-    private fun toggleError(view: EditText, mText: String?) {
-        view.error = mText
     }
 
     private fun enableRegisterButton() {
@@ -175,7 +174,7 @@ class RegisterFragment : Fragment() {
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
             if (it.resultCode == RESULT_OK) {
                 it.data?.let { data ->
-                    viewModel.doOnEvent(RegisterEvent.OnGoogleCredentialsAvailable(data))
+                    viewModel.doOnEvent(AuthenticationEvent.OnGoogleCredentialsAvailable(data))
                 }
             }
         }

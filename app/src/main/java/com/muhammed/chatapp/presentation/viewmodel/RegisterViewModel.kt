@@ -14,13 +14,15 @@ import com.muhammed.chatapp.domain.validation.ValidateNickname
 import com.muhammed.chatapp.domain.validation.ValidatePassword
 import com.muhammed.chatapp.domain.validation.ValidateRepeatedPassword
 import com.muhammed.chatapp.pojo.User
-import com.muhammed.chatapp.presentation.event.RegisterEvent
-import com.muhammed.chatapp.presentation.state.RegistrationState
+import com.muhammed.chatapp.presentation.event.AuthenticationEvent
+import com.muhammed.chatapp.presentation.state.AuthenticationState
 import com.muhammed.chatapp.presentation.state.ValidationState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -34,8 +36,8 @@ class RegisterViewModel @Inject constructor(
     private val googleAuth: GoogleAuth
 ) : ViewModel() {
 
-    private val _validationStates = MutableStateFlow<RegistrationState>(RegistrationState.Idle)
-    val validationStates = _validationStates.asStateFlow()
+    private val _authStates = Channel<AuthenticationState>()
+    val authStates = _authStates.receiveAsFlow()
     private val _validation = MutableStateFlow(ValidationState())
     val validation = _validation.asStateFlow()
 
@@ -43,33 +45,33 @@ class RegisterViewModel @Inject constructor(
         prepareGoogleAuthListener()
     }
 
-    fun doOnEvent(event: RegisterEvent) {
+    fun doOnEvent(event: AuthenticationEvent) {
         when(event) {
-            is RegisterEvent.OnNicknameChanged -> {
+            is AuthenticationEvent.OnNicknameChanged -> {
                 _validation.value = _validation.value.copy(nickname = event.name)
             }
 
-            is RegisterEvent.OnEmailChanged -> {
+            is AuthenticationEvent.OnEmailChanged -> {
                 _validation.value = _validation.value.copy(email = event.email)
             }
 
-            is RegisterEvent.OnPasswordChanged -> {
+            is AuthenticationEvent.OnPasswordChanged -> {
                 _validation.value = _validation.value.copy(password = event.password)
             }
 
-            is RegisterEvent.OnRepeatedPassword -> {
+            is AuthenticationEvent.OnRepeatedPassword -> {
                 _validation.value = _validation.value.copy(repeatedPassword = event.password)
             }
 
-            is RegisterEvent.StartGoogleAuthentication -> {
+            is AuthenticationEvent.StartGoogleAuthentication -> {
                 googleAuth.signIn()
             }
 
-            is RegisterEvent.OnGoogleCredentialsAvailable -> {
+            is AuthenticationEvent.OnGoogleCredentialsAvailable -> {
                 googleAuth.onTaskResult(event.data)
             }
 
-            is RegisterEvent.Submit -> {
+            is AuthenticationEvent.Submit -> {
                 validate()
             }
         }
@@ -97,7 +99,7 @@ class RegisterViewModel @Inject constructor(
                     repeatedPasswordError = repeatedPasswordResult.errorMessage,
                     nicknameError = nicknameResult.errorMessage
                 )
-                _validationStates.value = RegistrationState.ValidationFailure(newState)
+                _authStates.send(AuthenticationState.ValidationFailure(newState))
             }else {
                 registerUser()
             }
@@ -108,26 +110,27 @@ class RegisterViewModel @Inject constructor(
             googleAuth.registerCallbackListener(object : GoogleAuthCallback.ViewModel {
                 override fun onSigningStart(client: GoogleSignInClient) {
                     viewModelScope.launch {
-                        _validationStates.value = RegistrationState.OnGoogleAuthStart(client)
+                        _authStates.send(AuthenticationState.OnGoogleAuthStart(client))
                     }
                 }
 
                 override fun onSigningSuccess(client: GoogleSignInClient, account: GoogleSignInAccount) {
-                    account.email?.let { doOnEvent(RegisterEvent.OnEmailChanged(it)) }
-                    account.displayName?.let { doOnEvent(RegisterEvent.OnNicknameChanged(it)) }
+                    account.email?.let { doOnEvent(AuthenticationEvent.OnEmailChanged(it)) }
+                    account.displayName?.let { doOnEvent(AuthenticationEvent.OnNicknameChanged(it)) }
                     viewModelScope.launch {
-                        _validationStates.value = RegistrationState.OnGoogleAuthSuccess(client)
+                        _authStates.send(AuthenticationState.OnGoogleAuthSuccess(client))
                     }
                 }
 
                 override fun onSigningFailure(error: String?) {
                     viewModelScope.launch {
-                        _validationStates.value = RegistrationState.OnGoogleAuthFailure(error ?: "Google Auth Failed")
+                        _authStates.send(AuthenticationState.OnGoogleAuthFailure(error ?: "Google Auth Failed"))
                     }
                 }
             })
     }
 
+    // Register user, then save user credentials on Firestore.
     private  fun registerUser() {
         val nickName = _validation.value.nickname
         val email = _validation.value.email
@@ -137,7 +140,7 @@ class RegisterViewModel @Inject constructor(
             override fun onSuccess(user: User) {
                 Log.d(TAG, "onSuccess: $user")
                 viewModelScope.launch(Dispatchers.IO) {
-                    _validationStates.value = RegistrationState.RegistrationSuccess
+                    _authStates.send(AuthenticationState.AuthenticationSuccess)
                     authRepository.saveUserOnFirestore(user).collect {
                         Log.d(TAG, "onSuccess: ${it.errorMessage}")
                     }
@@ -146,7 +149,7 @@ class RegisterViewModel @Inject constructor(
 
             override fun onFailure(message: String) {
                 viewModelScope.launch {
-                    _validationStates.value = RegistrationState.RegistrationFailure(message)
+                    _authStates.send(AuthenticationState.AuthenticationFailure(message))
                 }
             }
         })

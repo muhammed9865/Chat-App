@@ -19,14 +19,20 @@ class EmailAndPasswordAuth @Inject constructor(private val mAuth: FirebaseAuth) 
 
     }
 
+    fun loginUser(email: String, password: String, authListener: Callbacks.AuthListener) {
+        mAuth.signInWithEmailAndPassword(email, password).addOnSuccessListener {
+            authListener.onSuccess(it.user)
+        }.addOnFailureListener {
+            authListener.onFailure(it.message!!)
+        }
+    }
+
     fun sendVerificationMessage(user: FirebaseUser, verificationListener: Callbacks.VerificationListener) {
         user.sendEmailVerification().addOnSuccessListener {
           verificationListener.onSuccess()
         }.addOnFailureListener {
             verificationListener.onFailure(it.message!!)
         }
-
-
     }
 
 

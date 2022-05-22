@@ -15,36 +15,24 @@
             android:id="@+id/register_btn"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginTop="24dp"
-            android:layout_marginStart="16dp"
             android:layout_marginEnd="16dp"
+            android:layout_marginStart="16dp"
+            motion:layout_constraintTop_toTopOf="@+id/textInputLayout"
             motion:layout_constraintEnd_toStartOf="@+id/guideline5"
             motion:layout_constraintStart_toEndOf="@+id/view"
-            motion:layout_constraintTop_toBottomOf="@+id/textInputLayout2">
-            <CustomAttribute
-                motion:attributeName="text"
-                motion:customStringValue="@string/register" />
+            motion:layout_constraintBottom_toBottomOf="@+id/textInputLayout4">
+            <CustomAttribute motion:attributeName="text" motion:customStringValue="@string/register"/>
         </Constraint>
         <Constraint
             android:id="@+id/register_pb"
+            android:elevation="10dp"
+            motion:layout_constraintEnd_toStartOf="@+id/guideline5"
             android:layout_width="0dp"
             android:layout_height="0dp"
-            android:elevation="10dp"
-            android:visibility="gone"
             motion:layout_constraintBottom_toBottomOf="@+id/register_btn"
-            motion:layout_constraintEnd_toStartOf="@+id/guideline5"
-            motion:layout_constraintStart_toStartOf="@+id/register_btn"
-            motion:layout_constraintTop_toTopOf="@+id/register_btn" />
-        <Constraint
-            android:id="@+id/textInputLayout3"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            motion:layout_constraintBottom_toBottomOf="@+id/textInputLayout2"
-            motion:layout_constraintEnd_toEndOf="parent"
-            motion:layout_constraintEnd_toStartOf="@+id/guideline5"
-            motion:layout_constraintHorizontal_bias="0.5"
-            motion:layout_constraintStart_toEndOf="@+id/textInputLayout2"
-            motion:layout_constraintTop_toTopOf="@+id/textInputLayout2" />
+            android:visibility="gone"
+            motion:layout_constraintTop_toTopOf="@+id/register_btn"
+            motion:layout_constraintStart_toStartOf="@+id/register_btn" />
     </ConstraintSet>
 
     <ConstraintSet android:id="@+id/end">
@@ -60,14 +48,15 @@
             motion:layout_constraintTop_toTopOf="@+id/register_btn" />
         <Constraint
             android:id="@+id/register_btn"
-            android:layout_width="@dimen/_60sdp"
+            android:layout_width="@dimen/_100sdp"
             android:layout_height="wrap_content"
-            android:layout_marginTop="32dp"
+            android:layout_marginEnd="16dp"
+            android:layout_marginStart="16dp"
+            motion:layout_constraintTop_toTopOf="@+id/textInputLayout"
             motion:layout_constraintEnd_toStartOf="@+id/guideline5"
-            motion:layout_constraintTop_toBottomOf="@+id/textInputLayout2">
-            <CustomAttribute
-                motion:attributeName="text"
-                motion:customStringValue=" " />
+            motion:layout_constraintStart_toEndOf="@+id/view"
+            motion:layout_constraintBottom_toBottomOf="@+id/textInputLayout4">
+            <CustomAttribute motion:attributeName="text" motion:customStringValue=""/>
         </Constraint>
     </ConstraintSet>
 

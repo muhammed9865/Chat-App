@@ -6,5 +6,6 @@ data class User(
     val uid: String,
     var nickname: String,
     val email: String,
+    val password: String,
     var profile_picture: String = Constants.MALE_PATH
 )
