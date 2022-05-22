@@ -80,27 +80,6 @@ class AuthRepository @Inject constructor(
 
     fun getCurrentUser() = mEmailAndPasswordAuth.currentUser
 
-    fun loginUser(token: String, onComplete: Callbacks.AuthCompleteListener) {
-        mEmailAndPasswordAuth.loginUserWithToken(token, object : Callbacks.AuthListener {
-            override fun onSuccess(fUser: FirebaseUser?, token: String?) {
-                fUser?.let {
-                    val user = User(
-                        uid = fUser.uid,
-                        nickname = fUser.displayName ?: "None",
-                        email = fUser.email ?: "",
-                        password = ""
-                    )
-                    onComplete.onSuccess(user, token = token)
-                }
-
-            }
-
-            override fun onFailure(message: String) {
-                onComplete.onFailure(message)
-            }
-        })
-    }
-
     suspend fun saveUserOnFirestore(user: User): Flow<OperationResult> {
         val result = mFirestore.saveUser(user)
         return flow {
