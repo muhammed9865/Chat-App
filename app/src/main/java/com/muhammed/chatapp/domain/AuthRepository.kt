@@ -21,7 +21,7 @@ class AuthRepository @Inject constructor(
         onComplete: Callbacks.AuthCompleteListener
     ) {
         mEmailAndPasswordAuth.registerNewUser(email, password, object : Callbacks.AuthListener {
-            override fun onSuccess(fUser: FirebaseUser?) {
+            override fun onSuccess(fUser: FirebaseUser?, token: String?) {
                 fUser?.let {
                     // Creating the user object to save it into Firestore.
                     val user = User(
@@ -57,8 +57,8 @@ class AuthRepository @Inject constructor(
         password: String,
         onComplete: Callbacks.AuthCompleteListener
     ) {
-        mEmailAndPasswordAuth.loginUser(email, password, object : Callbacks.AuthListener {
-            override fun onSuccess(fUser: FirebaseUser?) {
+        mEmailAndPasswordAuth.loginUserWithEmailAndPassword(email, password, object : Callbacks.AuthListener {
+            override fun onSuccess(fUser: FirebaseUser?, token: String?) {
                 fUser?.let {
                     val user = User(
                         uid = fUser.uid,
@@ -66,15 +66,39 @@ class AuthRepository @Inject constructor(
                         email = email,
                         password = Encoder.encodePassword(password)
                     )
-                    onComplete.onSuccess(user)
+                    onComplete.onSuccess(user, token = token)
+                    }
                 }
-            }
+
 
             override fun onFailure(message: String) {
                 onComplete.onFailure(message)
             }
         })
 
+    }
+
+    fun getCurrentUser() = mEmailAndPasswordAuth.currentUser
+
+    fun loginUser(token: String, onComplete: Callbacks.AuthCompleteListener) {
+        mEmailAndPasswordAuth.loginUserWithToken(token, object : Callbacks.AuthListener {
+            override fun onSuccess(fUser: FirebaseUser?, token: String?) {
+                fUser?.let {
+                    val user = User(
+                        uid = fUser.uid,
+                        nickname = fUser.displayName ?: "None",
+                        email = fUser.email ?: "",
+                        password = ""
+                    )
+                    onComplete.onSuccess(user, token = token)
+                }
+
+            }
+
+            override fun onFailure(message: String) {
+                onComplete.onFailure(message)
+            }
+        })
     }
 
     suspend fun saveUserOnFirestore(user: User): Flow<OperationResult> {

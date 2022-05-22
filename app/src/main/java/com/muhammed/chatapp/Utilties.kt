@@ -3,8 +3,8 @@ package com.muhammed.chatapp
 import android.content.Context
 import android.view.View
 import android.view.inputmethod.InputMethodManager
+import android.widget.Button
 import android.widget.EditText
-import androidx.fragment.app.Fragment
 import com.google.android.material.snackbar.BaseTransientBottomBar.ANIMATION_MODE_SLIDE
 import com.google.android.material.snackbar.Snackbar
 import com.muhammed.chatapp.presentation.state.ValidationState
@@ -35,7 +35,7 @@ fun View.showSnackbar(message: String) {
         .show()
 }
 
-fun Fragment.toggleAuthError(
+fun toggleAuthError(
     email: EditText? = null,
     nickname: EditText? = null,
     password: EditText? = null,
@@ -49,3 +49,24 @@ fun Fragment.toggleAuthError(
         repeatedPassword?.error = repeatedPasswordError
     }
 }
+
+    fun toggleButtonAvailabilityOnAuth(
+        email: EditText? = null,
+        nickname: EditText? = null,
+        password: EditText? = null,
+        repeatedPassword: EditText? = null,
+        button: Button
+    ) {
+        val fields = mutableListOf<EditText>()
+        email?.let { fields.add(it) }
+        password?.let { fields.add(it) }
+        repeatedPassword?.let { fields.add(it) }
+        nickname?.let { fields.add(it) }
+
+        val isAnyEmptyField = fields.any { it.text.isNullOrEmpty() }
+
+        button.apply {
+            isEnabled = !isAnyEmptyField
+            isFocusable = !isAnyEmptyField
+        }
+    }

@@ -14,6 +14,7 @@ import com.muhammed.chatapp.pojo.User
 import com.muhammed.chatapp.presentation.event.AuthenticationEvent
 import com.muhammed.chatapp.presentation.state.AuthenticationState
 import com.muhammed.chatapp.presentation.state.ValidationState
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -22,17 +23,19 @@ import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
+@HiltViewModel
 class LoginViewModel @Inject constructor(
     private val authRepository: AuthRepository,
     private val googleAuth: GoogleAuth,
     private val validateEmail: ValidateEmail,
-    private val validatePassword: ValidatePassword
+    private val validatePassword: ValidatePassword,
 ) : ViewModel() {
     private val _validation = MutableStateFlow(ValidationState())
     val validation = _validation.asStateFlow()
 
     private val _authStates = Channel<AuthenticationState>()
     val authStates = _authStates.receiveAsFlow()
+
 
     init {
         initGoogleAuthListener()
@@ -54,6 +57,10 @@ class LoginViewModel @Inject constructor(
 
             is AuthenticationEvent.OnGoogleCredentialsAvailable -> {
                 googleAuth.onTaskResult(event.data)
+            }
+
+            is AuthenticationEvent.LoginWithSavedToken -> {
+                loginInInstantly()
             }
 
             is AuthenticationEvent.Submit -> {
@@ -81,53 +88,70 @@ class LoginViewModel @Inject constructor(
                     emailError = emailResult.errorMessage,
                     passwordError = passwordResult.errorMessage,
                 )
-                _authStates.send(AuthenticationState.ValidationFailure(newState))
+
+                sendState(AuthenticationState.ValidationFailure(newState))
             } else {
                 loginUser()
             }
         }
     }
 
+    private fun loginInInstantly() {
+        val currentUser = authRepository.getCurrentUser()
+        currentUser?.let {
+            sendState(AuthenticationState.AuthenticationSuccess)
+        }
+    }
+
+
+    private fun sendState(state: AuthenticationState) {
+        viewModelScope.launch {
+            _authStates.send(state)
+        }
+    }
 
     private fun loginUser() {
         val email = _validation.value.email
         val password = _validation.value.password
 
-        authRepository.loginUser(email, password, object : Callbacks.AuthCompleteListener {
-            override fun onSuccess(user: User) {
-                viewModelScope.launch {
-                    _authStates.send(AuthenticationState.AuthenticationSuccess)
+        authRepository.loginUser(
+            email,
+            password,
+            object : Callbacks.AuthCompleteListener {
+                override fun onSuccess(user: User, token: String?) {
+                    sendState(AuthenticationState.AuthenticationSuccess)
                 }
-            }
 
-            override fun onFailure(message: String) {
-                viewModelScope.launch {
-                    _authStates.send(AuthenticationState.AuthenticationFailure(message))
+                override fun onFailure(message: String) {
+                    viewModelScope.launch {
+                        sendState(AuthenticationState.AuthenticationFailure(message))
+                    }
                 }
-            }
-        })
+            })
     }
 
     private fun initGoogleAuthListener() {
         googleAuth.registerCallbackListener(object : GoogleAuthCallback.ViewModel {
             override fun onSigningStart(client: GoogleSignInClient) {
-                viewModelScope.launch {
-                    _authStates.send(AuthenticationState.OnGoogleAuthStart(client))
-                }
+                sendState(AuthenticationState.OnGoogleAuthStart(client))
             }
 
-            override fun onSigningSuccess(client: GoogleSignInClient, account: GoogleSignInAccount) {
+            override fun onSigningSuccess(
+                client: GoogleSignInClient,
+                account: GoogleSignInAccount
+            ) {
                 account.email?.let { doOnEvent(AuthenticationEvent.OnEmailChanged(it)) }
                 account.displayName?.let { doOnEvent(AuthenticationEvent.OnNicknameChanged(it)) }
-                viewModelScope.launch {
-                    _authStates.send(AuthenticationState.OnGoogleAuthSuccess(client))
-                }
+                sendState(AuthenticationState.OnGoogleAuthSuccess(client))
             }
 
             override fun onSigningFailure(error: String?) {
-                viewModelScope.launch {
-                    _authStates.send(AuthenticationState.OnGoogleAuthFailure(error ?: "Google Auth Failed"))
-                }
+                sendState(
+                    AuthenticationState.OnGoogleAuthFailure(
+                        error ?: "Google Auth Failed"
+                    )
+                )
+
             }
         })
     }

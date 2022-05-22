@@ -9,5 +9,6 @@ sealed class AuthenticationEvent {
     data class OnRepeatedPassword(val password: String): AuthenticationEvent()
     object StartGoogleAuthentication : AuthenticationEvent()
     data class OnGoogleCredentialsAvailable(val data: Intent): AuthenticationEvent()
+    object LoginWithSavedToken : AuthenticationEvent()
     object Submit : AuthenticationEvent()
 }

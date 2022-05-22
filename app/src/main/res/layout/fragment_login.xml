@@ -5,7 +5,7 @@
     android:id="@+id/login_motionLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    app:layoutDescription="@xml/fragment_register_scene"
+    app:layoutDescription="@xml/fragment_login_scene"
     tools:context=".presentation.fragments.auth.RegisterFragment">
 
     <ImageView
@@ -186,7 +186,7 @@
         app:layout_constraintTop_toTopOf="@+id/view" />
 
     <com.google.android.material.button.MaterialButton
-        android:id="@+id/google_signup"
+        android:id="@+id/google_signin"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/_18sdp"
@@ -199,14 +199,6 @@
         app:layout_constraintStart_toStartOf="@+id/guideline4"
         app:layout_constraintTop_toBottomOf="@+id/view2" />
 
-    <com.google.android.material.checkbox.MaterialCheckBox
-        android:id="@+id/remember_me_cb"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/remember_me"
-        android:fontFamily="@font/sf_regular"
-        app:buttonTint="@color/primaryColor"
-        app:layout_constraintStart_toStartOf="@+id/guideline4"
-        app:layout_constraintTop_toBottomOf="@+id/textInputLayout2" />
+
 
 </androidx.constraintlayout.motion.widget.MotionLayout>

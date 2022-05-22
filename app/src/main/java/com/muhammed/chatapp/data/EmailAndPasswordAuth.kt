@@ -14,14 +14,33 @@ class EmailAndPasswordAuth @Inject constructor(private val mAuth: FirebaseAuth) 
         }.addOnFailureListener {
             authListener.onFailure(it.message!!)
 
+
         }
 
 
     }
 
-    fun loginUser(email: String, password: String, authListener: Callbacks.AuthListener) {
+    val currentUser = mAuth.currentUser
+
+    fun loginUserWithEmailAndPassword(email: String, password: String, authListener: Callbacks.AuthListener) {
         mAuth.signInWithEmailAndPassword(email, password).addOnSuccessListener {
             authListener.onSuccess(it.user)
+        }.addOnFailureListener {
+            authListener.onFailure(it.message!!)
+        }
+    }
+
+    fun loginUserWithToken(token: String, authListener: Callbacks.AuthListener) {
+        mAuth.signInWithCustomToken(token).addOnSuccessListener {
+            authListener.onSuccess(it.user, token)
+        }.addOnFailureListener {
+            authListener.onFailure(it.message!!)
+        }
+    }
+
+    fun getUserToken(user: FirebaseUser, authListener: Callbacks.AuthListener) {
+        user.getIdToken(false).addOnSuccessListener {
+            authListener.onSuccess(fUser = user, token = it.token)
         }.addOnFailureListener {
             authListener.onFailure(it.message!!)
         }

@@ -1,20 +1,23 @@
 package com.muhammed.chatapp.presentation.fragments.auth
 
+import android.annotation.SuppressLint
+import android.app.Activity
 import android.os.Bundle
 import android.view.LayoutInflater
+import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.widget.doOnTextChanged
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.fragment.findNavController
+import com.muhammed.chatapp.*
 import com.muhammed.chatapp.databinding.FragmentLoginBinding
 import com.muhammed.chatapp.presentation.event.AuthenticationEvent
 import com.muhammed.chatapp.presentation.state.AuthenticationState
 import com.muhammed.chatapp.presentation.viewmodel.LoginViewModel
-import com.muhammed.chatapp.showError
-import com.muhammed.chatapp.showSnackbar
-import com.muhammed.chatapp.toggleAuthError
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -23,11 +26,31 @@ import kotlinx.coroutines.launch
 class LoginFragment : Fragment() {
     private val binding: FragmentLoginBinding by lazy { FragmentLoginBinding.inflate(layoutInflater) }
     private val viewModel: LoginViewModel by viewModels()
+    @SuppressLint("ClickableViewAccessibility")
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
 
+        tryLoggingInstantly()
+
+        binding.loginBtn.setOnTouchListener { _, motionEvent ->
+            if (motionEvent.action == MotionEvent.ACTION_UP) {
+                binding.loginMotionLayout.transitionToEnd()
+                viewModel.doOnEvent(AuthenticationEvent.Submit)
+
+            }
+            false
+        }
+
+
+        binding.googleSignin.setOnClickListener {
+            viewModel.doOnEvent(AuthenticationEvent.StartGoogleAuthentication)
+        }
+
+        binding.loginToRegisterBtn.setOnClickListener {
+            findNavController().navigate(R.id.action_loginFragment_to_registerFragment)
+        }
 
         return binding.root
     }
@@ -38,15 +61,21 @@ class LoginFragment : Fragment() {
         onStateChanged()
     }
 
+    private fun tryLoggingInstantly() {
+        viewModel.doOnEvent(AuthenticationEvent.LoginWithSavedToken)
+    }
+
 
     private fun onInputFieldsTextChange() {
         lifecycleScope.launch {
             with(binding) {
                 loginEmail.doOnTextChanged { text, _, _, _ ->
                     viewModel.doOnEvent(AuthenticationEvent.OnEmailChanged(text.toString()))
+                    enableLoginButton()
                 }
                 loginPassword.doOnTextChanged { text, _, _, _ ->
                     viewModel.doOnEvent(AuthenticationEvent.OnPasswordChanged(text.toString()))
+                    enableLoginButton()
                 }
             }
         }
@@ -60,6 +89,7 @@ class LoginFragment : Fragment() {
 
                     is AuthenticationState.AuthenticationSuccess -> {
                         binding.root.showSnackbar("Welcome back Mr.Loly")
+                        binding.loginMotionLayout.transitionToStart()
                     }
 
                     is AuthenticationState.AuthenticationFailure -> {
@@ -86,11 +116,12 @@ class LoginFragment : Fragment() {
                     }
 
                     is AuthenticationState.OnGoogleAuthStart -> {
-
+                        googleSignInActivity.launch(it.client.signInIntent)
                     }
 
                     is AuthenticationState.OnGoogleAuthSuccess -> {
                         it.client.signOut()
+                        updateUI()
 
                     }
 
@@ -100,6 +131,32 @@ class LoginFragment : Fragment() {
                 }
             }
         }
+    }
 
+    private fun enableLoginButton() {
+        with(binding) {
+            toggleButtonAvailabilityOnAuth(
+                email = loginEmail,
+                password = loginPassword,
+                button = loginBtn
+            )
+        }
     }
+
+    private val googleSignInActivity =
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
+            if (it.resultCode == Activity.RESULT_OK) {
+                it.data?.let { data ->
+                    viewModel.doOnEvent(AuthenticationEvent.OnGoogleCredentialsAvailable(data))
+                }
+            }
+        }
+
+    private fun updateUI() {
+        with(viewModel.validation.value) {
+            binding.apply {
+                loginEmail.setText(email)
+            }
+        }
     }
+}

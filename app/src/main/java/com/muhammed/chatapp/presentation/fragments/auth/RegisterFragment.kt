@@ -13,14 +13,11 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
-import com.muhammed.chatapp.R
+import com.muhammed.chatapp.*
 import com.muhammed.chatapp.databinding.FragmentRegisterBinding
-import com.muhammed.chatapp.hideKeyboard
 import com.muhammed.chatapp.presentation.event.AuthenticationEvent
 import com.muhammed.chatapp.presentation.state.AuthenticationState
 import com.muhammed.chatapp.presentation.viewmodel.RegisterViewModel
-import com.muhammed.chatapp.showError
-import com.muhammed.chatapp.toggleAuthError
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -157,16 +154,13 @@ class RegisterFragment : Fragment() {
 
     private fun enableRegisterButton() {
         with(binding) {
-            val isAnyEmptyField = listOf(
-                registerEmail.text,
-                registerPassword.text,
-                registerRepeatedPassword.text
-            ).any { it.isNullOrEmpty() }
-
-            registerBtn.apply {
-                isEnabled = !isAnyEmptyField
-                isFocusable = !isAnyEmptyField
-            }
+            toggleButtonAvailabilityOnAuth(
+                email = registerEmail,
+                password = registerPassword,
+                repeatedPassword = registerRepeatedPassword,
+                nickname = registerNickname,
+                button = registerBtn
+            )
         }
     }
 

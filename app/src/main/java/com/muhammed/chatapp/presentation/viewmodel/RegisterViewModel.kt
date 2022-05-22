@@ -137,7 +137,7 @@ class RegisterViewModel @Inject constructor(
         val password = _validation.value.password
 
         authRepository.registerUser(nickName, email, password, object : Callbacks.AuthCompleteListener {
-            override fun onSuccess(user: User) {
+            override fun onSuccess(user: User, token: String?) {
                 Log.d(TAG, "onSuccess: $user")
                 viewModelScope.launch(Dispatchers.IO) {
                     _authStates.send(AuthenticationState.AuthenticationSuccess)
