@@ -2,6 +2,7 @@ package com.muhammed.chatapp.presentation.fragments.auth
 
 import android.annotation.SuppressLint
 import android.app.Activity
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.MotionEvent
@@ -15,6 +16,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.muhammed.chatapp.*
 import com.muhammed.chatapp.databinding.FragmentLoginBinding
+import com.muhammed.chatapp.presentation.activity.MainActivity
 import com.muhammed.chatapp.presentation.event.AuthenticationEvent
 import com.muhammed.chatapp.presentation.state.AuthenticationState
 import com.muhammed.chatapp.presentation.viewmodel.LoginViewModel
@@ -88,8 +90,10 @@ class LoginFragment : Fragment() {
                     is AuthenticationState.Idle -> {}
 
                     is AuthenticationState.AuthenticationSuccess -> {
-                        binding.root.showSnackbar("Welcome back Mr.Loly")
                         binding.loginMotionLayout.transitionToStart()
+                        val intent = Intent(requireContext(), MainActivity::class.java)
+                        requireActivity().startActivity(intent)
+                        requireActivity().finish()
                     }
 
                     is AuthenticationState.AuthenticationFailure -> {

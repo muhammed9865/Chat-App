@@ -6,19 +6,11 @@
         android:icon="@drawable/ic_chat"
         android:title="@string/chats"
         app:showAsAction="ifRoom" />
-    <item
-        android:id="@+id/calls"
-        android:icon="@drawable/ic_phone_call"
-        android:title="@string/calls"
-        app:showAsAction="ifRoom" />
+
     <item
         android:id="@+id/community"
         android:icon="@drawable/ic_community"
         android:title="@string/communities"
         app:showAsAction="ifRoom" />
-    <item
-        android:id="@+id/more"
-        android:icon="@drawable/ic_menu"
-        android:title="@string/more"
-        app:showAsAction="ifRoom" />
+
 </menu>

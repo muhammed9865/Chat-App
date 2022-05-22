@@ -39,7 +39,6 @@ class MainActivity : AppCompatActivity(), NavigationBarView.OnItemSelectedListen
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
         when(item.itemId) {
             R.id.chats -> navController.navigate(R.id.chatsFragment)
-            R.id.calls -> navController.navigate(R.id.callsFragment)
             R.id.community -> navController.navigate(R.id.communitiesFragment)
         }
 
