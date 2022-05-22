@@ -80,8 +80,10 @@ class RegisterFragment : Fragment() {
 
     private fun onStateChanged() {
         lifecycleScope.launch {
-            viewModel.registrationChannel.collect {
+            viewModel.validationStates.collect {
                 when (it) {
+                    is RegistrationState.Idle -> {}
+
                     is RegistrationState.RegistrationSuccess -> {
                         findNavController().navigate(R.id.action_registerFragment_to_registerCompleteFragment)
                     }
@@ -179,7 +181,7 @@ class RegisterFragment : Fragment() {
         }
 
     private fun updateUI() {
-        with(viewModel.states.value) {
+        with(viewModel.validation.value) {
             binding.apply {
                 registerEmail.setText(email)
                 registerNickname.setText(nickname)

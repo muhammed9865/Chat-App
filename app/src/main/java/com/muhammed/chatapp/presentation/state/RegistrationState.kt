@@ -4,6 +4,7 @@ import com.google.android.gms.auth.api.signin.GoogleSignInClient
 
 sealed class RegistrationState {
 
+    object Idle: RegistrationState()
     object RegistrationSuccess: RegistrationState()
     object ValidationSuccess: RegistrationState()
     data class ValidationFailure(val validationState: ValidationState): RegistrationState()

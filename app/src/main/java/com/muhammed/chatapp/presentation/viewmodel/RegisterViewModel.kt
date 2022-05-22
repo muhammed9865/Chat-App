@@ -19,10 +19,8 @@ import com.muhammed.chatapp.presentation.state.RegistrationState
 import com.muhammed.chatapp.presentation.state.ValidationState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -35,10 +33,11 @@ class RegisterViewModel @Inject constructor(
     private val authRepository: AuthRepository,
     private val googleAuth: GoogleAuth
 ) : ViewModel() {
-    private val _states = MutableStateFlow(ValidationState())
-    val states = _states.asStateFlow()
-    private val _registrationChannel = Channel<RegistrationState>()
-    val registrationChannel = _registrationChannel.receiveAsFlow()
+
+    private val _validationStates = MutableStateFlow<RegistrationState>(RegistrationState.Idle)
+    val validationStates = _validationStates.asStateFlow()
+    private val _validation = MutableStateFlow(ValidationState())
+    val validation = _validation.asStateFlow()
 
     init {
         prepareGoogleAuthListener()
@@ -47,19 +46,19 @@ class RegisterViewModel @Inject constructor(
     fun doOnEvent(event: RegisterEvent) {
         when(event) {
             is RegisterEvent.OnNicknameChanged -> {
-                _states.value = _states.value.copy(nickname = event.name)
+                _validation.value = _validation.value.copy(nickname = event.name)
             }
 
             is RegisterEvent.OnEmailChanged -> {
-                _states.value = _states.value.copy(email = event.email)
+                _validation.value = _validation.value.copy(email = event.email)
             }
 
             is RegisterEvent.OnPasswordChanged -> {
-                _states.value = _states.value.copy(password = event.password)
+                _validation.value = _validation.value.copy(password = event.password)
             }
 
             is RegisterEvent.OnRepeatedPassword -> {
-                _states.value = _states.value.copy(repeatedPassword = event.password)
+                _validation.value = _validation.value.copy(repeatedPassword = event.password)
             }
 
             is RegisterEvent.StartGoogleAuthentication -> {
@@ -79,11 +78,11 @@ class RegisterViewModel @Inject constructor(
     private fun validate() {
         viewModelScope.launch(Dispatchers.IO) {
             // Validating Inputs
-            val nicknameResult = validateNickname.execute(_states.value.nickname)
-            val emailResult = validateEmail.execute(_states.value.email)
-            val passwordResult = validatePassword.execute(_states.value.password)
+            val nicknameResult = validateNickname.execute(_validation.value.nickname)
+            val emailResult = validateEmail.execute(_validation.value.email)
+            val passwordResult = validatePassword.execute(_validation.value.password)
             val repeatedPasswordResult =
-                validateRepeatedPassword.execute(_states.value.password, _states.value.repeatedPassword)
+                validateRepeatedPassword.execute(_validation.value.password, _validation.value.repeatedPassword)
 
             // Result errors if any.
             val hasErrors =
@@ -92,13 +91,13 @@ class RegisterViewModel @Inject constructor(
                 }
             // If there are no errors, register user.
             if (hasErrors) {
-                val newState = _states.value.copy(
+                val newState = _validation.value.copy(
                     emailError = emailResult.errorMessage,
                     passwordError = passwordResult.errorMessage,
                     repeatedPasswordError = repeatedPasswordResult.errorMessage,
                     nicknameError = nicknameResult.errorMessage
                 )
-                _registrationChannel.send(RegistrationState.ValidationFailure(newState))
+                _validationStates.value = RegistrationState.ValidationFailure(newState)
             }else {
                 registerUser()
             }
@@ -109,7 +108,7 @@ class RegisterViewModel @Inject constructor(
             googleAuth.registerCallbackListener(object : GoogleAuthCallback.ViewModel {
                 override fun onSigningStart(client: GoogleSignInClient) {
                     viewModelScope.launch {
-                        _registrationChannel.send(RegistrationState.OnGoogleAuthStart(client))
+                        _validationStates.value = RegistrationState.OnGoogleAuthStart(client)
                     }
                 }
 
@@ -117,28 +116,28 @@ class RegisterViewModel @Inject constructor(
                     account.email?.let { doOnEvent(RegisterEvent.OnEmailChanged(it)) }
                     account.displayName?.let { doOnEvent(RegisterEvent.OnNicknameChanged(it)) }
                     viewModelScope.launch {
-                        _registrationChannel.send(RegistrationState.OnGoogleAuthSuccess(client))
+                        _validationStates.value = RegistrationState.OnGoogleAuthSuccess(client)
                     }
                 }
 
                 override fun onSigningFailure(error: String?) {
                     viewModelScope.launch {
-                        _registrationChannel.send(RegistrationState.OnGoogleAuthFailure(error ?: "Google Auth Failed"))
+                        _validationStates.value = RegistrationState.OnGoogleAuthFailure(error ?: "Google Auth Failed")
                     }
                 }
             })
     }
 
     private  fun registerUser() {
-        val nickName = _states.value.nickname
-        val email = _states.value.email
-        val password = _states.value.password
+        val nickName = _validation.value.nickname
+        val email = _validation.value.email
+        val password = _validation.value.password
 
         authRepository.registerUser(nickName, email, password, object : Callbacks.AuthCompleteListener {
             override fun onSuccess(user: User) {
                 Log.d(TAG, "onSuccess: $user")
                 viewModelScope.launch(Dispatchers.IO) {
-                    _registrationChannel.send(RegistrationState.RegistrationSuccess)
+                    _validationStates.value = RegistrationState.RegistrationSuccess
                     authRepository.saveUserOnFirestore(user).collect {
                         Log.d(TAG, "onSuccess: ${it.errorMessage}")
                     }
@@ -147,7 +146,7 @@ class RegisterViewModel @Inject constructor(
 
             override fun onFailure(message: String) {
                 viewModelScope.launch {
-                    _registrationChannel.send(RegistrationState.RegistrationFailure(message))
+                    _validationStates.value = RegistrationState.RegistrationFailure(message)
                 }
             }
         })
