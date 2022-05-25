@@ -23,4 +23,13 @@
     <string name="welcome_back">Welcome back</string>
     <string name="dont_have_account">New to Chato?</string>
     <string name="remember_me">Remember me</string>
+    <string name="search">Search</string>
+    <string name="take_a_photo">Take a photo</string>
+    <string name="sign_out">Sign out</string>
+    <string name="signing_out">Signing Out</string>
+    <string name="stay">Stay</string>
+
+    <string-array name="menu_rows">
+        <item>Sign out</item>
+    </string-array>
 </resources>

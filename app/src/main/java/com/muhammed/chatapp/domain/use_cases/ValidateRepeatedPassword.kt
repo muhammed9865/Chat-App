@@ -1,6 +1,6 @@
-package com.muhammed.chatapp.domain.validation
+package com.muhammed.chatapp.domain.use_cases
 
-import dagger.Provides
+import com.muhammed.chatapp.domain.OperationResult
 
 class ValidateRepeatedPassword {
     fun execute(password: String, repeatedPassword: String): OperationResult {

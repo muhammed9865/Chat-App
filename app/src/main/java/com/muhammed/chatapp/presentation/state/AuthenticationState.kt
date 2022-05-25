@@ -3,7 +3,6 @@ package com.muhammed.chatapp.presentation.state
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
 
 sealed class AuthenticationState {
-
     object Idle: AuthenticationState()
     object AuthenticationSuccess: AuthenticationState()
     object ValidationSuccess: AuthenticationState()

@@ -7,12 +7,12 @@ import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.muhammed.chatapp.data.GoogleAuth
 import com.muhammed.chatapp.data.GoogleAuthCallback
-import com.muhammed.chatapp.domain.AuthRepository
-import com.muhammed.chatapp.domain.Callbacks
-import com.muhammed.chatapp.domain.validation.ValidateEmail
-import com.muhammed.chatapp.domain.validation.ValidateNickname
-import com.muhammed.chatapp.domain.validation.ValidatePassword
-import com.muhammed.chatapp.domain.validation.ValidateRepeatedPassword
+import com.muhammed.chatapp.data.AuthRepository
+import com.muhammed.chatapp.data.Callbacks
+import com.muhammed.chatapp.domain.use_cases.ValidateEmail
+import com.muhammed.chatapp.domain.use_cases.ValidateNickname
+import com.muhammed.chatapp.domain.use_cases.ValidatePassword
+import com.muhammed.chatapp.domain.use_cases.ValidateRepeatedPassword
 import com.muhammed.chatapp.pojo.User
 import com.muhammed.chatapp.presentation.event.AuthenticationEvent
 import com.muhammed.chatapp.presentation.state.AuthenticationState
@@ -22,8 +22,10 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
+import java.lang.Exception
 import javax.inject.Inject
 
 @HiltViewModel
@@ -117,8 +119,18 @@ class RegisterViewModel @Inject constructor(
                 override fun onSigningSuccess(client: GoogleSignInClient, account: GoogleSignInAccount) {
                     account.email?.let { doOnEvent(AuthenticationEvent.OnEmailChanged(it)) }
                     account.displayName?.let { doOnEvent(AuthenticationEvent.OnNicknameChanged(it)) }
+
+                    val user = User(account.id ?: "", account.displayName ?: "", account.email ?: "", "")
+
                     viewModelScope.launch {
-                        _authStates.send(AuthenticationState.OnGoogleAuthSuccess(client))
+                        _authStates.send(
+                            try {
+                                authRepository.saveGoogleUser(user)
+                                AuthenticationState.AuthenticationSuccess
+                            }catch (e: Exception) {
+                                AuthenticationState.AuthenticationFailure(e.message!!)
+                            }
+                        )
                     }
                 }
 

@@ -1,4 +1,6 @@
-package com.muhammed.chatapp.domain.validation
+package com.muhammed.chatapp.domain.use_cases
+
+import com.muhammed.chatapp.domain.OperationResult
 
 class ValidateCurrentUser {
     fun execute(currentUserId: String, userId: String): OperationResult {

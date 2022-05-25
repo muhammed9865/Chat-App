@@ -1,9 +1,8 @@
-package com.muhammed.chatapp.domain
+package com.muhammed.chatapp.data
 
 import com.google.firebase.auth.FirebaseUser
-import com.muhammed.chatapp.data.EmailAndPasswordAuth
-import com.muhammed.chatapp.data.Firestore
-import com.muhammed.chatapp.domain.validation.OperationResult
+import com.muhammed.chatapp.domain.Encoder
+import com.muhammed.chatapp.domain.OperationResult
 import com.muhammed.chatapp.pojo.User
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collect
@@ -12,7 +11,7 @@ import javax.inject.Inject
 
 class AuthRepository @Inject constructor(
     private val mEmailAndPasswordAuth: EmailAndPasswordAuth,
-    private val mFirestore: Firestore,
+    private val mFirestoreManager: FirestoreManager,
 ) {
     fun registerUser(
         nickname: String,
@@ -57,7 +56,8 @@ class AuthRepository @Inject constructor(
         password: String,
         onComplete: Callbacks.AuthCompleteListener
     ) {
-        mEmailAndPasswordAuth.loginUserWithEmailAndPassword(email, password, object : Callbacks.AuthListener {
+        mEmailAndPasswordAuth.loginUserWithEmailAndPassword(email, password, object :
+            Callbacks.AuthListener {
             override fun onSuccess(fUser: FirebaseUser?, token: String?) {
                 fUser?.let {
                     val user = User(
@@ -80,11 +80,20 @@ class AuthRepository @Inject constructor(
 
     fun getCurrentUser() = mEmailAndPasswordAuth.currentUser
 
+    fun signOut() = mEmailAndPasswordAuth.signOut()
+
     suspend fun saveUserOnFirestore(user: User): Flow<OperationResult> {
-        val result = mFirestore.saveUser(user)
+        val result = mFirestoreManager.saveUser(user)
         return flow {
             result.collect()
         }
     }
+
+
+    suspend fun saveUserOnFStore(user: User) = mFirestoreManager.saveUserWithoutReturn(user)
+
+    suspend fun saveGoogleUser(user: User) = mFirestoreManager.saveGoogleUser(user)
+
+    suspend fun authenticateGoogleUser(uid: String) = mFirestoreManager.getGoogleUser(uid)
 
 }

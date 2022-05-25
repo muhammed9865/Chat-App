@@ -1,4 +1,6 @@
-package com.muhammed.chatapp.domain.validation
+package com.muhammed.chatapp.domain.use_cases
+
+import com.muhammed.chatapp.domain.OperationResult
 
 class ValidateNickname {
     fun execute(name: String): OperationResult {

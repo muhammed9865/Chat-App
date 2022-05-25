@@ -1,4 +1,4 @@
-package com.muhammed.chatapp.domain.validation
+package com.muhammed.chatapp.domain
 
 data class OperationResult(
     val isSuccessful: Boolean,

@@ -1,9 +1,9 @@
 package com.muhammed.chatapp.di
 
-import com.muhammed.chatapp.domain.validation.ValidateEmail
-import com.muhammed.chatapp.domain.validation.ValidateNickname
-import com.muhammed.chatapp.domain.validation.ValidatePassword
-import com.muhammed.chatapp.domain.validation.ValidateRepeatedPassword
+import com.muhammed.chatapp.domain.use_cases.ValidateEmail
+import com.muhammed.chatapp.domain.use_cases.ValidateNickname
+import com.muhammed.chatapp.domain.use_cases.ValidatePassword
+import com.muhammed.chatapp.domain.use_cases.ValidateRepeatedPassword
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn

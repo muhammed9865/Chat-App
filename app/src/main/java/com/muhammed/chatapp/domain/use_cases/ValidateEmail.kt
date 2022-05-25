@@ -1,6 +1,7 @@
-package com.muhammed.chatapp.domain.validation
+package com.muhammed.chatapp.domain.use_cases
 
 import android.util.Patterns
+import com.muhammed.chatapp.domain.OperationResult
 
 class ValidateEmail {
     fun execute(email: String): OperationResult {
