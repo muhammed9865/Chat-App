@@ -5,13 +5,11 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
+import com.muhammed.chatapp.data.AuthRepository
 import com.muhammed.chatapp.data.GoogleAuth
 import com.muhammed.chatapp.data.GoogleAuthCallback
-import com.muhammed.chatapp.data.AuthRepository
-import com.muhammed.chatapp.data.Callbacks
 import com.muhammed.chatapp.domain.use_cases.ValidateEmail
 import com.muhammed.chatapp.domain.use_cases.ValidatePassword
-import com.muhammed.chatapp.pojo.User
 import com.muhammed.chatapp.presentation.event.AuthenticationEvent
 import com.muhammed.chatapp.presentation.state.AuthenticationState
 import com.muhammed.chatapp.presentation.state.ValidationState
@@ -22,7 +20,6 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
-import java.lang.Exception
 import javax.inject.Inject
 
 @HiltViewModel
@@ -116,20 +113,16 @@ class LoginViewModel @Inject constructor(
         val email = _validation.value.email
         val password = _validation.value.password
 
-        authRepository.loginUser(
-            email,
-            password,
-            object : Callbacks.AuthCompleteListener {
-                override fun onSuccess(user: User, token: String?) {
-                    sendState(AuthenticationState.AuthenticationSuccess)
-                }
+        viewModelScope.launch(Dispatchers.IO) {
+            try {
+                authRepository.loginUser(email, password)
+                _authStates.send(AuthenticationState.AuthenticationSuccess)
+            }catch (e: Exception) {
+                _authStates.send(AuthenticationState.AuthenticationFailure(e.message.toString()))
+            }
 
-                override fun onFailure(message: String) {
-                    viewModelScope.launch {
-                        sendState(AuthenticationState.AuthenticationFailure(message))
-                    }
-                }
-            })
+        }
+
     }
 
     private fun initGoogleAuthListener() {
@@ -142,14 +135,11 @@ class LoginViewModel @Inject constructor(
                 client: GoogleSignInClient,
                 account: GoogleSignInAccount
             ) {
-                account.email?.let { doOnEvent(AuthenticationEvent.OnEmailChanged(it)) }
-                account.displayName?.let { doOnEvent(AuthenticationEvent.OnNicknameChanged(it)) }
 
                 account.id?.let {
                     viewModelScope.launch(Dispatchers.IO) {
                         try {
                             val user = authRepository.authenticateGoogleUser(it)
-                            Log.d("LoginViewModel", "onSigningSuccess: $user")
                             user?.let { sendState(AuthenticationState.AuthenticationSuccess) } ?: throw Exception( "User not found")
                         }catch (e: Exception) {
                             Log.d("LoginViewModel", "onSigningSuccess: ${e.message.toString()}")

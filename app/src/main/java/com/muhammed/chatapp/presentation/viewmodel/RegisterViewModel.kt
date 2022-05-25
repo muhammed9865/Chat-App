@@ -1,14 +1,12 @@
 package com.muhammed.chatapp.presentation.viewmodel
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
+import com.muhammed.chatapp.data.AuthRepository
 import com.muhammed.chatapp.data.GoogleAuth
 import com.muhammed.chatapp.data.GoogleAuthCallback
-import com.muhammed.chatapp.data.AuthRepository
-import com.muhammed.chatapp.data.Callbacks
 import com.muhammed.chatapp.domain.use_cases.ValidateEmail
 import com.muhammed.chatapp.domain.use_cases.ValidateNickname
 import com.muhammed.chatapp.domain.use_cases.ValidatePassword
@@ -22,10 +20,8 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
-import java.lang.Exception
 import javax.inject.Inject
 
 @HiltViewModel
@@ -76,6 +72,7 @@ class RegisterViewModel @Inject constructor(
             is AuthenticationEvent.Submit -> {
                 validate()
             }
+            else -> {}
         }
     }
 
@@ -148,26 +145,20 @@ class RegisterViewModel @Inject constructor(
         val email = _validation.value.email
         val password = _validation.value.password
 
-        authRepository.registerUser(nickName, email, password, object : Callbacks.AuthCompleteListener {
-            override fun onSuccess(user: User, token: String?) {
-                Log.d(TAG, "onSuccess: $user")
-                viewModelScope.launch(Dispatchers.IO) {
-                    _authStates.send(AuthenticationState.AuthenticationSuccess)
-                    authRepository.saveUserOnFirestore(user).collect {
-                        Log.d(TAG, "onSuccess: ${it.errorMessage}")
-                    }
-                }
+        viewModelScope.launch(Dispatchers.IO) {
+            try {
+                authRepository.registerUser(nickName,email, password)
+                _authStates.send(AuthenticationState.AuthenticationSuccess)
+            }catch (e: Exception) {
+                _authStates.send(AuthenticationState.AuthenticationFailure(e.message.toString()))
             }
+        }
 
-            override fun onFailure(message: String) {
-                viewModelScope.launch {
-                    _authStates.send(AuthenticationState.AuthenticationFailure(message))
-                }
-            }
-        })
+
     }
 
     companion object {
+        @Suppress("unused")
         private const val TAG = "RegisterViewModel"
     }
 

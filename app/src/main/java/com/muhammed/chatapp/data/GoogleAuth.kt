@@ -10,6 +10,7 @@ import javax.inject.Inject
 class GoogleAuth @Inject constructor(private val client: GoogleSignInClient)
     {
     private var googleAuthCallback: GoogleAuthCallback.ViewModel? = null
+
     fun signIn() {
         googleAuthCallback?.onSigningStart(client)
     }

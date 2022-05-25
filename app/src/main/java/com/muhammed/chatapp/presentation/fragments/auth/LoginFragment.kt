@@ -125,8 +125,6 @@ class LoginFragment : Fragment() {
 
                     is AuthenticationState.OnGoogleAuthSuccess -> {
                         it.client.signOut()
-                        updateUI()
-
                     }
 
                     is AuthenticationState.OnGoogleAuthFailure -> {
@@ -156,11 +154,5 @@ class LoginFragment : Fragment() {
             }
         }
 
-    private fun updateUI() {
-        with(viewModel.validation.value) {
-            binding.apply {
-                loginEmail.setText(email)
-            }
-        }
-    }
+
 }
