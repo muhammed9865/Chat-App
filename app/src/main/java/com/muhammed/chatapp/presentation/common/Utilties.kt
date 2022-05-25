@@ -7,6 +7,7 @@ import android.widget.Button
 import android.widget.EditText
 import com.google.android.material.snackbar.BaseTransientBottomBar.ANIMATION_MODE_SLIDE
 import com.google.android.material.snackbar.Snackbar
+import com.muhammed.chatapp.presentation.common.LoadingDialog
 import com.muhammed.chatapp.presentation.state.ValidationState
 
 fun View.hideKeyboard() {
@@ -50,23 +51,29 @@ fun toggleAuthError(
     }
 }
 
-    fun toggleButtonAvailabilityOnAuth(
-        email: EditText? = null,
-        nickname: EditText? = null,
-        password: EditText? = null,
-        repeatedPassword: EditText? = null,
-        button: Button
-    ) {
-        val fields = mutableListOf<EditText>()
-        email?.let { fields.add(it) }
-        password?.let { fields.add(it) }
-        repeatedPassword?.let { fields.add(it) }
-        nickname?.let { fields.add(it) }
+fun toggleButtonAvailabilityOnAuth(
+    email: EditText? = null,
+    nickname: EditText? = null,
+    password: EditText? = null,
+    repeatedPassword: EditText? = null,
+    button: Button
+) {
+    val fields = mutableListOf<EditText>()
+    email?.let { fields.add(it) }
+    password?.let { fields.add(it) }
+    repeatedPassword?.let { fields.add(it) }
+    nickname?.let { fields.add(it) }
 
-        val isAnyEmptyField = fields.any { it.text.isNullOrEmpty() }
+    val isAnyEmptyField = fields.any { it.text.isNullOrEmpty() }
 
-        button.apply {
-            isEnabled = !isAnyEmptyField
-            isFocusable = !isAnyEmptyField
-        }
+    button.apply {
+        isEnabled = !isAnyEmptyField
+        isFocusable = !isAnyEmptyField
     }
+}
+
+fun LoadingDialog.hide() {
+    if (isVisible) {
+        dismiss()
+    }
+}

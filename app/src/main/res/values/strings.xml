@@ -28,6 +28,7 @@
     <string name="sign_out">Sign out</string>
     <string name="signing_out">Signing Out</string>
     <string name="stay">Stay</string>
+    <string name="loading">Loading</string>
 
     <string-array name="menu_rows">
         <item>Sign out</item>

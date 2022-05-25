@@ -17,6 +17,7 @@ import androidx.navigation.fragment.findNavController
 import com.muhammed.chatapp.*
 import com.muhammed.chatapp.databinding.FragmentLoginBinding
 import com.muhammed.chatapp.presentation.activity.MainActivity
+import com.muhammed.chatapp.presentation.common.LoadingDialog
 import com.muhammed.chatapp.presentation.event.AuthenticationEvent
 import com.muhammed.chatapp.presentation.state.AuthenticationState
 import com.muhammed.chatapp.presentation.viewmodel.LoginViewModel
@@ -28,6 +29,7 @@ import kotlinx.coroutines.launch
 class LoginFragment : Fragment() {
     private val binding: FragmentLoginBinding by lazy { FragmentLoginBinding.inflate(layoutInflater) }
     private val viewModel: LoginViewModel by viewModels()
+    private val loadingDialog: LoadingDialog by lazy { LoadingDialog() }
     @SuppressLint("ClickableViewAccessibility")
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -94,6 +96,7 @@ class LoginFragment : Fragment() {
                         val intent = Intent(requireContext(), MainActivity::class.java)
                         requireActivity().startActivity(intent)
                         requireActivity().finish()
+                        loadingDialog.hide()
                     }
 
                     is AuthenticationState.AuthenticationFailure -> {
@@ -149,6 +152,7 @@ class LoginFragment : Fragment() {
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
             if (it.resultCode == Activity.RESULT_OK) {
                 it.data?.let { data ->
+                    loadingDialog.show(requireActivity().supportFragmentManager, "loading")
                     viewModel.doOnEvent(AuthenticationEvent.OnGoogleCredentialsAvailable(data))
                 }
             }

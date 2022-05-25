@@ -17,7 +17,6 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -30,7 +29,6 @@ class LoginViewModel @Inject constructor(
     private val validatePassword: ValidatePassword,
 ) : ViewModel() {
     private val _validation = MutableStateFlow(ValidationState())
-    val validation = _validation.asStateFlow()
 
     private val _authStates = Channel<AuthenticationState>()
     val authStates = _authStates.receiveAsFlow()
