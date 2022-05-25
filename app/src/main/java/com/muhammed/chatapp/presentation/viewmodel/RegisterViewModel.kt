@@ -62,7 +62,9 @@ class RegisterViewModel @Inject constructor(
             }
 
             is AuthenticationEvent.StartGoogleAuthentication -> {
-                googleAuth.signIn()
+                viewModelScope.launch(Dispatchers.IO) {
+                    googleAuth.signIn()
+                }
             }
 
             is AuthenticationEvent.OnGoogleCredentialsAvailable -> {

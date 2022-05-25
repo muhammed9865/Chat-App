@@ -7,7 +7,7 @@ import android.view.ViewGroup
 import androidx.fragment.app.DialogFragment
 import com.muhammed.chatapp.databinding.LoadingDialogBinding
 
-class LoadingDialog: DialogFragment() {
+class LoadingDialog private constructor() : DialogFragment() {
     private lateinit var binding: LoadingDialogBinding
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -18,5 +18,20 @@ class LoadingDialog: DialogFragment() {
         dialog?.window?.setBackgroundDrawableResource(android.R.color.transparent)
         isCancelable = false
         return binding.root
+    }
+
+    companion object {
+        @Volatile
+        private var INSTANCE: LoadingDialog? = null
+
+        fun getInstance(): LoadingDialog {
+            INSTANCE ?: synchronized(this) {
+                INSTANCE = LoadingDialog().also {
+                    INSTANCE = it
+                }
+            }
+
+            return INSTANCE!!
+        }
     }
 }

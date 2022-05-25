@@ -15,6 +15,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.muhammed.chatapp.*
 import com.muhammed.chatapp.databinding.FragmentRegisterBinding
+import com.muhammed.chatapp.presentation.common.LoadingDialog
 import com.muhammed.chatapp.presentation.event.AuthenticationEvent
 import com.muhammed.chatapp.presentation.state.AuthenticationState
 import com.muhammed.chatapp.presentation.viewmodel.RegisterViewModel
@@ -41,6 +42,8 @@ class RegisterFragment : Fragment() {
         )
     }
     private val viewModel: RegisterViewModel by viewModels()
+
+    private val loadingDialog: LoadingDialog by lazy { LoadingDialog.getInstance() }
 
 
     @SuppressLint("ClickableViewAccessibility")
@@ -168,6 +171,7 @@ class RegisterFragment : Fragment() {
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
             if (it.resultCode == RESULT_OK) {
                 it.data?.let { data ->
+
                     viewModel.doOnEvent(AuthenticationEvent.OnGoogleCredentialsAvailable(data))
                 }
             }

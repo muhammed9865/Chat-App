@@ -29,7 +29,7 @@ import kotlinx.coroutines.launch
 class LoginFragment : Fragment() {
     private val binding: FragmentLoginBinding by lazy { FragmentLoginBinding.inflate(layoutInflater) }
     private val viewModel: LoginViewModel by viewModels()
-    private val loadingDialog: LoadingDialog by lazy { LoadingDialog() }
+    private val loadingDialog: LoadingDialog by lazy { LoadingDialog.getInstance() }
     @SuppressLint("ClickableViewAccessibility")
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,

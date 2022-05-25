@@ -5,13 +5,15 @@ import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.common.api.ApiException
+import kotlinx.coroutines.tasks.await
 import javax.inject.Inject
 
 class GoogleAuth @Inject constructor(private val client: GoogleSignInClient)
     {
     private var googleAuthCallback: GoogleAuthCallback.ViewModel? = null
 
-    fun signIn() {
+    suspend fun signIn() {
+        client.signOut().await()
         googleAuthCallback?.onSigningStart(client)
     }
 
