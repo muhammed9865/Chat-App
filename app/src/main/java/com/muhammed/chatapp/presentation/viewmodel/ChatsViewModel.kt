@@ -1,5 +1,6 @@
 package com.muhammed.chatapp.presentation.viewmodel
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.muhammed.chatapp.data.repository.AuthRepository
@@ -92,12 +93,24 @@ class ChatsViewModel @Inject constructor(
                         _currentUser.value = user
                         _states.value = ChatsState.ChatsListLoaded(currentUser = user)
                         _privateChats.value = chats
+                        updateUserChatsListLocally(it, chats)
+                        listenToUserChats()
                     } ?: throw NullPointerException("There are no lists")
                 }
             } catch (e: Exception) {
                 _states.value = ChatsState.Error(e.message.toString())
             }
         }
+    }
+
+    private suspend fun updateUserChatsListLocally(user: User,chatsList: List<PrivateChat>) {
+        val idsList = mutableListOf<String>()
+        chatsList.forEach {
+            idsList.add(it.cid)
+        }
+        user.chats_list = idsList
+
+        dataStoreRepository.saveUserDetails(user)
     }
 
     private fun createPrivateChat(otherUserEmail: String) {
@@ -113,15 +126,24 @@ class ChatsViewModel @Inject constructor(
                     user?.let {
                         val roomId = fireStoreRepository.createNewPrivateChat(otherUserEmail, user)
                         fireStoreRepository.updateUserChatsList(it.email, it.collection, roomId)
-
                         _states.value = ChatsState.PrivateRoomCreated
                     }
                 }
 
-
-
             } catch (e: NullPointerException) {
                 _states.value = ChatsState.Error(e.message.toString())
+            }
+        }
+    }
+
+    private fun listenToUserChats() {
+        viewModelScope.launch(Dispatchers.IO) {
+            dataStoreRepository.currentUser.collect { user ->
+                user?.let {
+                    fireStoreRepository.listenToUserChats(it) { changedRoom ->
+                        Log.d(TAG, changedRoom.lastMessageText)
+                    }
+                }
             }
         }
     }
@@ -137,5 +159,9 @@ class ChatsViewModel @Inject constructor(
                     ChatsState.Error(e.message!!)
                 }
         }
+    }
+
+    companion object {
+        private const val TAG = "ChatsViewModel"
     }
 }

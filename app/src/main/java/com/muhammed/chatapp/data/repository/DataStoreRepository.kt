@@ -11,5 +11,4 @@ class DataStoreRepository @Inject constructor(
 
     suspend fun saveUserDetails(user: User) = dataStoreManager.saveCurrentUserDetails(user = user)
 
-    suspend fun updateUserChatList(chatId: String) = dataStoreManager.updateUserSavedChatsList(chatId)
 }

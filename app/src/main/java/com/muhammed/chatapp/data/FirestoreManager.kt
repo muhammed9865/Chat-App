@@ -1,5 +1,6 @@
 package com.muhammed.chatapp.data
 
+import android.util.Log
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
 import com.muhammed.chatapp.pojo.Messages
@@ -102,6 +103,7 @@ class FirestoreManager @Inject constructor(private val mFirestore: FirebaseFires
             .document(user.email)
             .get().await().toObject(User::class.java)?.chats_list
 
+
         // Collecting User chat rooms
         chatsList?.forEach {
             val room = getChat(it)
@@ -112,6 +114,24 @@ class FirestoreManager @Inject constructor(private val mFirestore: FirebaseFires
 
         return chats
     }
+
+
+     fun listenToChatRooms(chats_id: List<String>, onChange: (room: PrivateChat) -> Unit) {
+         Log.d("ChatsViewModel", "listenToChatRooms: $chats_id")
+        mFirestore.collection(Collections.CHATS)
+            .whereIn("cid", chats_id)
+            .addSnapshotListener { value, error ->
+                if (error == null) {
+                    Log.d("ChatsViewModel", "listenToChatRooms: ${value?.documents}")
+                    value?.documentChanges?.forEach {
+                        onChange(it.document.toObject(PrivateChat::class.java))
+                    }
+                }else {
+                    Log.d("ChatsViewModel", "listenToChatRooms: ${error.message}")
+                }
+            }
+    }
+
 
     private suspend fun getChat(chatId: String): PrivateChat? {
         return mFirestore.collection(Collections.CHATS)

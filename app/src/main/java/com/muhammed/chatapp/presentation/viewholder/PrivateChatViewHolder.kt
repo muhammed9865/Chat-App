@@ -6,7 +6,7 @@ import com.muhammed.chatapp.databinding.ListItemPrivateChatBinding
 import com.muhammed.chatapp.domain.use_cases.ValidateCurrentUser
 import com.muhammed.chatapp.pojo.PrivateChat
 import com.muhammed.chatapp.pojo.User
-import com.muhammed.chatapp.toDateAsString
+import com.muhammed.chatapp.presentation.common.toDateAsString
 
 class PrivateChatViewHolder(private val binding: ListItemPrivateChatBinding, private val validateCurrentUser: ValidateCurrentUser): RecyclerView.ViewHolder(binding.root) {
     fun bind(chat: PrivateChat, currentUser: User?) {

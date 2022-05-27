@@ -8,14 +8,12 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
-import androidx.navigation.fragment.findNavController
 import com.google.android.material.navigation.NavigationBarView
 import com.google.android.material.shape.CornerFamily
 import com.google.android.material.shape.MaterialShapeDrawable
 import com.muhammed.chatapp.*
 import com.muhammed.chatapp.databinding.ActivityMainBinding
-import com.muhammed.chatapp.presentation.common.LoadingDialog
-import com.muhammed.chatapp.presentation.common.NewChatDialog
+import com.muhammed.chatapp.presentation.common.*
 import com.muhammed.chatapp.presentation.event.ChatsEvent
 import com.muhammed.chatapp.presentation.state.ChatsState
 import com.muhammed.chatapp.presentation.viewmodel.ChatsViewModel
@@ -84,7 +82,7 @@ class MainActivity : AppCompatActivity(), NavigationBarView.OnItemSelectedListen
                         binding.root.showError(it.errorMessage)
                     }
                     is ChatsState.PrivateRoomCreated -> {
-                        binding.root.showSnackbar("Room was created successfully")
+                        binding.root.showSnackBar("Room was created successfully")
                         viewModel.doOnEvent(ChatsEvent.LoadChats)
                     }
 

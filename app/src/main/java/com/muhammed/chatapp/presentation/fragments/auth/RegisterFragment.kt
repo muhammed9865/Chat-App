@@ -15,7 +15,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.muhammed.chatapp.*
 import com.muhammed.chatapp.databinding.FragmentRegisterBinding
-import com.muhammed.chatapp.presentation.common.LoadingDialog
+import com.muhammed.chatapp.presentation.common.*
 import com.muhammed.chatapp.presentation.event.AuthenticationEvent
 import com.muhammed.chatapp.presentation.state.AuthenticationState
 import com.muhammed.chatapp.presentation.viewmodel.RegisterViewModel

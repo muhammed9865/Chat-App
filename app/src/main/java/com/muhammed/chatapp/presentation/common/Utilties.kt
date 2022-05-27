@@ -1,4 +1,4 @@
-package com.muhammed.chatapp
+package com.muhammed.chatapp.presentation.common
 
 import android.content.Context
 import android.util.Log
@@ -6,11 +6,10 @@ import android.view.View
 import android.view.inputmethod.InputMethodManager
 import android.widget.Button
 import android.widget.EditText
-import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import com.google.android.material.snackbar.BaseTransientBottomBar.ANIMATION_MODE_SLIDE
 import com.google.android.material.snackbar.Snackbar
-import com.muhammed.chatapp.presentation.common.LoadingDialog
+import com.muhammed.chatapp.R
 import com.muhammed.chatapp.presentation.state.ValidationState
 import java.text.SimpleDateFormat
 import java.util.*
@@ -35,7 +34,7 @@ fun View.showError(error: String) {
         .show()
 }
 
-fun View.showSnackbar(message: String) {
+fun View.showSnackBar(message: String) {
     Snackbar.make(this, message, Snackbar.LENGTH_LONG)
         .setAnimationMode(ANIMATION_MODE_SLIDE)
         .show()
