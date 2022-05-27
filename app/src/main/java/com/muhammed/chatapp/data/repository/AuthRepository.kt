@@ -1,6 +1,5 @@
 package com.muhammed.chatapp.data.repository
 
-import com.muhammed.chatapp.data.DataStoreManager
 import com.muhammed.chatapp.data.EmailAndPasswordAuth
 import com.muhammed.chatapp.data.FirestoreManager
 import com.muhammed.chatapp.domain.Encoder
@@ -10,13 +9,20 @@ import javax.inject.Inject
 class AuthRepository @Inject constructor(
     private val mEmailAndPasswordAuth: EmailAndPasswordAuth,
     private val mFirestoreManager: FirestoreManager,
-    private val dataStoreManager: DataStoreManager
 ) {
     suspend fun registerUser(
         nickname: String,
         email: String,
         password: String,
     ): User? {
+
+        // Check if someone is already using the email on Google Auth
+        val isRegisteredWithGoogleEmail = mFirestoreManager.getGoogleUser(email) != null
+
+        if (isRegisteredWithGoogleEmail) {
+            throw Exception("Email is already in use")
+        }
+
         val fUser = mEmailAndPasswordAuth.registerNewUser(email, password).user
         fUser?.let {
             // Creating the user object to save it into Firestore.
@@ -24,7 +30,8 @@ class AuthRepository @Inject constructor(
                 uid = fUser.uid,
                 nickname = nickname,
                 email = email,
-                password = Encoder.encodePassword(password)
+                password = Encoder.encodePassword(password),
+                collection = FirestoreManager.Collections.USERS
             )
             saveUserOnFirestore(user)
             // Sending Verification message and then send the user to Viewmodel
@@ -38,13 +45,6 @@ class AuthRepository @Inject constructor(
         email: String,
         password: String
     ) = mEmailAndPasswordAuth.loginUserWithEmailAndPassword(email, password).user
-
-    val currentUserEmail = dataStoreManager.currentUserEmail
-    val currentUserCategory = dataStoreManager.currentUserCategory
-    val currentUserName = dataStoreManager.currentUserName
-
-    suspend fun saveCurrentUserDetails(email: String, category: String, nickname: String) =
-        dataStoreManager.saveCurrentUserDetails(email, category, nickname)
 
 
     fun getCurrentUser() = mEmailAndPasswordAuth.currentUser

@@ -8,6 +8,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
+import androidx.navigation.fragment.findNavController
 import com.google.android.material.navigation.NavigationBarView
 import com.google.android.material.shape.CornerFamily
 import com.google.android.material.shape.MaterialShapeDrawable
@@ -18,7 +19,6 @@ import com.muhammed.chatapp.presentation.common.NewChatDialog
 import com.muhammed.chatapp.presentation.event.ChatsEvent
 import com.muhammed.chatapp.presentation.state.ChatsState
 import com.muhammed.chatapp.presentation.viewmodel.ChatsViewModel
-import com.muhammed.chatapp.presentation.viewmodel.MainActivityViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 
@@ -26,11 +26,12 @@ import kotlinx.coroutines.launch
 class MainActivity : AppCompatActivity(), NavigationBarView.OnItemSelectedListener {
     private val binding: ActivityMainBinding by lazy { ActivityMainBinding.inflate(layoutInflater) }
     private val navController: NavController by lazy {
-        val host = supportFragmentManager.findFragmentById(R.id.fragmentsContainer) as NavHostFragment
+        val host =
+            supportFragmentManager.findFragmentById(R.id.fragmentsContainer) as NavHostFragment
         host.navController
     }
     private val loadingDialog by lazy { LoadingDialog.getInstance() }
-    private val viewModel: MainActivityViewModel by viewModels()
+    private val viewModel: ChatsViewModel by viewModels()
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -49,7 +50,8 @@ class MainActivity : AppCompatActivity(), NavigationBarView.OnItemSelectedListen
 
     private fun makeBotNavRoundedCorners() {
         val radius = resources.getDimension(R.dimen.bot_nav_corners)
-        val shapeDrawable: MaterialShapeDrawable = binding.botBar.background as MaterialShapeDrawable
+        val shapeDrawable: MaterialShapeDrawable =
+            binding.botBar.background as MaterialShapeDrawable
         shapeDrawable.shapeAppearanceModel = shapeDrawable.shapeAppearanceModel.toBuilder()
             .setTopRightCorner(CornerFamily.ROUNDED, radius)
             .setTopLeftCorner(CornerFamily.ROUNDED, radius)
@@ -57,7 +59,7 @@ class MainActivity : AppCompatActivity(), NavigationBarView.OnItemSelectedListen
     }
 
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
-        when(item.itemId) {
+        when (item.itemId) {
             R.id.chats -> navController.navigate(R.id.chatsFragment)
             R.id.community -> navController.navigate(R.id.communitiesFragment)
         }
@@ -73,14 +75,23 @@ class MainActivity : AppCompatActivity(), NavigationBarView.OnItemSelectedListen
                     is ChatsState.Idle -> {
                         loadingDialog.hideDialog()
                     }
+                    is ChatsState.SignedOut -> {
+                        navController.navigate(R.id.action_chatsFragment_to_authActivity)
+                        finish()
+                    }
                     is ChatsState.Error -> {
                         loadingDialog.hideDialog()
                         binding.root.showError(it.errorMessage)
                     }
                     is ChatsState.PrivateRoomCreated -> {
                         binding.root.showSnackbar("Room was created successfully")
-                        viewModel.doOnEvent(ChatsEvent.Idle)
+                        viewModel.doOnEvent(ChatsEvent.LoadChats)
                     }
+
+                    is ChatsState.ChatsListLoaded -> {
+                        loadingDialog.hideDialog()
+                    }
+
                     is ChatsState.Loading -> {
                         loadingDialog.showDialog(supportFragmentManager, null)
                     }

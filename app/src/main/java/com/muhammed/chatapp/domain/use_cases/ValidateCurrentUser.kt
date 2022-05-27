@@ -1,8 +1,10 @@
 package com.muhammed.chatapp.domain.use_cases
 
 import com.muhammed.chatapp.domain.OperationResult
+import javax.inject.Inject
 
-class ValidateCurrentUser {
+
+class ValidateCurrentUser @Inject constructor() {
     fun execute(currentUserId: String, userId: String): OperationResult {
         if (currentUserId != userId) {
             return OperationResult(

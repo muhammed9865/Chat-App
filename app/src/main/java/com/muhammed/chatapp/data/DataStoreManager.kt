@@ -4,10 +4,14 @@ import android.content.Context
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
+import com.google.gson.Gson
 import com.muhammed.chatapp.Constants
-import com.muhammed.chatapp.pojo.SavedUserDetails
+import com.muhammed.chatapp.pojo.User
 import dagger.hilt.android.qualifiers.ApplicationContext
-import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.currentCoroutineContext
+import kotlinx.coroutines.ensureActive
+import kotlinx.coroutines.flow.cancellable
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 
@@ -15,31 +19,21 @@ private val Context.dataStore by preferencesDataStore(name = Constants.USER_TOKE
 class DataStoreManager @Inject constructor(@ApplicationContext appContext: Context) {
     private val dataStore = appContext.dataStore
 
-    suspend fun saveCurrentUserDetails(userEmail: String, userCategory: String, userName: String) {
+    suspend fun saveCurrentUserDetails(user: User) {
         dataStore.edit {
-            it[currentUserEmailKey] = userEmail
-            it[currentUserCategoryKey] = userCategory
-            it[currentUserNameKey] = userName
+            val userAsString = Gson().toJson(user).toString()
+            it[currentUserDetailsKey] = userAsString
         }
     }
 
-
-
-    val currentUserName = dataStore.data.map {
-        it[currentUserNameKey]
-    }
-
-    val currentUserCategory = dataStore.data.map {
-        it[currentUserCategoryKey]
-    }
-
-    val currentUserEmail = dataStore.data.map {
-        it[currentUserEmailKey]
-    }
+    val currentUserDetails = dataStore.data.map {
+        it[currentUserDetailsKey]
+    }.map {
+        it?.let {  Gson().fromJson(it, User::class.java) }
+    }.cancellable()
 
 
 
-    private val currentUserNameKey = stringPreferencesKey(Constants.USER_NAME)
-    private val currentUserCategoryKey = stringPreferencesKey(Constants.USER_CATEGORY)
-    private val currentUserEmailKey = stringPreferencesKey(Constants.USER_TOKEN)
+
+   private val currentUserDetailsKey = stringPreferencesKey("CurrentUserDetails")
 }

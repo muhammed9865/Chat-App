@@ -91,16 +91,16 @@ class LoginFragment : Fragment() {
 
                     is AuthenticationState.AuthenticationSuccess -> {
                         binding.loginMotionLayout.transitionToStart()
-
+                        loadingDialog.hideDialog()
                         findNavController().navigate(R.id.action_loginFragment_to_mainActivity)
                         requireActivity().finish()
-                        loadingDialog.dismiss()
+
                     }
 
                     is AuthenticationState.AuthenticationFailure -> {
                         binding.root.showError(it.error)
                         binding.loginMotionLayout.transitionToStart()
-                        loadingDialog.dismissNow()
+                        loadingDialog.hideDialog()
                     }
 
                     is AuthenticationState.ValidationSuccess -> {}

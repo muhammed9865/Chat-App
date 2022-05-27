@@ -2,8 +2,8 @@ package com.muhammed.chatapp.pojo
 
 data class PrivateChat(
     val cid: String = "",
-    val profileName: String = "",
-    val profilePicture: String = "",
+    val firstUser: User = User(),
+    val secondUser: User = User(),
     val messagesId: String = "",
     val createdSince: Long = System.currentTimeMillis(),
     val lastMessageText: String = "",

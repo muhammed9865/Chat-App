@@ -17,10 +17,13 @@ class LoadingDialog : DialogFragment() {
     ): View? {
         binding = LoadingDialogBinding.inflate(layoutInflater)
         isCancelable = false
+
         dialog?.window?.setBackgroundDrawableResource(android.R.color.transparent)
 
         return binding.root
     }
+
+
 
     companion object {
         @Volatile

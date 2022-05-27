@@ -7,9 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
-import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
-import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.muhammed.chatapp.R
 import com.muhammed.chatapp.databinding.FragmentChatsBinding
@@ -20,17 +18,20 @@ import com.muhammed.chatapp.presentation.common.MenuOptions
 import com.muhammed.chatapp.presentation.event.ChatsEvent
 import com.muhammed.chatapp.presentation.state.ChatsState
 import com.muhammed.chatapp.presentation.viewmodel.ChatsViewModel
-import com.muhammed.chatapp.showDialog
 import com.muhammed.chatapp.showError
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class ChatsFragment : Fragment() {
     private val binding: FragmentChatsBinding by lazy { FragmentChatsBinding.inflate(layoutInflater) }
-    private val viewModel by viewModels<ChatsViewModel>()
-    private val mAdapter: ChatsAdapter by lazy { ChatsAdapter() }
+    private val viewModel by activityViewModels<ChatsViewModel>()
     private val loadingDialog: LoadingDialog by lazy { LoadingDialog.getInstance() }
+    @Inject
+    lateinit var mAdapter: ChatsAdapter
+
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -44,8 +45,15 @@ class ChatsFragment : Fragment() {
         }
 
         lifecycleScope.launch {
-            viewModel.privateChats.collect {
-                mAdapter.submitList(it)
+            launch {
+                viewModel.currentUser.collect {
+                    mAdapter.setCurrentUser(it)
+                }
+            }
+            launch {
+                viewModel.privateChats.collect {
+                    mAdapter.submitList(it)
+                }
             }
         }
 
@@ -73,35 +81,30 @@ class ChatsFragment : Fragment() {
     private fun doOnStateChanged() {
         lifecycleScope.launch {
             viewModel.states.collect { state ->
-                Log.d("Chat State", "onStateChanged from fragment: ${state.toString()}")
+                Log.d("Chat State", "onStateChanged from fragment: $state")
                 when (state) {
-                    is ChatsState.Idle -> {
-                        loadingDialog.hideDialog()
-                    }
-                    is ChatsState.Loading -> {
-                        loadingDialog.showDialog(parentFragmentManager, null)
-                    }
-                    is ChatsState.SignedOut -> {
-                        requireActivity().run {
-                            findNavController().navigate(R.id.action_chatsFragment_to_authActivity)
-                            finish()
-                        }
+                    is ChatsState.UserExists -> {
+                        Log.d(TAG, "doOnStateChanged: ${state.privateChat}")
                     }
 
                     is ChatsState.PrivateRoomCreated -> {
                         viewModel.doOnEvent(ChatsEvent.LoadChats)
-
                     }
 
                     is ChatsState.ChatsListLoaded -> {
-                        viewModel.doOnEvent(ChatsEvent.Idle)
+                        loadingDialog.hideDialog()
                     }
 
                     is ChatsState.Error -> {
                         view?.showError(state.errorMessage)
+                        viewModel.doOnEvent(ChatsEvent.Idle)
                     }
                 }
             }
         }
+    }
+
+    companion object {
+        private const val TAG = "ChatsFragment"
     }
 }

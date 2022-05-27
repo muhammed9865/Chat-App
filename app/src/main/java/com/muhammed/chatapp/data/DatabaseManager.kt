@@ -9,6 +9,7 @@ import com.muhammed.chatapp.pojo.Message
 import kotlinx.coroutines.tasks.await
 import javax.inject.Inject
 
+@Deprecated("Using firestore, might be deleted later")
 class DatabaseManager @Inject constructor(
     private val database: DatabaseReference
 ) {

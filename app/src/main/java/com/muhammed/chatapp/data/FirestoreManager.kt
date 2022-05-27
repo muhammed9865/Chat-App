@@ -2,7 +2,7 @@ package com.muhammed.chatapp.data
 
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
-import com.muhammed.chatapp.pojo.Message
+import com.muhammed.chatapp.pojo.Messages
 import com.muhammed.chatapp.pojo.PrivateChat
 import com.muhammed.chatapp.pojo.User
 import kotlinx.coroutines.tasks.await
@@ -31,41 +31,37 @@ class FirestoreManager @Inject constructor(private val mFirestore: FirebaseFires
     }
 
 
-    suspend fun createPrivateChatRoom(otherUserEmail: String): String {
+    suspend fun createPrivateChatRoom(otherUserEmail: String, currentUser: User): String {
 
-        // Returned User Category as Key and the User object as Value
         val otherUser = getUser(otherUserEmail)
 
-        val userCategory = otherUser.keys.first()
-        otherUser[userCategory]?.let { user ->
-            // Create Chat Document if user is not null.
-            val chatDocument = mFirestore.collection(Collections.CHATS)
-                .document()
+        // Create Chat Document if user is not null.
+        val chatDocument = mFirestore.collection(Collections.CHATS)
+            .document()
 
-            // Create Messages Document to save it's id in the PrivateChat object if user is not null
-            val messagesDocument = mFirestore.collection(Collections.MESSAGES)
-                .document()
+        // Create Messages Document to save it's id in the PrivateChat object if user is not null
+        val messagesDocument = mFirestore.collection(Collections.MESSAGES)
+            .document()
 
-            val privateChat = PrivateChat(
-                cid = chatDocument.id,
-                messagesId = messagesDocument.id,
-                profileName = user.nickname,
-                profilePicture = user.profile_picture
-            )
+        val privateChat = PrivateChat(
+            cid = chatDocument.id,
+            messagesId = messagesDocument.id,
+            firstUser = currentUser,
+            secondUser = otherUser
+        )
 
-            chatDocument.set(privateChat).await()
-            messagesDocument.set(Message()).await()
+        chatDocument.set(privateChat).await()
 
-            updateUserChatsList(otherUserEmail, userCategory, chatDocument.id)
+        // Setting a List to make it in array data structure on fireStore
+        messagesDocument.set(Messages()).await()
 
-            return chatDocument.id
-        }
+        updateUserChatsList(otherUserEmail, otherUser.collection, chatDocument.id)
 
-        return ""
+        return chatDocument.id
     }
 
-    suspend fun updateUserChatsList(userEmail: String, userCollection: String, chatId: String) {
 
+    suspend fun updateUserChatsList(userEmail: String, userCollection: String, chatId: String) {
         mFirestore.collection(userCollection)
             .document(userEmail)
             .update(UPDATES.CHATS_LIST, FieldValue.arrayUnion(chatId))
@@ -74,7 +70,7 @@ class FirestoreManager @Inject constructor(private val mFirestore: FirebaseFires
 
 
     @Throws(NullPointerException::class)
-    suspend fun getUser(email: String): Map<String, User> {
+    suspend fun getUser(email: String): User {
         val normalUser = mFirestore.collection(Collections.USERS)
             .document(email)
             .get()
@@ -82,26 +78,32 @@ class FirestoreManager @Inject constructor(private val mFirestore: FirebaseFires
 
         // Check if user is in Collections.USERS first
         if (normalUser != null) {
-            return mapOf(Pair(Collections.USERS, normalUser))
+            return normalUser
         }
 
         val googleUser = getGoogleUser(email)
 
         // Check if user in Collections.GOOGLE_USERS if first check failed.
         if (googleUser != null) {
-            return mapOf(Pair(Collections.GOOGLE_USERS, googleUser))
+            return googleUser
         }
 
-        throw java.lang.NullPointerException("User not found")
+        throw NullPointerException("User not found")
     }
 
-    suspend fun getUserChats(email: String, userCollection: String): List<PrivateChat> {
+    suspend fun getUserChats(user: User): List<PrivateChat> {
         val chats = mutableListOf<PrivateChat>()
-        val user = mFirestore.collection(userCollection)
-            .document(email)
-            .get().await().toObject(User::class.java)
+        if (user.chats_list.isEmpty()) {
+            return emptyList()
+        }
 
-        user?.chats_list?.forEach {
+
+        val chatsList = mFirestore.collection(user.collection)
+            .document(user.email)
+            .get().await().toObject(User::class.java)?.chats_list
+
+        // Collecting User chat rooms
+        chatsList?.forEach {
             val room = getChat(it)
             if (room != null) {
                 chats.add(room)

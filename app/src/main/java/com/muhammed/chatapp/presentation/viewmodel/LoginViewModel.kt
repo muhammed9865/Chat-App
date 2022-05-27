@@ -5,10 +5,10 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
-import com.muhammed.chatapp.data.repository.AuthRepository
-import com.muhammed.chatapp.data.FirestoreManager
 import com.muhammed.chatapp.data.GoogleAuth
 import com.muhammed.chatapp.data.GoogleAuthCallback
+import com.muhammed.chatapp.data.repository.AuthRepository
+import com.muhammed.chatapp.data.repository.DataStoreRepository
 import com.muhammed.chatapp.data.repository.FirestoreRepository
 import com.muhammed.chatapp.domain.use_cases.ValidateEmail
 import com.muhammed.chatapp.domain.use_cases.ValidatePassword
@@ -27,6 +27,7 @@ import javax.inject.Inject
 class LoginViewModel @Inject constructor(
     private val authRepository: AuthRepository,
     private val fireStoreRepository: FirestoreRepository,
+    private val dataStoreRepository: DataStoreRepository,
     private val googleAuth: GoogleAuth,
     private val validateEmail: ValidateEmail,
     private val validatePassword: ValidatePassword,
@@ -103,9 +104,13 @@ class LoginViewModel @Inject constructor(
         currentUser?.let {
             if (it.isEmailVerified) {
                 viewModelScope.launch(Dispatchers.IO) {
-                    val user = fireStoreRepository.getUser(it.email!!).values.first()
-                    authRepository.saveCurrentUserDetails(user.email, FirestoreManager.Collections.USERS, user.nickname)
-                    sendState(AuthenticationState.AuthenticationSuccess)
+                    try {
+                        val user = fireStoreRepository.getUser(it.email!!)
+                        dataStoreRepository.saveUserDetails(user)
+                        sendState(AuthenticationState.AuthenticationSuccess)
+                    } catch (e: Exception) {
+                        sendState(AuthenticationState.AuthenticationFailure(e.message.toString()))
+                    }
                 }
             }
         }
@@ -121,17 +126,16 @@ class LoginViewModel @Inject constructor(
     private fun loginUser() {
         val email = _validation.value.email
         val password = _validation.value.password
-
         viewModelScope.launch(Dispatchers.IO) {
             try {
                 authRepository.loginUser(email, password)?.let {
-                    if (it.isEmailVerified) {
-                        val user = fireStoreRepository.getUser(it.email!!).values.first()
-                        authRepository.saveCurrentUserDetails(user.email, FirestoreManager.Collections.USERS, user.nickname)
+                  /*  if (it.isEmailVerified) {*/
+                        val user = fireStoreRepository.getUser(it.email!!)
+                        dataStoreRepository.saveUserDetails(user)
                         _authStates.send(AuthenticationState.AuthenticationSuccess)
                         return@launch
-                    }
-                    throw Exception("Either email or password is incorrect")
+/*                    }
+                    throw Exception("Either email or password is incorrect")*/
                 }
 
             } catch (e: Exception) {
@@ -159,15 +163,9 @@ class LoginViewModel @Inject constructor(
                             val user = authRepository.authenticateGoogleUser(it)
                             user?.let {
                                 // Saving the User Details to later usage.
-                                authRepository.saveCurrentUserDetails(
-                                    it.email,
-                                    FirestoreManager.Collections.GOOGLE_USERS,
-                                    it.nickname
-                                )
-
+                                dataStoreRepository.saveUserDetails(user)
                                 sendState(AuthenticationState.AuthenticationSuccess)
-                            }
-                                ?: throw Exception("User not found")
+                            } ?: throw Exception("User not found")
                         } catch (e: Exception) {
                             Log.d("LoginViewModel", "onSigningSuccess: ${e.message.toString()}")
                             sendState(AuthenticationState.AuthenticationFailure(e.message!!))

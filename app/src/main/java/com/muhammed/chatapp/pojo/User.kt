@@ -8,5 +8,6 @@ data class User(
     val email: String = "",
     val password: String? = "",
     var profile_picture: String = Constants.MALE_PATH,
+    val collection: String = "",
     val chats_list: List<String> = emptyList()
 )
