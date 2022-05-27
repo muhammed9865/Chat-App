@@ -3,6 +3,7 @@ package com.muhammed.chatapp.data
 import android.util.Log
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.Query
 import com.muhammed.chatapp.pojo.Messages
 import com.muhammed.chatapp.pojo.PrivateChat
 import com.muhammed.chatapp.pojo.User
@@ -116,20 +117,9 @@ class FirestoreManager @Inject constructor(private val mFirestore: FirebaseFires
     }
 
 
-     fun listenToChatRooms(chats_id: List<String>, onChange: (room: PrivateChat) -> Unit) {
-         Log.d("ChatsViewModel", "listenToChatRooms: $chats_id")
-        mFirestore.collection(Collections.CHATS)
-            .whereIn("cid", chats_id)
-            .addSnapshotListener { value, error ->
-                if (error == null) {
-                    Log.d("ChatsViewModel", "listenToChatRooms: ${value?.documents}")
-                    value?.documentChanges?.forEach {
-                        onChange(it.document.toObject(PrivateChat::class.java))
-                    }
-                }else {
-                    Log.d("ChatsViewModel", "listenToChatRooms: ${error.message}")
-                }
-            }
+     fun listenToChatRooms(chats_id: List<String>, onChange: (room: PrivateChat) -> Unit): Query {
+         return mFirestore.collection(Collections.CHATS)
+             .whereIn("cid", chats_id)
     }
 
 

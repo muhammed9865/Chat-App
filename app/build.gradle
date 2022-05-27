@@ -83,6 +83,9 @@ dependencies {
     // Firebase Messaging
     implementation 'com.google.firebase:firebase-messaging'
 
+    // FirebaseUI
+    implementation 'com.firebaseui:firebase-ui-firestore:8.0.1'
+
     // Coroutine Support for Firebase operations
     implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-play-services:1.4.1'
 

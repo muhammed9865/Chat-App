@@ -9,10 +9,13 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.google.firebase.firestore.Query
 import com.muhammed.chatapp.R
 import com.muhammed.chatapp.databinding.FragmentChatsBinding
+import com.muhammed.chatapp.domain.use_cases.ValidateCurrentUser
 import com.muhammed.chatapp.presentation.common.hideDialog
 import com.muhammed.chatapp.presentation.adapter.ChatsAdapter
+import com.muhammed.chatapp.presentation.adapter.PrivateChatAdapter
 import com.muhammed.chatapp.presentation.common.LoadingDialog
 import com.muhammed.chatapp.presentation.common.MenuOptions
 import com.muhammed.chatapp.presentation.event.ChatsEvent
@@ -28,8 +31,8 @@ class ChatsFragment : Fragment() {
     private val binding: FragmentChatsBinding by lazy { FragmentChatsBinding.inflate(layoutInflater) }
     private val viewModel by activityViewModels<ChatsViewModel>()
     private val loadingDialog: LoadingDialog by lazy { LoadingDialog.getInstance() }
-    @Inject
-    lateinit var mAdapter: ChatsAdapter
+
+    private lateinit var mAdapter: PrivateChatAdapter
 
 
     override fun onCreateView(
@@ -39,20 +42,12 @@ class ChatsFragment : Fragment() {
         binding.menuBtn.setOnClickListener {
             showOptionsMenu()
         }
-        binding.chatsRv.apply {
-            adapter = mAdapter
-            layoutManager = LinearLayoutManager(requireContext())
-        }
+
 
         lifecycleScope.launch {
             launch {
-                viewModel.currentUser.collect {
-                    mAdapter.setCurrentUser(it)
-                }
-            }
-            launch {
                 viewModel.privateChats.collect {
-                    mAdapter.submitList(it)
+
                 }
             }
         }
@@ -95,12 +90,28 @@ class ChatsFragment : Fragment() {
                         loadingDialog.hideDialog()
                     }
 
+                    is ChatsState.StartListeningToRooms -> {
+                        initializeRecyclerViewWithAdapter(state.roomsQuery)
+                        viewModel.currentUser.collect {
+                            mAdapter.setUser(it)
+                        }
+                    }
+
                     is ChatsState.Error -> {
                         view?.showError(state.errorMessage)
                         viewModel.doOnEvent(ChatsEvent.Idle)
                     }
                 }
             }
+        }
+    }
+
+    private fun initializeRecyclerViewWithAdapter(roomsQuery: Query) {
+        mAdapter = PrivateChatAdapter(ValidateCurrentUser(), options = roomsQuery)
+        mAdapter.startListening()
+        binding.chatsRv.apply {
+            adapter = mAdapter
+            layoutManager = LinearLayoutManager(requireContext())
         }
     }
 

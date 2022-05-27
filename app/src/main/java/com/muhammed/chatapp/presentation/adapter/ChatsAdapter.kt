@@ -25,6 +25,7 @@ class ChatsAdapter @Inject constructor(
         holder.bind(getItem(position), user)
     }
 
+
     fun setCurrentUser(user: User) {
         this.user = user
     }

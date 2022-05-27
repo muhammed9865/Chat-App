@@ -90,7 +90,6 @@ class ChatsViewModel @Inject constructor(
                 userDetails.collect { user ->
                     user?.let {
                         val chats = fireStoreRepository.getUserChats(user)
-                        _currentUser.value = user
                         _states.value = ChatsState.ChatsListLoaded(currentUser = user)
                         _privateChats.value = chats
                         updateUserChatsListLocally(it, chats)
@@ -140,9 +139,11 @@ class ChatsViewModel @Inject constructor(
         viewModelScope.launch(Dispatchers.IO) {
             dataStoreRepository.currentUser.collect { user ->
                 user?.let {
-                    fireStoreRepository.listenToUserChats(it) { changedRoom ->
+                    val query = fireStoreRepository.listenToUserChats(it) { changedRoom ->
                         Log.d(TAG, changedRoom.lastMessageText)
                     }
+                    _states.value = ChatsState.StartListeningToRooms(roomsQuery = query)
+                    _currentUser.value = it
                 }
             }
         }
