@@ -4,7 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
-import com.muhammed.chatapp.data.AuthRepository
+import com.muhammed.chatapp.data.repository.AuthRepository
 import com.muhammed.chatapp.data.GoogleAuth
 import com.muhammed.chatapp.data.GoogleAuthCallback
 import com.muhammed.chatapp.domain.use_cases.ValidateEmail

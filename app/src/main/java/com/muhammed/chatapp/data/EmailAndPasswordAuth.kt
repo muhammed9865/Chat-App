@@ -19,6 +19,7 @@ class EmailAndPasswordAuth @Inject constructor(private val mAuth: FirebaseAuth) 
 
     suspend fun loginUserWithEmailAndPassword(email: String, password: String): AuthResult {
         return mAuth.signInWithEmailAndPassword(email, password).await()
+
     }
 
 

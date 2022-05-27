@@ -22,9 +22,10 @@
         <item name="android:layout_height">wrap_content</item>
         <item name="android:layout_marginEnd">@dimen/_5sdp</item>
         <item name="boxBackgroundMode">outline</item>
-        <item name="boxStrokeColor">#686A8A</item>
+        <item name="boxStrokeColor">@color/secondaryColor</item>
         <item name="boxStrokeErrorColor">@color/error</item>
         <item name="boxStrokeWidth">1dp</item>
         <item name="hintTextAppearance">@style/EditTextHint</item>
     </style>
+
 </resources>

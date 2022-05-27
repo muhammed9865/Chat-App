@@ -19,27 +19,27 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
+        android:contentDescription="@string/logo"
         android:src="@drawable/ic_chat_logo"
         app:layout_constraintStart_toStartOf="@+id/guideline2"
-        app:layout_constraintTop_toTopOf="parent"
-        android:contentDescription="@string/logo" />
+        app:layout_constraintTop_toTopOf="parent" />
 
 
-        <ImageView
-            android:id="@+id/menu_btn"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:background="@drawable/icon_rounded_bg"
-            android:clickable="true"
-            android:contentDescription="@string/sign_out"
-            android:focusable="true"
-            android:padding="@dimen/_5sdp"
-            android:src="@drawable/ic_list"
-            app:tint="#686A8A"
-            app:layout_constraintBottom_toBottomOf="@+id/imageView"
-            app:layout_constraintEnd_toStartOf="@+id/guideline8"
-            app:layout_constraintTop_toTopOf="@+id/imageView"
-            app:layout_constraintVertical_bias="0.533"/>
+    <ImageView
+        android:id="@+id/menu_btn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/icon_rounded_bg"
+        android:clickable="true"
+        android:contentDescription="@string/sign_out"
+        android:focusable="true"
+        android:padding="@dimen/_5sdp"
+        android:src="@drawable/ic_list"
+        app:layout_constraintBottom_toBottomOf="@+id/imageView"
+        app:layout_constraintEnd_toStartOf="@+id/guideline8"
+        app:layout_constraintTop_toTopOf="@+id/imageView"
+        app:layout_constraintVertical_bias="0.533"
+        app:tint="#686A8A" />
 
 
     <ImageView
@@ -74,14 +74,16 @@
         app:layout_constraintTop_toTopOf="@+id/imageView"
         app:layout_constraintVertical_bias="0.533" />
 
+
     <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/chats_Rv"
         android:layout_width="0dp"
-        android:layout_height="wrap_content"
+        android:layout_height="0dp"
         android:layout_marginTop="@dimen/_16sdp"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/guideline8"
         app:layout_constraintStart_toStartOf="@+id/guideline2"
-        app:layout_constraintTop_toBottomOf="@+id/imageView2"
-        tools:listitem="@layout/list_item_single_chat" />
+        app:layout_constraintTop_toBottomOf="@+id/imageView2"/>
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/guideline8"
@@ -89,4 +91,5 @@
         android:layout_height="wrap_content"
         android:orientation="vertical"
         app:layout_constraintGuide_end="8dp" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>

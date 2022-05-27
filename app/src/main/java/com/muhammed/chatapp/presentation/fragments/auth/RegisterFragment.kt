@@ -43,7 +43,7 @@ class RegisterFragment : Fragment() {
     }
     private val viewModel: RegisterViewModel by viewModels()
 
-    private val loadingDialog: LoadingDialog by lazy { LoadingDialog.getInstance() }
+    private val loadingDialog: LoadingDialog by lazy { LoadingDialog() }
 
 
     @SuppressLint("ClickableViewAccessibility")
@@ -53,7 +53,7 @@ class RegisterFragment : Fragment() {
     ): View {
         with(binding) {
             registerToLoginBtn.setOnClickListener {
-                findNavController().navigate(R.id.action_registerFragment_to_loginFragment)
+                findNavController().navigateUp()
             }
 
             registerBtn.setOnTouchListener { _, motionEvent ->

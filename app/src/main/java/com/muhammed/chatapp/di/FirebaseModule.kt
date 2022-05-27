@@ -4,7 +4,12 @@ import android.content.Context
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.database.DatabaseReference
+import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.ktx.database
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.ktx.firestoreSettings
+import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.FirebaseStorage
 import dagger.Module
 import dagger.Provides
@@ -42,8 +47,18 @@ class FirebaseModule {
     fun provideGoogleSignInClient(@ApplicationContext context: Context, options: GoogleSignInOptions) = GoogleSignIn.getClient(context, options)
 
     @Provides
+    @Singleton
     fun provideFirestore(): FirebaseFirestore {
-        return FirebaseFirestore.getInstance()
+        return FirebaseFirestore.getInstance().also {
+            val settings = firestoreSettings {
+                isPersistenceEnabled = true
+            }
+            it.firestoreSettings = settings
+        }
     }
+
+    @Provides
+    @Singleton
+    fun provideRealtimeDatabase(): DatabaseReference = Firebase.database.reference
 
 }

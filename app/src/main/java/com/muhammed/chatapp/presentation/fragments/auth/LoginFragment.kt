@@ -2,7 +2,6 @@ package com.muhammed.chatapp.presentation.fragments.auth
 
 import android.annotation.SuppressLint
 import android.app.Activity
-import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.MotionEvent
@@ -16,7 +15,6 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.muhammed.chatapp.*
 import com.muhammed.chatapp.databinding.FragmentLoginBinding
-import com.muhammed.chatapp.presentation.activity.MainActivity
 import com.muhammed.chatapp.presentation.common.LoadingDialog
 import com.muhammed.chatapp.presentation.event.AuthenticationEvent
 import com.muhammed.chatapp.presentation.state.AuthenticationState
@@ -93,15 +91,16 @@ class LoginFragment : Fragment() {
 
                     is AuthenticationState.AuthenticationSuccess -> {
                         binding.loginMotionLayout.transitionToStart()
-                        val intent = Intent(requireContext(), MainActivity::class.java)
-                        requireActivity().startActivity(intent)
+
+                        findNavController().navigate(R.id.action_loginFragment_to_mainActivity)
                         requireActivity().finish()
-                        loadingDialog.hide()
+                        loadingDialog.dismiss()
                     }
 
                     is AuthenticationState.AuthenticationFailure -> {
                         binding.root.showError(it.error)
                         binding.loginMotionLayout.transitionToStart()
+                        loadingDialog.dismissNow()
                     }
 
                     is AuthenticationState.ValidationSuccess -> {}
@@ -152,7 +151,7 @@ class LoginFragment : Fragment() {
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
             if (it.resultCode == Activity.RESULT_OK) {
                 it.data?.let { data ->
-                    loadingDialog.show(requireActivity().supportFragmentManager, "loading")
+                    loadingDialog.show(requireParentFragment().parentFragmentManager, null)
                     viewModel.doOnEvent(AuthenticationEvent.OnGoogleCredentialsAvailable(data))
                 }
             }

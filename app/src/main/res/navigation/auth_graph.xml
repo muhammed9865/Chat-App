@@ -11,13 +11,9 @@
         android:label="fragment_register"
         tools:layout="@layout/fragment_register" >
         <action
-            android:id="@+id/action_registerFragment_to_loginFragment"
-            app:destination="@id/loginFragment"
-            app:launchSingleTop="true"
-            app:popUpTo="@id/loginFragment" />
-        <action
             android:id="@+id/action_registerFragment_to_registerCompleteFragment"
             app:destination="@id/registerCompleteFragment"
+            app:enterAnim="@anim/fade_in"
             app:launchSingleTop="true"
             app:popUpTo="@id/loginFragment" />
     </fragment>
@@ -29,7 +25,16 @@
         <action
             android:id="@+id/action_loginFragment_to_registerFragment"
             app:destination="@id/registerFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_right"
+            app:popUpTo="@id/loginFragment"
             app:popUpToInclusive="false" />
+        <action
+            android:id="@+id/action_loginFragment_to_mainActivity"
+            app:destination="@id/mainActivity"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popUpTo="@id/mainActivity" />
     </fragment>
     <fragment
         android:id="@+id/registerCompleteFragment"
@@ -39,7 +44,14 @@
         <action
             android:id="@+id/action_registerCompleteFragment_to_loginFragment"
             app:destination="@id/loginFragment"
+            app:enterAnim="@anim/fade_out"
+            app:exitAnim="@anim/fade_in"
             app:popUpTo="@id/loginFragment"
             app:popUpToInclusive="true" />
     </fragment>
+    <activity
+        android:id="@+id/mainActivity"
+        android:name="com.muhammed.chatapp.presentation.activity.MainActivity"
+        android:label="activity_main"
+        tools:layout="@layout/activity_main" />
 </navigation>

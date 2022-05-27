@@ -1,14 +1,19 @@
 package com.muhammed.chatapp
 
 import android.content.Context
+import android.util.Log
 import android.view.View
 import android.view.inputmethod.InputMethodManager
 import android.widget.Button
 import android.widget.EditText
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentManager
 import com.google.android.material.snackbar.BaseTransientBottomBar.ANIMATION_MODE_SLIDE
 import com.google.android.material.snackbar.Snackbar
 import com.muhammed.chatapp.presentation.common.LoadingDialog
 import com.muhammed.chatapp.presentation.state.ValidationState
+import java.text.SimpleDateFormat
+import java.util.*
 
 fun View.hideKeyboard() {
     val imm: InputMethodManager =
@@ -34,6 +39,12 @@ fun View.showSnackbar(message: String) {
     Snackbar.make(this, message, Snackbar.LENGTH_LONG)
         .setAnimationMode(ANIMATION_MODE_SLIDE)
         .show()
+}
+
+fun Long.toDateAsString(): String {
+    val sdf = SimpleDateFormat("hh:mm a", Locale.ENGLISH)
+    val date = Date(this)
+    return sdf.format(date)
 }
 
 fun toggleAuthError(
@@ -72,8 +83,18 @@ fun toggleButtonAvailabilityOnAuth(
     }
 }
 
-fun LoadingDialog.hide() {
+fun LoadingDialog.hideDialog() {
     if (isVisible) {
-        dismiss()
+        dialog?.hide()
     }
 }
+
+fun LoadingDialog.showDialog(manager: FragmentManager, tag: String?) {
+    if (isAdded) {
+        Log.d("LoadingDialog", "showDialog: showing")
+        dialog?.show()
+    }else {
+        show(manager, tag)
+    }
+}
+
