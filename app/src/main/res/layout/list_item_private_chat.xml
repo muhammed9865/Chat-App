@@ -8,8 +8,8 @@
 
     <com.google.android.material.imageview.ShapeableImageView
         android:id="@+id/chat_profile_pic"
-        android:layout_width="@dimen/_50sdp"
-        android:layout_height="@dimen/_50sdp"
+        android:layout_width="@dimen/_40sdp"
+        android:layout_height="@dimen/_40sdp"
         android:scaleType="centerCrop"
         android:src="@drawable/ic_baseline_person_24"
         app:layout_constraintStart_toStartOf="parent"
@@ -31,19 +31,17 @@
     <TextView
         android:id="@+id/chat_last_msg"
         android:layout_width="0dp"
-        android:layout_height="0dp"
+        android:layout_height="wrap_content"
         android:ellipsize="end"
         android:fontFamily="@font/sf_regular"
         android:maxLength="70"
         android:maxLines="2"
         android:textColor="#686A8A"
         android:textSize="@dimen/_10ssp"
-        app:layout_constraintBottom_toBottomOf="@+id/chat_profile_pic"
         app:layout_constraintEnd_toStartOf="@+id/guideline3"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="@+id/chat_person_name"
         app:layout_constraintTop_toBottomOf="@+id/chat_person_name"
-        app:layout_constraintVertical_bias="0.0"
         tools:text="asasdkljasdklasjdlkasjdklasjdklasdjklasjdklasdjlkasdjklasdjklasdjlksadjasdkljdklsaj" />
 
     <TextView
@@ -52,7 +50,7 @@
         android:layout_height="wrap_content"
         android:text="7:11PM"
         app:layout_constraintBottom_toBottomOf="@+id/chat_person_name"
-        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/guideline4"
         app:layout_constraintTop_toTopOf="@+id/chat_person_name" />
 
     <androidx.constraintlayout.widget.Guideline
@@ -62,18 +60,26 @@
         android:orientation="vertical"
         app:layout_constraintGuide_end="70dp" />
 
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline4"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_end="10dp" />
+
     <TextView
         android:id="@+id/chat_new_msgs_count"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
         android:background="@drawable/chat_newmsgs_count_bg"
         android:backgroundTint="#2176FF"
-        android:paddingEnd="@dimen/_5sdp"
-        android:paddingStart="@dimen/_5sdp"
         android:fontFamily="@font/sf_regular"
-        android:textColor="@color/white"
+        android:paddingStart="@dimen/_5sdp"
+        android:paddingEnd="@dimen/_5sdp"
         android:text="10"
-        app:layout_constraintEnd_toEndOf="parent"
+        android:textColor="@color/white"
+        app:layout_constraintEnd_toStartOf="@+id/guideline4"
         app:layout_constraintTop_toBottomOf="@+id/chat_last_msg_time" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

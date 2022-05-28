@@ -40,6 +40,7 @@ android {
 dependencies {
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
     def lifecycle_version = "2.5.0-rc01"
+    def nav_version = "2.4.2"
     def arch_version = "2.1.0"
 
     implementation 'androidx.core:core-ktx:1.7.0'
@@ -96,6 +97,7 @@ dependencies {
     // Fragment
     implementation "androidx.fragment:fragment:1.5.0-rc01"
     implementation 'androidx.navigation:navigation-fragment:2.4.2'
+    implementation "androidx.navigation:navigation-ui-ktx:$nav_version"
 
     // Sdp/SSP
     implementation 'com.intuit.ssp:ssp-android:1.0.6'

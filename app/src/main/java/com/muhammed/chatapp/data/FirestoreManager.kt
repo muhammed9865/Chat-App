@@ -1,9 +1,7 @@
 package com.muhammed.chatapp.data
 
-import android.util.Log
-import com.google.firebase.firestore.FieldValue
-import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.firestore.Query
+import com.google.android.gms.tasks.Task
+import com.google.firebase.firestore.*
 import com.muhammed.chatapp.pojo.Messages
 import com.muhammed.chatapp.pojo.PrivateChat
 import com.muhammed.chatapp.pojo.User
@@ -33,7 +31,7 @@ class FirestoreManager @Inject constructor(private val mFirestore: FirebaseFires
     }
 
 
-    suspend fun createPrivateChatRoom(otherUserEmail: String, currentUser: User): String {
+    suspend fun createPrivateChatRoom(otherUserEmail: String, currentUser: User): PrivateChat? {
 
         val otherUser = getUser(otherUserEmail)
 
@@ -59,7 +57,7 @@ class FirestoreManager @Inject constructor(private val mFirestore: FirebaseFires
 
         updateUserChatsList(otherUserEmail, otherUser.collection, chatDocument.id)
 
-        return chatDocument.id
+        return chatDocument.get().await().toObject(PrivateChat::class.java)
     }
 
 
@@ -95,11 +93,10 @@ class FirestoreManager @Inject constructor(private val mFirestore: FirebaseFires
 
     suspend fun getUserChats(user: User): List<PrivateChat> {
         val chats = mutableListOf<PrivateChat>()
-        if (user.chats_list.isEmpty()) {
+        /*if (user.chats_list.isEmpty()) {
             return emptyList()
         }
-
-
+*/
         val chatsList = mFirestore.collection(user.collection)
             .document(user.email)
             .get().await().toObject(User::class.java)?.chats_list
@@ -117,9 +114,33 @@ class FirestoreManager @Inject constructor(private val mFirestore: FirebaseFires
     }
 
 
-     fun listenToChatRooms(chats_id: List<String>, onChange: (room: PrivateChat) -> Unit): Query {
-         return mFirestore.collection(Collections.CHATS)
-             .whereIn("cid", chats_id)
+    fun listenToUserChats(
+        user: User,
+        eventListener: EventListener<DocumentSnapshot>
+    ): ListenerRegistration? {
+        return if (user.email.isNotEmpty())
+            mFirestore.collection(user.collection)
+                .document(user.email)
+                .addSnapshotListener(eventListener)
+        else null
+    }
+
+    fun listenToChatsChanges(
+        chat_ids: List<String>,
+        listener: EventListener<QuerySnapshot>
+    ): ListenerRegistration? {
+        return if (chat_ids.isEmpty()) null
+        else mFirestore.collection(Collections.CHATS)
+            .whereIn("cid", chat_ids)
+            .addSnapshotListener(listener)
+    }
+
+    suspend fun loadChats(chat_ids: List<String>): List<PrivateChat> {
+        return if (chat_ids.isNotEmpty()) mFirestore.collection(Collections.CHATS)
+            .whereIn("cid", chat_ids)
+            .get()
+            .await().toObjects(PrivateChat::class.java)
+        else emptyList()
     }
 
 

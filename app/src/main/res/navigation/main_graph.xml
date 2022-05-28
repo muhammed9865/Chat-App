@@ -16,15 +16,30 @@
             app:enterAnim="@anim/slide_in_left"
             app:exitAnim="@anim/slide_out_right"
             app:popUpTo="@id/authActivity" />
+        <action
+            android:id="@+id/action_chatsFragment_to_chatRoomActivity"
+            app:destination="@id/chatRoomActivity"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popUpTo="@id/chatsFragment" />
     </fragment>
     <fragment
         android:id="@+id/communitiesFragment"
         android:name="com.muhammed.chatapp.presentation.fragments.CommunitiesFragment"
         android:label="fragment_communities"
-        tools:layout="@layout/fragment_communities" />
+        tools:layout="@layout/fragment_communities" >
+        <action
+            android:id="@+id/action_communitiesFragment_to_chatRoomActivity"
+            app:destination="@id/chatRoomActivity" />
+    </fragment>
     <activity
         android:id="@+id/authActivity"
         android:name="com.muhammed.chatapp.presentation.activity.AuthActivity"
         android:label="activity_auth"
         tools:layout="@layout/activity_auth" />
+    <activity
+        android:id="@+id/chatRoomActivity"
+        android:name="com.muhammed.chatapp.presentation.activity.ChatRoomActivity"
+        android:label="activity_chat_room"
+        tools:layout="@layout/activity_chat_room" />
 </navigation>

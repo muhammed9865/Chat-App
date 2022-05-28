@@ -1,5 +1,6 @@
 package com.muhammed.chatapp.presentation.viewholder
 
+import android.view.View
 import androidx.recyclerview.widget.RecyclerView
 import coil.load
 import com.muhammed.chatapp.databinding.ListItemPrivateChatBinding
@@ -15,6 +16,7 @@ class PrivateChatViewHolder(private val binding: ListItemPrivateChatBinding, pri
            chatLastMsg.text = chat.lastMessageText
            chatNewMsgsCount.text = chat.newMessagesCount.toString()
            chatLastMsgTime.text = chat.lastMessageDate.toDateAsString()
+           chatNewMsgsCount.visibility = if (chat.newMessagesCount > 0) View.VISIBLE else View.GONE
        }
     }
 

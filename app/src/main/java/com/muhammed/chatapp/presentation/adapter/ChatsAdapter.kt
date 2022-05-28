@@ -11,6 +11,7 @@ import com.muhammed.chatapp.pojo.User
 import com.muhammed.chatapp.presentation.viewholder.PrivateChatViewHolder
 import javax.inject.Inject
 
+
 class ChatsAdapter @Inject constructor(
     private val validateCurrentUser: ValidateCurrentUser,
 ): ListAdapter<PrivateChat, PrivateChatViewHolder>(ChatDiffUtl()) {

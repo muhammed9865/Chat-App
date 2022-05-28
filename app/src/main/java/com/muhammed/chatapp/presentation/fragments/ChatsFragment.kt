@@ -8,23 +8,20 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.firebase.firestore.Query
 import com.muhammed.chatapp.R
 import com.muhammed.chatapp.databinding.FragmentChatsBinding
 import com.muhammed.chatapp.domain.use_cases.ValidateCurrentUser
-import com.muhammed.chatapp.presentation.common.hideDialog
 import com.muhammed.chatapp.presentation.adapter.ChatsAdapter
 import com.muhammed.chatapp.presentation.adapter.PrivateChatAdapter
-import com.muhammed.chatapp.presentation.common.LoadingDialog
-import com.muhammed.chatapp.presentation.common.MenuOptions
+import com.muhammed.chatapp.presentation.common.*
 import com.muhammed.chatapp.presentation.event.ChatsEvent
 import com.muhammed.chatapp.presentation.state.ChatsState
 import com.muhammed.chatapp.presentation.viewmodel.ChatsViewModel
-import com.muhammed.chatapp.presentation.common.showError
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
-import javax.inject.Inject
 
 @AndroidEntryPoint
 class ChatsFragment : Fragment() {
@@ -32,7 +29,8 @@ class ChatsFragment : Fragment() {
     private val viewModel by activityViewModels<ChatsViewModel>()
     private val loadingDialog: LoadingDialog by lazy { LoadingDialog.getInstance() }
 
-    private lateinit var mAdapter: PrivateChatAdapter
+
+    private var mAdapter: ChatsAdapter? = null
 
 
     override fun onCreateView(
@@ -43,13 +41,26 @@ class ChatsFragment : Fragment() {
             showOptionsMenu()
         }
 
+        mAdapter = ChatsAdapter(ValidateCurrentUser())
+
 
         lifecycleScope.launch {
             launch {
                 viewModel.privateChats.collect {
-
+                    mAdapter?.submitList(it)
                 }
             }
+
+            launch {
+                viewModel.currentUser.collect {
+                    mAdapter?.setCurrentUser(it)
+                }
+            }
+        }
+
+        binding.chatsRv.apply {
+            adapter = mAdapter
+            layoutManager = LinearLayoutManager(requireContext())
         }
 
 
@@ -72,46 +83,60 @@ class ChatsFragment : Fragment() {
     }
 
 
-
     private fun doOnStateChanged() {
+
         lifecycleScope.launch {
             viewModel.states.collect { state ->
                 Log.d("Chat State", "onStateChanged from fragment: $state")
                 when (state) {
+
+                    is ChatsState.SignedOut -> {
+                        findNavController().navigate(R.id.action_chatsFragment_to_authActivity)
+                        requireActivity().finish()
+                    }
+
                     is ChatsState.UserExists -> {
                         Log.d(TAG, "doOnStateChanged: ${state.privateChat}")
                     }
 
                     is ChatsState.PrivateRoomCreated -> {
-                        viewModel.doOnEvent(ChatsEvent.LoadChats)
+                        loadingDialog.hideDialog()
                     }
 
                     is ChatsState.ChatsListLoaded -> {
                         loadingDialog.hideDialog()
                     }
 
+
+                    is ChatsState.Loading -> loadingDialog.showDialog(parentFragmentManager, "loading")
+
                     is ChatsState.StartListeningToRooms -> {
-                        initializeRecyclerViewWithAdapter(state.roomsQuery)
-                        viewModel.currentUser.collect {
-                            mAdapter.setUser(it)
+                        lifecycleScope.launch {
+                            initializeRecyclerViewWithAdapter(state.roomsQuery)
+                            viewModel.currentUser.collect {
+                                mAdapter?.setCurrentUser(it)
+                                loadingDialog.hideDialog()
+                            }
                         }
                     }
-
                     is ChatsState.Error -> {
                         view?.showError(state.errorMessage)
                         viewModel.doOnEvent(ChatsEvent.Idle)
                     }
+
+                    else -> {}
                 }
             }
         }
     }
 
+
     private fun initializeRecyclerViewWithAdapter(roomsQuery: Query) {
-        mAdapter = PrivateChatAdapter(ValidateCurrentUser(), options = roomsQuery)
-        mAdapter.startListening()
-        binding.chatsRv.apply {
-            adapter = mAdapter
-            layoutManager = LinearLayoutManager(requireContext())
+        if (mAdapter == null) {
+            binding.chatsRv.apply {
+                adapter = mAdapter
+                layoutManager = LinearLayoutManager(requireContext())
+            }
         }
     }
 

@@ -11,7 +11,7 @@ import androidx.navigation.fragment.NavHostFragment
 import com.google.android.material.navigation.NavigationBarView
 import com.google.android.material.shape.CornerFamily
 import com.google.android.material.shape.MaterialShapeDrawable
-import com.muhammed.chatapp.*
+import com.muhammed.chatapp.R
 import com.muhammed.chatapp.databinding.ActivityMainBinding
 import com.muhammed.chatapp.presentation.common.*
 import com.muhammed.chatapp.presentation.event.ChatsEvent
@@ -43,7 +43,7 @@ class MainActivity : AppCompatActivity(), NavigationBarView.OnItemSelectedListen
             createNewChat()
         }
 
-        onStateChanged()
+        //onStateChanged()
     }
 
     private fun makeBotNavRoundedCorners() {
@@ -82,8 +82,8 @@ class MainActivity : AppCompatActivity(), NavigationBarView.OnItemSelectedListen
                         binding.root.showError(it.errorMessage)
                     }
                     is ChatsState.PrivateRoomCreated -> {
-                        binding.root.showSnackBar("Room was created successfully")
-                        viewModel.doOnEvent(ChatsEvent.LoadChats)
+                       // binding.root.showSnackBar("Room was created successfully")
+                        loadingDialog.hideDialog()
                     }
 
                     is ChatsState.ChatsListLoaded -> {
@@ -107,4 +107,6 @@ class MainActivity : AppCompatActivity(), NavigationBarView.OnItemSelectedListen
         }
         newChatDialog.show(this.supportFragmentManager, null)
     }
+
+
 }
