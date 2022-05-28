@@ -1,6 +1,5 @@
 package com.muhammed.chatapp.data
 
-import com.google.android.gms.tasks.Task
 import com.google.firebase.firestore.*
 import com.muhammed.chatapp.Fields
 import com.muhammed.chatapp.pojo.Messages
@@ -32,7 +31,7 @@ class FirestoreManager @Inject constructor(private val mFirestore: FirebaseFires
     }
 
 
-    suspend fun createPrivateChatRoom(otherUserEmail: String, currentUser: User): PrivateChat? {
+    suspend fun createPrivateChatRoom(otherUserEmail: String, currentUser: User, onRoomIdCreated: (id: String) -> Unit): PrivateChat? {
 
         val otherUser = getUser(otherUserEmail)
 
@@ -50,6 +49,8 @@ class FirestoreManager @Inject constructor(private val mFirestore: FirebaseFires
             firstUser = currentUser,
             secondUser = otherUser
         )
+
+        onRoomIdCreated(chatDocument.id)
 
         chatDocument.set(privateChat).await()
 
@@ -92,89 +93,18 @@ class FirestoreManager @Inject constructor(private val mFirestore: FirebaseFires
         throw NullPointerException("User not found")
     }
 
-/*
-    suspend fun getUserChats(user: User): List<PrivateChat> {
-        val chats = mutableListOf<PrivateChat>()
-        if (user.chats_list.isEmpty()) {
-            return emptyList()
-        }
-
-        val chatsList = mFirestore.collection(user.collection)
-            .document(user.email)
-            .get().await().toObject(User::class.java)?.chats_list
 
 
-        // Collecting User chat rooms
-        chatsList?.forEach {
-            val room = getChat(it)
-            if (room != null) {
-                chats.add(room)
-            }
-        }
-
-        return chats
-    }
-*/
-
-
-    fun listenToUserChats(
-        user: User,
-        eventListener: EventListener<DocumentSnapshot>
-    ): ListenerRegistration? {
-        return if (user.email.isNotEmpty())
-            mFirestore.collection(user.collection)
-                .document(user.email)
-                .addSnapshotListener(eventListener)
-        else null
-    }
-
-   suspend fun getUserChatIds(user: User): List<String>? {
-        return mFirestore.collection(user.collection)
-            .document(user.email)
-            .get().await().toObject(User::class.java)?.chats_list
-    }
 
     fun listenToChatsChanges(
-        chat_ids: List<String>,
         listener: EventListener<QuerySnapshot>
-    ): ListenerRegistration? {
-        return if (chat_ids.isEmpty()) null
-        else mFirestore.collection(Collections.CHATS)
+    ): ListenerRegistration {
+        return mFirestore.collection(Collections.CHATS)
             .orderBy(Fields.LAST_MSG_DATE)
             .addSnapshotListener(listener)
     }
 
-    fun listenToChatsChangedV2(
-        onChange: (room: List<DocumentChange>) -> Unit
-    ) {
-        mFirestore.collection(Collections.CHATS)
-            .addSnapshotListener { value, error ->
-                if (error == null) {
-                    value?.let {
-                        if (it.documentChanges.isNotEmpty()) {
-                            onChange(it.documentChanges)
-                        }
-                    }
-                }
-            }
-    }
 
-    suspend fun loadChats(chat_ids: List<String>): List<PrivateChat> {
-        return if (chat_ids.isNotEmpty()) mFirestore.collection(Collections.CHATS)
-            .whereIn("cid", chat_ids)
-            .get()
-            .await().toObjects(PrivateChat::class.java)
-        else emptyList()
-    }
-
-
-    private suspend fun getChat(chatId: String): PrivateChat? {
-        return mFirestore.collection(Collections.CHATS)
-            .document(chatId)
-            .get()
-            .await()
-            .toObject(PrivateChat::class.java)
-    }
 
     suspend fun getGoogleUser(email: String): User? {
         return mFirestore.collection(Collections.GOOGLE_USERS)

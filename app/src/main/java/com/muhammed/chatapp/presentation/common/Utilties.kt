@@ -93,6 +93,7 @@ fun LoadingDialog.showDialog(manager: FragmentManager, tag: String?) {
         Log.d("LoadingDialog", "showDialog: showing")
         dialog?.show()
     }else {
+        Log.d("LoadingDialog", "hideDialog: hiding")
         show(manager, tag)
     }
 }
