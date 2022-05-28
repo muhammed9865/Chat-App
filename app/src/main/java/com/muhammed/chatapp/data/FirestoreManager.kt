@@ -30,11 +30,37 @@ class FirestoreManager @Inject constructor(private val mFirestore: FirebaseFires
 
     }
 
+    @Throws(NullPointerException::class)
+    suspend fun getUser(email: String): User {
+        val normalUser = mFirestore.collection(Collections.USERS)
+            .document(email)
+            .get()
+            .await().toObject(User::class.java)
+        // Check if user is in Collections.USERS first
+        if (normalUser != null) {
+            return normalUser
+        }
+        val googleUser = getGoogleUser(email)
+        // Check if user in Collections.GOOGLE_USERS if first check failed.
+        if (googleUser != null) {
+            return googleUser
+        }
+        throw NullPointerException("User not found")
+    }
+
+
+    suspend fun getGoogleUser(email: String): User? {
+        return mFirestore.collection(Collections.GOOGLE_USERS)
+            .document(email)
+            .get()
+            .await()
+            .toObject(User::class.java)
+    }
+
+
 
     suspend fun createPrivateChatRoom(otherUserEmail: String, currentUser: User, onRoomIdCreated: (id: String) -> Unit): PrivateChat? {
-
         val otherUser = getUser(otherUserEmail)
-
         // Create Chat Document if user is not null.
         val chatDocument = mFirestore.collection(Collections.CHATS)
             .document()
@@ -52,12 +78,11 @@ class FirestoreManager @Inject constructor(private val mFirestore: FirebaseFires
 
         onRoomIdCreated(chatDocument.id)
 
+        updateUserChatsList(otherUserEmail, otherUser.collection, chatDocument.id)
+
         chatDocument.set(privateChat).await()
 
-        // Setting a List to make it in array data structure on fireStore
         messagesDocument.set(Messages()).await()
-
-        updateUserChatsList(otherUserEmail, otherUser.collection, chatDocument.id)
 
         return chatDocument.get().await().toObject(PrivateChat::class.java)
     }
@@ -71,31 +96,6 @@ class FirestoreManager @Inject constructor(private val mFirestore: FirebaseFires
     }
 
 
-    @Throws(NullPointerException::class)
-    suspend fun getUser(email: String): User {
-        val normalUser = mFirestore.collection(Collections.USERS)
-            .document(email)
-            .get()
-            .await().toObject(User::class.java)
-
-        // Check if user is in Collections.USERS first
-        if (normalUser != null) {
-            return normalUser
-        }
-
-        val googleUser = getGoogleUser(email)
-
-        // Check if user in Collections.GOOGLE_USERS if first check failed.
-        if (googleUser != null) {
-            return googleUser
-        }
-
-        throw NullPointerException("User not found")
-    }
-
-
-
-
     fun listenToChatsChanges(
         listener: EventListener<QuerySnapshot>
     ): ListenerRegistration {
@@ -104,15 +104,16 @@ class FirestoreManager @Inject constructor(private val mFirestore: FirebaseFires
             .addSnapshotListener(listener)
     }
 
-
-
-    suspend fun getGoogleUser(email: String): User? {
-        return mFirestore.collection(Collections.GOOGLE_USERS)
-            .document(email)
-            .get()
-            .await()
-            .toObject(User::class.java)
+    fun listenToUserProfile(
+        user: User,
+        listener: EventListener<DocumentSnapshot>
+    ): ListenerRegistration {
+        return mFirestore.collection(user.collection)
+            .document(user.email)
+            .addSnapshotListener(listener)
     }
+
+
 
     object Collections {
         const val USERS = "users"

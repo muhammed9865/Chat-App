@@ -39,6 +39,7 @@ class ChatsViewModel @Inject constructor(
     private val _currentUser = MutableStateFlow(User())
     val currentUser = _currentUser.asStateFlow()
     private var chatsListener: ListenerRegistration? = null
+    private var profileListener: ListenerRegistration? = null
 
 
     init {
@@ -47,6 +48,7 @@ class ChatsViewModel @Inject constructor(
                 _currentUser.value = it
                 fireStoreRepository.setChatIds(it.chats_list)
                 listenToUserChats()
+                listenToUserProfile()
             }
         }
     }
@@ -129,13 +131,25 @@ class ChatsViewModel @Inject constructor(
                     fireStoreRepository.listenToChatsChanges { rooms ->
                         _privateChats.value = rooms
                     }
-
             }catch (e: Exception) {
                 Log.d(TAG, "listenToUserChats: ${e.message}")
                 setState(ChatsState.Error("Something went wrong"))
             }
         }
+    }
 
+    private fun listenToUserProfile() {
+        viewModelScope.launch(Dispatchers.IO) {
+            try {
+                profileListener = fireStoreRepository.listenToUserProfile(_currentUser.value) {
+                    fireStoreRepository.setChatIds(it.chats_list)
+                    _currentUser.value = it
+                }
+            }catch (e: Exception) {
+                Log.d(TAG, "listenToUserProfile: ${e.message}")
+                setState(ChatsState.Error("Something went wrong"))
+            }
+        }
     }
 
 
@@ -159,6 +173,7 @@ class ChatsViewModel @Inject constructor(
 
     override fun onCleared() {
         chatsListener?.remove()
+        profileListener?.remove()
         super.onCleared()
     }
 
