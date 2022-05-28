@@ -30,12 +30,12 @@ class FirestoreRepository @Inject constructor(
         this.chatIds = chat_ids.toMutableList()
     }
 
-    fun listenToChatsChanges(onChange: (rooms: List<PrivateChat>) -> Unit): ListenerRegistration {
+    fun listenToChatsChanges(user: User, onChange: (rooms: List<PrivateChat>) -> Unit): ListenerRegistration {
         return fireStoreManager.listenToChatsChanges { roomsValue, roomsError ->
             if (roomsError == null) {
                 Log.d(TAG, "listenToChatsChanges: $chatIds")
                 roomsValue?.documents?.let { documents ->
-                    val rooms = filterUserPrivateRoom.execute(documents, chatIds)
+                    val rooms = filterUserPrivateRoom.execute(documents, user)
 
                     onChange(rooms)
                 }
@@ -43,13 +43,6 @@ class FirestoreRepository @Inject constructor(
         }
     }
 
-    fun listenToUserProfile(user: User, onChange: (user: User) -> Unit): ListenerRegistration {
-        return fireStoreManager.listenToUserProfile(user) { userValue, userError ->
-            if (userError == null) {
-                userValue?.toObject(User::class.java)?.let { onChange(it) }
-            }
-        }
-    }
 
     companion object {
         private const val TAG = "FirestoreRepository"

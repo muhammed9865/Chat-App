@@ -43,12 +43,12 @@ class ChatsViewModel @Inject constructor(
 
 
     init {
-        viewModelScope.launch {
+        tryAsync {
             dataStoreRepository.currentUser.filterNotNull().collect {
                 _currentUser.value = it
                 fireStoreRepository.setChatIds(it.chats_list)
                 listenToUserChats()
-                listenToUserProfile()
+
             }
         }
     }
@@ -68,7 +68,7 @@ class ChatsViewModel @Inject constructor(
     }
 
     private fun validateUserExists(email: String) {
-        viewModelScope.launch(Dispatchers.IO) {
+        tryAsync {
             dataStoreRepository.currentUser.collect { user ->
                 user?.let {
                     val isCurrentUser = validateCurrentUser.execute(user.email, email)
@@ -81,37 +81,31 @@ class ChatsViewModel @Inject constructor(
                     }
                 }
             }
-
         }
-
     }
 
-    private fun createPrivateChat(otherUserEmail: String) {
-        viewModelScope.launch(Dispatchers.IO) {
-            try {
-                val result = validateEmail.execute(otherUserEmail)
-                result.errorMessage?.let { throw NullPointerException(it) }
-                setState(ChatsState.Loading)
-                // if current user is not null, start creating the chat,
-                // and then update the current chat list on fireStore.
-                dataStoreRepository.currentUser.collect { user ->
-                    user?.let {
-                        val room = fireStoreRepository.createNewPrivateChat(otherUserEmail, user)
-                        room?.let {
-                            fireStoreRepository.updateUserChatsList(
-                                user.email,
-                                user.collection,
-                                room.cid
-                            )
-                            setState(ChatsState.PrivateRoomCreated(it))
-                            updateCurrentUserChatsList(room.cid)
-                        }
-                    }
-                }
-            } catch (e: NullPointerException) {
-                setState(ChatsState.Error(e.message.toString()))
-            }
-        }
+    private  fun createPrivateChat(otherUserEmail: String) {
+       tryAsync {
+           val result = validateEmail.execute(otherUserEmail)
+           result.errorMessage?.let { throw NullPointerException(it) }
+           setState(ChatsState.Loading)
+           // if current user is not null, start creating the chat,
+           // and then update the current chat list on fireStore.
+           dataStoreRepository.currentUser.collect { user ->
+               user?.let {
+                   val room = fireStoreRepository.createNewPrivateChat(otherUserEmail, user)
+                   room?.let {
+                       fireStoreRepository.updateUserChatsList(
+                           user.email,
+                           user.collection,
+                           room.cid
+                       )
+                       setState(ChatsState.PrivateRoomCreated(it))
+                       updateCurrentUserChatsList(room.cid)
+                   }
+               }
+           }
+       }
     }
 
     private fun updateCurrentUserChatsList(roomId: String) {
@@ -125,26 +119,18 @@ class ChatsViewModel @Inject constructor(
 
 
     private fun listenToUserChats() {
-        viewModelScope.launch(Dispatchers.IO) {
-            try {
-                chatsListener =
-                    fireStoreRepository.listenToChatsChanges { rooms ->
-                        _privateChats.value = rooms
-                    }
-            }catch (e: Exception) {
-                Log.d(TAG, "listenToUserChats: ${e.message}")
-                setState(ChatsState.Error("Something went wrong"))
-            }
+        tryAsync {
+            chatsListener =
+                fireStoreRepository.listenToChatsChanges(_currentUser.value) { rooms ->
+                    _privateChats.value = rooms
+                }
         }
     }
 
-    private fun listenToUserProfile() {
+    private fun tryAsync(function: suspend () -> Unit) {
         viewModelScope.launch(Dispatchers.IO) {
             try {
-                profileListener = fireStoreRepository.listenToUserProfile(_currentUser.value) {
-                    fireStoreRepository.setChatIds(it.chats_list)
-                    _currentUser.value = it
-                }
+                function()
             }catch (e: Exception) {
                 Log.d(TAG, "listenToUserProfile: ${e.message}")
                 setState(ChatsState.Error("Something went wrong"))

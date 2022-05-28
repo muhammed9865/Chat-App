@@ -2,15 +2,15 @@ package com.muhammed.chatapp.domain.use_cases
 
 import com.google.firebase.firestore.DocumentSnapshot
 import com.muhammed.chatapp.pojo.PrivateChat
+import com.muhammed.chatapp.pojo.User
 import javax.inject.Inject
 
 class FilterUserPrivateRoom @Inject constructor() {
-    fun execute(documents: List<DocumentSnapshot>, chatIds: List<String>): List<PrivateChat> {
+    fun execute(documents: List<DocumentSnapshot>, user: User): List<PrivateChat> {
         val filteredDocuments =
             documents.filter { documentChange ->
-                documentChange.toObject(
-                    PrivateChat::class.java
-                )?.cid in chatIds
+               val document = documentChange.toObject(PrivateChat::class.java)
+                document?.firstUser?.uid == user.uid || document?.secondUser?.uid == user.uid
             }
                 .toSet()
         return filteredDocuments.mapNotNull { dc ->

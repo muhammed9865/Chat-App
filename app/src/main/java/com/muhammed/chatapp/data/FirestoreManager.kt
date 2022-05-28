@@ -104,14 +104,6 @@ class FirestoreManager @Inject constructor(private val mFirestore: FirebaseFires
             .addSnapshotListener(listener)
     }
 
-    fun listenToUserProfile(
-        user: User,
-        listener: EventListener<DocumentSnapshot>
-    ): ListenerRegistration {
-        return mFirestore.collection(user.collection)
-            .document(user.email)
-            .addSnapshotListener(listener)
-    }
 
 
 
