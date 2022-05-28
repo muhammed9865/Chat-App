@@ -1,9 +1,7 @@
 package com.muhammed.chatapp.presentation.viewmodel
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.ListenerRegistration
 import com.muhammed.chatapp.data.repository.AuthRepository
 import com.muhammed.chatapp.data.repository.DataStoreRepository
@@ -38,7 +36,7 @@ class ChatsViewModel @Inject constructor(
     private val _currentUser = MutableStateFlow(User())
     val currentUser = _currentUser.asStateFlow()
 
-    private var userChatIDsListener: ListenerRegistration? = null
+
     private var chatsListener: ListenerRegistration? = null
 
     init {
@@ -103,11 +101,11 @@ class ChatsViewModel @Inject constructor(
     }*/
 
 
-  /*  private suspend fun updateUserChatsListLocally(user: User, chatsList: List<String>) {
-        user.chats_list = chatsList
-        dataStoreRepository.saveUserDetails(user)
-    }
-*/
+    /*  private suspend fun updateUserChatsListLocally(user: User, chatsList: List<String>) {
+          user.chats_list = chatsList
+          dataStoreRepository.saveUserDetails(user)
+      }
+  */
     private fun createPrivateChat(otherUserEmail: String) {
         viewModelScope.launch(Dispatchers.IO) {
             try {
@@ -121,14 +119,13 @@ class ChatsViewModel @Inject constructor(
                     user?.let {
                         val room = fireStoreRepository.createNewPrivateChat(otherUserEmail, user)
                         room?.let {
-
                             fireStoreRepository.updateUserChatsList(
                                 user.email,
                                 user.collection,
                                 room.cid
                             )
-
                             setState(ChatsState.PrivateRoomCreated(it))
+                            listenToUserChats()
                         }
 
                     }
@@ -140,6 +137,14 @@ class ChatsViewModel @Inject constructor(
             }
         }
     }
+
+    /* private suspend fun updateUserLocally(roomId: String) {
+         val chatsIds = _currentUser.value.chats_list.toMutableList()
+         chatsIds.add(roomId)
+         _currentUser.value.chats_list = chatsIds
+         dataStoreRepository.saveUserDetails(_currentUser.value)
+
+     }*/
 
     /*private fun loadChats(chat_ids: List<String>) {
         viewModelScope.launch(Dispatchers.IO) {
@@ -155,52 +160,28 @@ class ChatsViewModel @Inject constructor(
             dataStoreRepository.currentUser.collect { user ->
                 user?.let {
                     _currentUser.value = it
-                    userChatIDsListener = fireStoreRepository.listenToUserChats(it) { value, error ->
-                        if (error == null) {
-                            // Chats Listener will be removed once a user creates or deletes a chat
-                            chatsListener?.remove()
-                            // The User chat list listener response
-                            val chatIds = value?.toObject(User::class.java)?.chats_list
-                            chatIds?.let { ids ->
-                                Log.d(TAG, "listenToUserChats: $chatIds")
-                                if (ids.isEmpty()) {
-                                    _privateChats.value = emptyList()
-                                }else {
-                                    // Firing the Chats Listener once again with the new chats list
-                                    chatsListener =
-                                        fireStoreRepository.listenToChatsChanges(ids) { roomsValue, roomsError ->
-                                            if (roomsError == null) {
-                                                roomsValue?.documents?.let { documents ->
-                                                    publishPrivateRoomList(documents)
-                                                }
-                                            }
-                                        }
+                    fireStoreRepository.getUserChatIds(it)?.let { chatIds ->
+                        // Chats Listener will be removed once a user creates or deletes a chat
+                        chatsListener?.remove()
+                        if (chatIds.isEmpty()) {
+                            _privateChats.value = emptyList()
+                        } else {
+                            // Firing the Chats Listener once again with the new chats list
+                            chatsListener =
+                                fireStoreRepository.listenToChatsChanges(chatIds) { rooms ->
+                                    _privateChats.value = rooms
                                 }
-                            }
                         }
                     }
-
 
                 }
             }
         }
     }
 
-    private fun publishPrivateRoomList(documents: List<DocumentSnapshot>) {
-        viewModelScope.launch(Dispatchers.IO) {
-            val rooms = mutableListOf<PrivateChat>()
-            documents.forEach {
-                val room = it.toObject(PrivateChat::class.java)
-                room?.let { rooms.add(room) }
-            }
-            Log.d(TAG, "listenToUserChats: $rooms")
-            _privateChats.value = rooms
-        }
-    }
 
     private fun setState(state: ChatsState) {
         _states.value = state
-
     }
 
 
@@ -215,6 +196,11 @@ class ChatsViewModel @Inject constructor(
                 }
             )
         }
+    }
+
+    override fun onCleared() {
+        super.onCleared()
+        chatsListener?.remove()
     }
 
     companion object {

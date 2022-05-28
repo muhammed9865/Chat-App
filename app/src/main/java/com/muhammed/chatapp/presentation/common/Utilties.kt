@@ -84,7 +84,7 @@ fun toggleButtonAvailabilityOnAuth(
 
 fun LoadingDialog.hideDialog() {
     if (isVisible) {
-        dismiss()
+        dialog?.hide()
     }
 }
 

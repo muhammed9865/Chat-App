@@ -7,3 +7,8 @@ object Constants {
     const val USER_CATEGORY = "user_category"
     const val USER_NAME = "user_name"
 }
+
+object Fields {
+    const val LAST_MSG_DATE = "lastMessageDate"
+
+}

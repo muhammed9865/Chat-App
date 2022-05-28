@@ -97,6 +97,7 @@ class ChatsFragment : Fragment() {
 
                     is ChatsState.UserExists -> {
                         Log.d(TAG, "doOnStateChanged: ${state.privateChat}")
+                        loadingDialog.hideDialog()
                     }
 
                     is ChatsState.PrivateRoomCreated -> {
@@ -121,7 +122,7 @@ class ChatsFragment : Fragment() {
                     }
                     is ChatsState.Error -> {
                         view?.showError(state.errorMessage)
-                        viewModel.doOnEvent(ChatsEvent.Idle)
+                        loadingDialog.hideDialog()
                     }
 
                     else -> {}

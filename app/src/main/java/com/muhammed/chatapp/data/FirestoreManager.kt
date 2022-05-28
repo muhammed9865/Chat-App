@@ -2,6 +2,7 @@ package com.muhammed.chatapp.data
 
 import com.google.android.gms.tasks.Task
 import com.google.firebase.firestore.*
+import com.muhammed.chatapp.Fields
 import com.muhammed.chatapp.pojo.Messages
 import com.muhammed.chatapp.pojo.PrivateChat
 import com.muhammed.chatapp.pojo.User
@@ -91,12 +92,13 @@ class FirestoreManager @Inject constructor(private val mFirestore: FirebaseFires
         throw NullPointerException("User not found")
     }
 
+/*
     suspend fun getUserChats(user: User): List<PrivateChat> {
         val chats = mutableListOf<PrivateChat>()
-        /*if (user.chats_list.isEmpty()) {
+        if (user.chats_list.isEmpty()) {
             return emptyList()
         }
-*/
+
         val chatsList = mFirestore.collection(user.collection)
             .document(user.email)
             .get().await().toObject(User::class.java)?.chats_list
@@ -112,6 +114,7 @@ class FirestoreManager @Inject constructor(private val mFirestore: FirebaseFires
 
         return chats
     }
+*/
 
 
     fun listenToUserChats(
@@ -125,14 +128,35 @@ class FirestoreManager @Inject constructor(private val mFirestore: FirebaseFires
         else null
     }
 
+   suspend fun getUserChatIds(user: User): List<String>? {
+        return mFirestore.collection(user.collection)
+            .document(user.email)
+            .get().await().toObject(User::class.java)?.chats_list
+    }
+
     fun listenToChatsChanges(
         chat_ids: List<String>,
         listener: EventListener<QuerySnapshot>
     ): ListenerRegistration? {
         return if (chat_ids.isEmpty()) null
         else mFirestore.collection(Collections.CHATS)
-            .whereIn("cid", chat_ids)
+            .orderBy(Fields.LAST_MSG_DATE)
             .addSnapshotListener(listener)
+    }
+
+    fun listenToChatsChangedV2(
+        onChange: (room: List<DocumentChange>) -> Unit
+    ) {
+        mFirestore.collection(Collections.CHATS)
+            .addSnapshotListener { value, error ->
+                if (error == null) {
+                    value?.let {
+                        if (it.documentChanges.isNotEmpty()) {
+                            onChange(it.documentChanges)
+                        }
+                    }
+                }
+            }
     }
 
     suspend fun loadChats(chat_ids: List<String>): List<PrivateChat> {
