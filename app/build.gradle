@@ -41,7 +41,7 @@ dependencies {
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
     def lifecycle_version = "2.5.0-rc01"
     def nav_version = "2.4.2"
-    def arch_version = "2.1.0"
+
 
     implementation 'androidx.core:core-ktx:1.7.0'
     implementation 'androidx.appcompat:appcompat:1.4.1'
@@ -88,7 +88,7 @@ dependencies {
     implementation 'com.firebaseui:firebase-ui-firestore:8.0.1'
 
     // Coroutine Support for Firebase operations
-    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-play-services:1.4.1'
+    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-play-services:1.6.1'
 
     // Dagger Hilt
     implementation "com.google.dagger:hilt-android:2.38.1"

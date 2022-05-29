@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     package="com.muhammed.chatapp">
 
     <uses-permission android:name="android.permission.INTERNET" />
@@ -27,7 +28,10 @@
         <activity
             android:name=".presentation.activity.MainActivity"
             android:exported="true"
-            android:screenOrientation="portrait"></activity>
+            android:screenOrientation="portrait"
+            tools:ignore="LockedOrientationActivity">
+
+        </activity>
 
         <service
             android:name=".services.MessagingService"
@@ -35,11 +39,11 @@
             <intent-filter>
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />
             </intent-filter>
-
             <meta-data
                 android:name="com.google.firebase.messaging.default_notification_channel_id"
                 android:value="@string/default_notification_channel_id" />
         </service>
+
     </application>
 
 </manifest>

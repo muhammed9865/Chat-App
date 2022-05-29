@@ -10,12 +10,10 @@ import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.google.firebase.firestore.Query
 import com.muhammed.chatapp.R
 import com.muhammed.chatapp.databinding.FragmentChatsBinding
 import com.muhammed.chatapp.domain.use_cases.ValidateCurrentUser
 import com.muhammed.chatapp.presentation.adapter.ChatsAdapter
-import com.muhammed.chatapp.presentation.adapter.PrivateChatAdapter
 import com.muhammed.chatapp.presentation.common.*
 import com.muhammed.chatapp.presentation.event.ChatsEvent
 import com.muhammed.chatapp.presentation.state.ChatsState
@@ -28,15 +26,14 @@ class ChatsFragment : Fragment() {
     private val binding: FragmentChatsBinding by lazy { FragmentChatsBinding.inflate(layoutInflater) }
     private val viewModel by activityViewModels<ChatsViewModel>()
     private val loadingDialog: LoadingDialog by lazy { LoadingDialog.getInstance() }
-
-
     private var mAdapter: ChatsAdapter? = null
-
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
+
+
         binding.menuBtn.setOnClickListener {
             showOptionsMenu()
         }
@@ -70,7 +67,6 @@ class ChatsFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         doOnStateChanged()
-
     }
 
     private fun showOptionsMenu() {
@@ -79,6 +75,8 @@ class ChatsFragment : Fragment() {
             viewModel.doOnEvent(ChatsEvent.SignOut)
         }
         menuOptions.showMenu()
+
+
 
     }
 
@@ -113,7 +111,7 @@ class ChatsFragment : Fragment() {
 
                     is ChatsState.StartListeningToRooms -> {
                         lifecycleScope.launch {
-                            initializeRecyclerViewWithAdapter(state.roomsQuery)
+                            initializeRecyclerViewWithAdapter()
                             viewModel.currentUser.collect {
                                 mAdapter?.setCurrentUser(it)
                                 loadingDialog.hideDialog()
@@ -132,7 +130,7 @@ class ChatsFragment : Fragment() {
     }
 
 
-    private fun initializeRecyclerViewWithAdapter(roomsQuery: Query) {
+    private fun initializeRecyclerViewWithAdapter() {
         if (mAdapter == null) {
             binding.chatsRv.apply {
                 adapter = mAdapter
@@ -144,4 +142,5 @@ class ChatsFragment : Fragment() {
     companion object {
         private const val TAG = "ChatsFragment"
     }
+
 }
