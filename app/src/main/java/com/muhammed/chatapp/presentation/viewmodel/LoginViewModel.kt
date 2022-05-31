@@ -129,13 +129,13 @@ class LoginViewModel @Inject constructor(
         viewModelScope.launch(Dispatchers.IO) {
             try {
                 authRepository.loginUser(email, password)?.let {
-                  /*  if (it.isEmailVerified) {*/
+                    if (it.isEmailVerified) {
                         val user = fireStoreRepository.getUser(it.email!!)
                         dataStoreRepository.saveUserDetails(user)
                         _authStates.send(AuthenticationState.AuthenticationSuccess)
                         return@launch
-/*                    }
-                    throw Exception("Either email or password is incorrect")*/
+                    }
+                    throw Exception("Either email or password is incorrect")
                 }
 
             } catch (e: Exception) {

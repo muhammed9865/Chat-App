@@ -3,12 +3,14 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="..\:/AndroidStudioProjects/ChatApp/app/src/main/res/drawable/back_arrow_icon.xml" value="0.242" />
         <entry key="..\:/AndroidStudioProjects/ChatApp/app/src/main/res/drawable/bot_nav_rounded.xml" value="0.24" />
         <entry key="..\:/AndroidStudioProjects/ChatApp/app/src/main/res/drawable/chat_newmsgs_count_bg.xml" value="0.24" />
         <entry key="..\:/AndroidStudioProjects/ChatApp/app/src/main/res/drawable/ic_baseline_photo_camera_24.xml" value="0.242" />
         <entry key="..\:/AndroidStudioProjects/ChatApp/app/src/main/res/drawable/ic_group_43_.xml" value="0.24" />
         <entry key="..\:/AndroidStudioProjects/ChatApp/app/src/main/res/drawable/ic_list.xml" value="0.242" />
         <entry key="..\:/AndroidStudioProjects/ChatApp/app/src/main/res/drawable/icon_rounded_bg.xml" value="0.24" />
+        <entry key="..\:/AndroidStudioProjects/ChatApp/app/src/main/res/drawable/rounded_edittext.xml" value="0.242" />
         <entry key="..\:/AndroidStudioProjects/ChatApp/app/src/main/res/layout-land/fragment_register.xml" value="0.33" />
         <entry key="..\:/AndroidStudioProjects/ChatApp/app/src/main/res/layout-xhdpi/fragment_register.xml" value="0.40729166666666666" />
         <entry key="..\:/AndroidStudioProjects/ChatApp/app/src/main/res/layout/activity_auth.xml" value="0.40729166666666666" />
@@ -19,9 +21,12 @@
         <entry key="..\:/AndroidStudioProjects/ChatApp/app/src/main/res/layout/fragment_chats.xml" value="0.3932291666666667" />
         <entry key="..\:/AndroidStudioProjects/ChatApp/app/src/main/res/layout/fragment_communities.xml" value="0.40729166666666666" />
         <entry key="..\:/AndroidStudioProjects/ChatApp/app/src/main/res/layout/fragment_login.xml" value="0.4114583333333333" />
+        <entry key="..\:/AndroidStudioProjects/ChatApp/app/src/main/res/layout/fragment_messaging.xml" value="0.36574074074074076" />
         <entry key="..\:/AndroidStudioProjects/ChatApp/app/src/main/res/layout/fragment_register.xml" value="0.33" />
         <entry key="..\:/AndroidStudioProjects/ChatApp/app/src/main/res/layout/fragment_register_complete.xml" value="0.4114583333333333" />
         <entry key="..\:/AndroidStudioProjects/ChatApp/app/src/main/res/layout/list_item_message.xml" value="0.36574074074074076" />
+        <entry key="..\:/AndroidStudioProjects/ChatApp/app/src/main/res/layout/list_item_message_received.xml" value="0.36574074074074076" />
+        <entry key="..\:/AndroidStudioProjects/ChatApp/app/src/main/res/layout/list_item_message_sent.xml" value="0.36574074074074076" />
         <entry key="..\:/AndroidStudioProjects/ChatApp/app/src/main/res/layout/list_item_private_chat.xml" value="0.36574074074074076" />
         <entry key="..\:/AndroidStudioProjects/ChatApp/app/src/main/res/layout/list_item_single_chat.xml" value="0.40729166666666666" />
         <entry key="..\:/AndroidStudioProjects/ChatApp/app/src/main/res/layout/loading_dialog.xml" value="0.3607305936073059" />

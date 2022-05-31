@@ -1,8 +1,8 @@
 package com.muhammed.chatapp.domain.use_cases
 
 import com.google.firebase.firestore.DocumentSnapshot
-import com.muhammed.chatapp.pojo.PrivateChat
-import com.muhammed.chatapp.pojo.User
+import com.muhammed.chatapp.data.pojo.PrivateChat
+import com.muhammed.chatapp.data.pojo.User
 import javax.inject.Inject
 
 class FilterUserPrivateRoom @Inject constructor() {

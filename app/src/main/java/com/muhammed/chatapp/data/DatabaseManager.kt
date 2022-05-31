@@ -5,7 +5,7 @@ import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.ValueEventListener
-import com.muhammed.chatapp.pojo.Message
+import com.muhammed.chatapp.data.pojo.Message
 import kotlinx.coroutines.tasks.await
 import javax.inject.Inject
 

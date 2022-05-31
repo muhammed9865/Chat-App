@@ -2,14 +2,14 @@ package com.muhammed.chatapp.data
 
 import com.google.firebase.firestore.*
 import com.muhammed.chatapp.Fields
-import com.muhammed.chatapp.pojo.Messages
-import com.muhammed.chatapp.pojo.PrivateChat
-import com.muhammed.chatapp.pojo.User
+import com.muhammed.chatapp.data.pojo.Message
+import com.muhammed.chatapp.data.pojo.Messages
+import com.muhammed.chatapp.data.pojo.PrivateChat
+import com.muhammed.chatapp.data.pojo.User
 import kotlinx.coroutines.tasks.await
 import javax.inject.Inject
 
 class FirestoreManager @Inject constructor(private val mFirestore: FirebaseFirestore) {
-
 
     suspend fun saveUser(user: User) {
         mFirestore.collection(Collections.USERS)
@@ -100,11 +100,50 @@ class FirestoreManager @Inject constructor(private val mFirestore: FirebaseFires
         listener: EventListener<QuerySnapshot>
     ): ListenerRegistration {
         return mFirestore.collection(Collections.CHATS)
-            .orderBy(Fields.LAST_MSG_DATE)
             .addSnapshotListener(listener)
     }
 
+    fun listenToChatMessages(
+        messagesId: String,
+        listener: EventListener<DocumentSnapshot>
+    ): ListenerRegistration {
+        return mFirestore.collection(Collections.MESSAGES)
+            .document(messagesId)
+            .addSnapshotListener(listener)
+    }
 
+    suspend fun sendMessage(
+        chatId: String,
+        messagesId: String,
+        message: Message
+    ){
+        mFirestore.collection(Collections.MESSAGES)
+            .document(messagesId)
+            .update(Fields.MESSAGES,FieldValue.arrayUnion(message))
+            .await()
+
+        mFirestore.collection(Collections.CHATS)
+            .document(chatId)
+            .update(Fields.LAST_MESSAGE, message)
+            .await()
+    }
+
+    suspend fun getUserChatList(user: User): List<PrivateChat> {
+        val chats = mutableListOf<PrivateChat>()
+        val indexes = user.chats_list.chunked(10)
+        indexes.forEach { listOfIds ->
+            val list = mFirestore.collection(Collections.CHATS)
+                .whereIn("cid", listOfIds)
+                .get().await().toObjects(PrivateChat::class.java)
+
+            list.forEach {
+                chats.add(it)
+            }
+        }
+
+        return chats
+
+    }
 
 
     object Collections {

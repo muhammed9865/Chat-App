@@ -4,14 +4,13 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.firebase.firestore.ListenerRegistration
+import com.muhammed.chatapp.data.pojo.PrivateChat
+import com.muhammed.chatapp.data.pojo.User
 import com.muhammed.chatapp.data.repository.AuthRepository
 import com.muhammed.chatapp.data.repository.DataStoreRepository
 import com.muhammed.chatapp.data.repository.FirestoreRepository
-import com.muhammed.chatapp.domain.use_cases.ValidateCurrentUser
-import com.muhammed.chatapp.domain.use_cases.ValidateEmail
-import com.muhammed.chatapp.domain.use_cases.ValidateUserExists
-import com.muhammed.chatapp.pojo.PrivateChat
-import com.muhammed.chatapp.pojo.User
+import com.muhammed.chatapp.domain.use_cases.CreateRoomUseCase
+import com.muhammed.chatapp.domain.use_cases.SerializeEntityUseCase
 import com.muhammed.chatapp.presentation.event.ChatsEvent
 import com.muhammed.chatapp.presentation.state.ChatsState
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -27,9 +26,8 @@ class ChatsViewModel @Inject constructor(
     private val authRepository: AuthRepository,
     private val fireStoreRepository: FirestoreRepository,
     private val dataStoreRepository: DataStoreRepository,
-    private val validateEmail: ValidateEmail,
-    private val validateUserExists: ValidateUserExists,
-    private val validateCurrentUser: ValidateCurrentUser
+    private val createRoomUseCase: CreateRoomUseCase,
+    private val serializeEntityUseCase: SerializeEntityUseCase
 ) : ViewModel() {
 
     private val _states = MutableStateFlow<ChatsState>(ChatsState.Idle)
@@ -38,15 +36,17 @@ class ChatsViewModel @Inject constructor(
     val privateChats = _privateChats.asStateFlow()
     private val _currentUser = MutableStateFlow(User())
     val currentUser = _currentUser.asStateFlow()
+
+    // This State is changed whenever a private chat selected
+
+
     private var chatsListener: ListenerRegistration? = null
-    private var profileListener: ListenerRegistration? = null
 
 
     init {
         tryAsync {
             dataStoreRepository.currentUser.filterNotNull().collect {
                 _currentUser.value = it
-                fireStoreRepository.setChatIds(it.chats_list)
                 listenToUserChats()
 
             }
@@ -59,19 +59,22 @@ class ChatsViewModel @Inject constructor(
 
             is ChatsEvent.SignOut -> signOut()
 
-            is ChatsEvent.CreatePrivateRoom -> validateUserExists(email = event.email)
+            is ChatsEvent.CreatePrivateRoom -> createPrivateChat(otherUserEmail = event.email)
 
-            else -> {}
+            is ChatsEvent.JoinPrivateChat -> {
+                val room = serializeEntityUseCase.toString(event.chat)
+                setState(ChatsState.EnterChat(room))
+            }
 
 
         }
     }
 
-    private fun validateUserExists(email: String) {
+   /* private fun validateUserExists(email: String) {
         tryAsync {
             dataStoreRepository.currentUser.collect { user ->
                 user?.let {
-                    val isCurrentUser = validateCurrentUser.execute(user.email, email)
+                    val isCurrentUser = checkIfCurrentUserUseCase.execute(user.email, email)
                     if (!isCurrentUser.isSuccessful) {
                         val exists = validateUserExists.execute(email, _privateChats.value)
                         exists?.let { setState(ChatsState.UserExists(it)) }
@@ -82,30 +85,26 @@ class ChatsViewModel @Inject constructor(
                 }
             }
         }
-    }
+    }*/
 
-    private  fun createPrivateChat(otherUserEmail: String) {
-       tryAsync {
-           val result = validateEmail.execute(otherUserEmail)
-           result.errorMessage?.let { throw NullPointerException(it) }
-           setState(ChatsState.Loading)
-           // if current user is not null, start creating the chat,
-           // and then update the current chat list on fireStore.
-           dataStoreRepository.currentUser.collect { user ->
-               user?.let {
-                   val room = fireStoreRepository.createNewPrivateChat(otherUserEmail, user)
-                   room?.let {
-                       fireStoreRepository.updateUserChatsList(
-                           user.email,
-                           user.collection,
-                           room.cid
-                       )
-                       setState(ChatsState.PrivateRoomCreated(it))
-                       updateCurrentUserChatsList(room.cid)
-                   }
-               }
-           }
-       }
+    private fun createPrivateChat(otherUserEmail: String) {
+        tryAsync {
+            setState(ChatsState.Loading)
+            // if current user is not null, start creating the chat,
+            // and then update the current chat list on fireStore.
+            dataStoreRepository.currentUser.filterNotNull().collect { user ->
+                val room = createRoomUseCase.execute(otherUserEmail, user, _privateChats.value)
+                room?.let {
+                    fireStoreRepository.updateUserChatsList(
+                        user.email,
+                        user.collection,
+                        room.cid
+                    )
+                    setState(ChatsState.PrivateRoomCreated(it))
+                    updateCurrentUserChatsList(room.cid)
+                }
+            }
+        }
     }
 
     private fun updateCurrentUserChatsList(roomId: String) {
@@ -114,7 +113,6 @@ class ChatsViewModel @Inject constructor(
         val newUser = _currentUser.value
         newUser.chats_list = usersChatList
         _currentUser.value = newUser
-        fireStoreRepository.setChatIds(usersChatList)
     }
 
 
@@ -127,13 +125,13 @@ class ChatsViewModel @Inject constructor(
         }
     }
 
-    private fun tryAsync(function: suspend () -> Unit) {
+    private fun tryAsync (function: suspend () -> Unit) {
         viewModelScope.launch(Dispatchers.IO) {
             try {
                 function()
-            }catch (e: Exception) {
-                Log.d(TAG, "listenToUserProfile: ${e.message}")
-                setState(ChatsState.Error("Something went wrong"))
+            } catch (e: Exception) {
+                Log.e(TAG, "Error: ${e.message}")
+                setState(ChatsState.Error(e.message.toString()))
             }
         }
     }
@@ -159,7 +157,6 @@ class ChatsViewModel @Inject constructor(
 
     override fun onCleared() {
         chatsListener?.remove()
-        profileListener?.remove()
         super.onCleared()
     }
 

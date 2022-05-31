@@ -32,6 +32,9 @@
     <string name="default_notification_channel_id">Messages channel</string>
     <string name="start_a_new_chat">Start a new chat</string>
     <string name="start">Start</string>
+    <string name="background">background</string>
+    <string name="enter_message">Type a message..</string>
+    <string name="record_audio">record_audio</string>
 
     <string-array name="menu_rows">
         <item>Sign out</item>

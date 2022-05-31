@@ -1,8 +1,10 @@
 package com.muhammed.chatapp.presentation.activity
 
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.MenuItem
+import android.view.View
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
@@ -11,6 +13,7 @@ import androidx.navigation.fragment.NavHostFragment
 import com.google.android.material.navigation.NavigationBarView
 import com.google.android.material.shape.CornerFamily
 import com.google.android.material.shape.MaterialShapeDrawable
+import com.muhammed.chatapp.Constants
 import com.muhammed.chatapp.R
 import com.muhammed.chatapp.databinding.ActivityMainBinding
 import com.muhammed.chatapp.presentation.common.*
@@ -21,7 +24,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
-class MainActivity : AppCompatActivity(), NavigationBarView.OnItemSelectedListener {
+class MainActivity : AppCompatActivity(), NavigationBarView.OnItemSelectedListener{
     private val binding: ActivityMainBinding by lazy { ActivityMainBinding.inflate(layoutInflater) }
     private val navController: NavController by lazy {
         val host =
@@ -43,7 +46,7 @@ class MainActivity : AppCompatActivity(), NavigationBarView.OnItemSelectedListen
             createNewChat()
         }
 
-        //onStateChanged()
+        onStateChanged()
     }
 
     private fun makeBotNavRoundedCorners() {
@@ -71,7 +74,6 @@ class MainActivity : AppCompatActivity(), NavigationBarView.OnItemSelectedListen
                 Log.d("Chat State", "onStateChanged from activity: ${it.javaClass}")
                 when (it) {
                     is ChatsState.Idle -> {
-                        loadingDialog.hideDialog()
                     }
                     is ChatsState.SignedOut -> {
                         navController.navigate(R.id.action_chatsFragment_to_authActivity)
@@ -82,12 +84,15 @@ class MainActivity : AppCompatActivity(), NavigationBarView.OnItemSelectedListen
                         binding.root.showError(it.errorMessage)
                     }
                     is ChatsState.PrivateRoomCreated -> {
-                       // binding.root.showSnackBar("Room was created successfully")
                         loadingDialog.hideDialog()
                     }
 
-                    is ChatsState.ChatsListLoaded -> {
-                        loadingDialog.hideDialog()
+                    is ChatsState.EnterChat -> {
+                        val intent = Intent(this@MainActivity, ChatRoomActivity::class.java)
+                        intent.putExtra(Constants.PRIVATE_CHAT, it.room)
+                        startActivity(intent)
+                        viewModel.doOnEvent(ChatsEvent.Idle)
+                       // navController.navigate(R.id.action_chatsFragment_to_chatRoomActivity)
                     }
 
                     is ChatsState.Loading -> {
@@ -100,6 +105,7 @@ class MainActivity : AppCompatActivity(), NavigationBarView.OnItemSelectedListen
         }
     }
 
+
     private fun createNewChat() {
         val newChatDialog = NewChatDialog()
         newChatDialog.setOnStartClickedListener { email ->
@@ -107,6 +113,8 @@ class MainActivity : AppCompatActivity(), NavigationBarView.OnItemSelectedListen
         }
         newChatDialog.show(this.supportFragmentManager, null)
     }
+
+
 
 
 }

@@ -1,4 +1,4 @@
-package com.muhammed.chatapp.pojo
+package com.muhammed.chatapp.data.pojo
 
 import com.google.firebase.auth.FirebaseUser
 

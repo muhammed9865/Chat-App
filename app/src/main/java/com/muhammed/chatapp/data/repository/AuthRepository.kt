@@ -3,7 +3,7 @@ package com.muhammed.chatapp.data.repository
 import com.muhammed.chatapp.data.EmailAndPasswordAuth
 import com.muhammed.chatapp.data.FirestoreManager
 import com.muhammed.chatapp.domain.Encoder
-import com.muhammed.chatapp.pojo.User
+import com.muhammed.chatapp.data.pojo.User
 import javax.inject.Inject
 
 class AuthRepository @Inject constructor(

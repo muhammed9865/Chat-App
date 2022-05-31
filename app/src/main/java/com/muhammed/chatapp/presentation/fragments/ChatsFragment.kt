@@ -12,7 +12,7 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.muhammed.chatapp.R
 import com.muhammed.chatapp.databinding.FragmentChatsBinding
-import com.muhammed.chatapp.domain.use_cases.ValidateCurrentUser
+import com.muhammed.chatapp.domain.use_cases.CheckIfCurrentUserUseCase
 import com.muhammed.chatapp.presentation.adapter.ChatsAdapter
 import com.muhammed.chatapp.presentation.common.*
 import com.muhammed.chatapp.presentation.event.ChatsEvent
@@ -32,14 +32,10 @@ class ChatsFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-
-
         binding.menuBtn.setOnClickListener {
             showOptionsMenu()
         }
-
-        mAdapter = ChatsAdapter(ValidateCurrentUser())
-
+        mAdapter = ChatsAdapter(CheckIfCurrentUserUseCase())
 
         lifecycleScope.launch {
             launch {
@@ -60,14 +56,18 @@ class ChatsFragment : Fragment() {
             layoutManager = LinearLayoutManager(requireContext())
         }
 
+        mAdapter?.registerClickListener {
+            viewModel.doOnEvent(ChatsEvent.JoinPrivateChat(it))
+        }
 
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        doOnStateChanged()
+        //doOnStateChanged()
     }
+
 
     private fun showOptionsMenu() {
         val menuOptions = MenuOptions(requireActivity(), binding.menuBtn, R.menu.options_menu)
@@ -87,7 +87,6 @@ class ChatsFragment : Fragment() {
             viewModel.states.collect { state ->
                 Log.d("Chat State", "onStateChanged from fragment: $state")
                 when (state) {
-
                     is ChatsState.SignedOut -> {
                         findNavController().navigate(R.id.action_chatsFragment_to_authActivity)
                         requireActivity().finish()
@@ -101,13 +100,6 @@ class ChatsFragment : Fragment() {
                     is ChatsState.PrivateRoomCreated -> {
                         loadingDialog.hideDialog()
                     }
-
-                    is ChatsState.ChatsListLoaded -> {
-                        loadingDialog.hideDialog()
-                    }
-
-
-                    is ChatsState.Loading -> loadingDialog.showDialog(parentFragmentManager, "loading")
 
                     is ChatsState.StartListeningToRooms -> {
                         lifecycleScope.launch {
@@ -123,6 +115,9 @@ class ChatsFragment : Fragment() {
                         loadingDialog.hideDialog()
                     }
 
+                    is ChatsState.Loading -> {
+                        loadingDialog.showDialog(requireActivity().supportFragmentManager, null)
+                    }
                     else -> {}
                 }
             }

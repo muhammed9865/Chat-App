@@ -1,0 +1,121 @@
+package com.muhammed.chatapp.presentation.viewmodel
+
+import android.content.Intent
+import android.util.Log
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import com.google.firebase.firestore.ListenerRegistration
+import com.muhammed.chatapp.Constants
+import com.muhammed.chatapp.data.pojo.Message
+import com.muhammed.chatapp.data.pojo.Messages
+import com.muhammed.chatapp.data.pojo.MessagingRoom
+import com.muhammed.chatapp.data.pojo.User
+import com.muhammed.chatapp.data.repository.DataStoreRepository
+import com.muhammed.chatapp.data.repository.MessagesRepository
+import com.muhammed.chatapp.domain.use_cases.SerializeEntityUseCase
+import com.muhammed.chatapp.presentation.event.MessagingRoomEvents
+import com.muhammed.chatapp.presentation.state.MessagingRoomStates
+import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.filterNotNull
+import kotlinx.coroutines.launch
+import javax.inject.Inject
+
+@HiltViewModel
+class MessagingViewModel @Inject constructor(
+    private val serializeEntityUseCase: SerializeEntityUseCase,
+    private val messagesRepository: MessagesRepository,
+    private val dataStoreRepository: DataStoreRepository
+) : ViewModel() {
+    private val _room = MutableStateFlow(MessagingRoom())
+    val room = _room.asStateFlow()
+
+    private val _messages = MutableStateFlow(Messages())
+    val messages = _messages.asStateFlow()
+
+    private val _states = MutableStateFlow<MessagingRoomStates>(MessagingRoomStates.Idle)
+    val states = _states.asStateFlow()
+    var currentUser = MutableStateFlow(User())
+    private var messagesListener: ListenerRegistration? = null
+
+    init {
+        tryAsync {
+            dataStoreRepository.currentUser.filterNotNull().collect {
+                currentUser.value = it
+            }
+        }
+    }
+
+    fun doOnEvent(event: MessagingRoomEvents) {
+        when (event) {
+            is MessagingRoomEvents.SendUserDetails -> getUserDetailsFromIntent(event.intent)
+            is MessagingRoomEvents.SendMessage -> sendMessage(event.message)
+        }
+    }
+
+    private fun getUserDetailsFromIntent(intent: Intent?) {
+        val roomAsString = intent?.getStringExtra(Constants.PRIVATE_CHAT)
+        roomAsString?.let {
+            Log.d(TAG, "getUserDetailsFromIntent: $it")
+            val room = serializeEntityUseCase.fromString<MessagingRoom>(it)
+            _room.value = room
+            listenToMessages()
+        }
+
+        // Used it here instead of init because I'm not sure if it will be executed first and would lead to NullPointerException
+        // And since getUserDetailsFromIntent is called once entering the activity, so it's like init.
+
+    }
+
+    private fun listenToMessages() {
+        tryAsync {
+            Log.d(TAG, "listenToMessages: ${_room.value}")
+            messagesListener = messagesRepository.listenToMessages(_room.value.messagesId) {
+                _messages.value = it
+                Log.d(TAG, "listenToMessages: $it")
+            }
+        }
+    }
+
+    private fun sendMessage(message: String) {
+       tryAsync {
+           val msg = Message(
+               currentUser.value,
+               message
+           )
+           messagesRepository.sendMessage(
+               chatId = _room.value.chatId,
+               messagesId = _room.value.messagesId,
+               message = msg
+           )
+       }
+
+    }
+
+    private fun tryAsync(asyncFunction: suspend () -> Unit) {
+        viewModelScope.launch(Dispatchers.IO) {
+            try {
+                asyncFunction()
+            } catch (e: Exception) {
+                Log.e(TAG, "tryAsync: ${e.message}")
+                setState(MessagingRoomStates.Error(e.message.toString()))
+            }
+        }
+    }
+
+    private fun setState(state: MessagingRoomStates) {
+        _states.value = state
+    }
+
+    companion object {
+        private const val TAG = "MessagingViewModel"
+    }
+
+    override fun onCleared() {
+        messagesListener?.remove()
+        super.onCleared()
+    }
+
+}

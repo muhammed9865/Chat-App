@@ -1,7 +1,7 @@
-package com.muhammed.chatapp.pojo
+package com.muhammed.chatapp.data.pojo
 
 data class ChatStatus(
-    private val status: String
+    val status: String = IDLE
 ) {
     companion object {
         const val TYPING = "typing.."

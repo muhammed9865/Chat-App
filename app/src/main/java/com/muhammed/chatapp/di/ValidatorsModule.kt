@@ -1,5 +1,6 @@
 package com.muhammed.chatapp.di
 
+import com.google.gson.Gson
 import com.muhammed.chatapp.domain.use_cases.ValidateEmail
 import com.muhammed.chatapp.domain.use_cases.ValidateNickname
 import com.muhammed.chatapp.domain.use_cases.ValidatePassword
@@ -29,4 +30,8 @@ class ValidatorsModule {
     @Provides
     @Singleton
     fun provideNicknameValidator(): ValidateNickname = ValidateNickname()
+
+    @Provides
+    @Singleton
+    fun provideGson(): Gson = Gson()
 }

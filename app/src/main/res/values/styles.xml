@@ -28,4 +28,12 @@
         <item name="hintTextAppearance">@style/EditTextHint</item>
     </style>
 
+    <style name="ToolbarTitleAppearance">
+        <item name="android:fontFamily">@font/sf_medium</item>
+        <item name="android:textSize">@dimen/_12ssp</item>
+    </style>
+    <style name="ToolbarSubtitle">
+        <item name="android:textSize">@dimen/_10ssp</item>
+        <item name="android:fontFamily">@font/sf_regular</item>
+    </style>
 </resources>
