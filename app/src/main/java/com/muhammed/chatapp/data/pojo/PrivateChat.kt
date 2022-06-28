@@ -14,10 +14,4 @@ data class PrivateChat(
     override fun toString(): String {
         return Gson().toJson(this)
     }
-
-    companion object {
-        fun fromString(string: String): PrivateChat {
-            return Gson().fromJson(string, PrivateChat::class.java)
-        }
-    }
 }

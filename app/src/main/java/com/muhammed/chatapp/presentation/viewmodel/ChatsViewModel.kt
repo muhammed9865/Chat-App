@@ -8,7 +8,7 @@ import com.muhammed.chatapp.data.pojo.PrivateChat
 import com.muhammed.chatapp.data.pojo.User
 import com.muhammed.chatapp.data.repository.AuthRepository
 import com.muhammed.chatapp.data.repository.DataStoreRepository
-import com.muhammed.chatapp.data.repository.FirestoreRepository
+import com.muhammed.chatapp.data.repository.NetworkRepository
 import com.muhammed.chatapp.domain.use_cases.CreateRoomUseCase
 import com.muhammed.chatapp.domain.use_cases.SerializeEntityUseCase
 import com.muhammed.chatapp.presentation.event.ChatsEvent
@@ -24,7 +24,7 @@ import javax.inject.Inject
 @HiltViewModel
 class ChatsViewModel @Inject constructor(
     private val authRepository: AuthRepository,
-    private val fireStoreRepository: FirestoreRepository,
+    private val fireStoreRepository: NetworkRepository,
     private val dataStoreRepository: DataStoreRepository,
     private val createRoomUseCase: CreateRoomUseCase,
     private val serializeEntityUseCase: SerializeEntityUseCase

@@ -1,6 +1,6 @@
 package com.muhammed.chatapp.data.repository
 
-import com.muhammed.chatapp.data.DataStoreManager
+import com.muhammed.chatapp.data.implementation.local.DataStoreManager
 import com.muhammed.chatapp.data.pojo.User
 import javax.inject.Inject
 

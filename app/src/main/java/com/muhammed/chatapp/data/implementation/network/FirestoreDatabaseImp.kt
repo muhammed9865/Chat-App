@@ -1,24 +1,29 @@
-package com.muhammed.chatapp.data
+package com.muhammed.chatapp.data.implementation.network
 
 import com.google.firebase.firestore.*
 import com.muhammed.chatapp.Fields
+import com.muhammed.chatapp.data.NetworkDatabase
 import com.muhammed.chatapp.data.pojo.Message
 import com.muhammed.chatapp.data.pojo.Messages
 import com.muhammed.chatapp.data.pojo.PrivateChat
 import com.muhammed.chatapp.data.pojo.User
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 import javax.inject.Inject
 
-class FirestoreManager @Inject constructor(private val mFirestore: FirebaseFirestore) {
+class FirestoreDatabaseImp @Inject constructor(private val mFirestore: FirebaseFirestore) :
+    NetworkDatabase {
 
-    suspend fun saveUser(user: User) {
+    override suspend fun saveUser(user: User) {
         mFirestore.collection(Collections.USERS)
             .document(user.email)
             .set(user)
             .await()
     }
 
-    suspend fun saveGoogleUser(user: User) {
+    override suspend fun saveGoogleUser(user: User) {
         val fUser = getGoogleUser(user.uid)
         if (fUser != null) {
             throw Exception("Email address is already in use, try logging in")
@@ -31,7 +36,7 @@ class FirestoreManager @Inject constructor(private val mFirestore: FirebaseFires
     }
 
     @Throws(NullPointerException::class)
-    suspend fun getUser(email: String): User {
+    override suspend fun getUser(email: String): User {
         val normalUser = mFirestore.collection(Collections.USERS)
             .document(email)
             .get()
@@ -49,7 +54,7 @@ class FirestoreManager @Inject constructor(private val mFirestore: FirebaseFires
     }
 
 
-    suspend fun getGoogleUser(email: String): User? {
+    override suspend fun getGoogleUser(email: String): User? {
         return mFirestore.collection(Collections.GOOGLE_USERS)
             .document(email)
             .get()
@@ -58,8 +63,10 @@ class FirestoreManager @Inject constructor(private val mFirestore: FirebaseFires
     }
 
 
-
-    suspend fun createPrivateChatRoom(otherUserEmail: String, currentUser: User, onRoomIdCreated: (id: String) -> Unit): PrivateChat? {
+    override suspend fun createPrivateChat(
+        otherUserEmail: String,
+        currentUser: User
+    ): PrivateChat? {
         val otherUser = getUser(otherUserEmail)
         // Create Chat Document if user is not null.
         val chatDocument = mFirestore.collection(Collections.CHATS)
@@ -76,8 +83,6 @@ class FirestoreManager @Inject constructor(private val mFirestore: FirebaseFires
             secondUser = otherUser
         )
 
-        onRoomIdCreated(chatDocument.id)
-
         updateUserChatsList(otherUserEmail, otherUser.collection, chatDocument.id)
 
         chatDocument.set(privateChat).await()
@@ -88,7 +93,11 @@ class FirestoreManager @Inject constructor(private val mFirestore: FirebaseFires
     }
 
 
-    suspend fun updateUserChatsList(userEmail: String, userCollection: String, chatId: String) {
+    override suspend fun updateUserChatsList(
+        userEmail: String,
+        userCollection: String,
+        chatId: String
+    ) {
         mFirestore.collection(userCollection)
             .document(userEmail)
             .update(UPDATES.CHATS_LIST, FieldValue.arrayUnion(chatId))
@@ -96,30 +105,40 @@ class FirestoreManager @Inject constructor(private val mFirestore: FirebaseFires
     }
 
 
-    fun listenToChatsChanges(
+    override fun listenToChatsChanges(
         listener: EventListener<QuerySnapshot>
     ): ListenerRegistration {
         return mFirestore.collection(Collections.CHATS)
             .addSnapshotListener(listener)
     }
 
-    fun listenToChatMessages(
+    override fun listenToChatMessages(
         messagesId: String,
-        listener: EventListener<DocumentSnapshot>
-    ): ListenerRegistration {
-        return mFirestore.collection(Collections.MESSAGES)
+        onUpdate: suspend (messages: Messages) -> Unit
+    ) {
+        mFirestore.collection(Collections.MESSAGES)
             .document(messagesId)
-            .addSnapshotListener(listener)
+            .addSnapshotListener { value, error ->
+                if (error == null) {
+                    value?.toObject(Messages::class.java)?.let {
+                        CoroutineScope(Dispatchers.IO).launch {
+                            onUpdate(it)
+                        }
+                    }
+                }else {
+                    throw FirebaseFirestoreException("Something went wrong", FirebaseFirestoreException.Code.NOT_FOUND)
+                }
+            }
     }
 
-    suspend fun sendMessage(
+    override suspend fun sendMessage(
         chatId: String,
         messagesId: String,
         message: Message
-    ){
+    ) {
         mFirestore.collection(Collections.MESSAGES)
             .document(messagesId)
-            .update(Fields.MESSAGES,FieldValue.arrayUnion(message))
+            .update(Fields.MESSAGES, FieldValue.arrayUnion(message))
             .await()
 
         mFirestore.collection(Collections.CHATS)
@@ -128,22 +147,22 @@ class FirestoreManager @Inject constructor(private val mFirestore: FirebaseFires
             .await()
     }
 
-    suspend fun getUserChatList(user: User): List<PrivateChat> {
-        val chats = mutableListOf<PrivateChat>()
-        val indexes = user.chats_list.chunked(10)
-        indexes.forEach { listOfIds ->
-            val list = mFirestore.collection(Collections.CHATS)
-                .whereIn("cid", listOfIds)
-                .get().await().toObjects(PrivateChat::class.java)
+    /* suspend fun getUserChatList(user: User): List<PrivateChat> {
+         val chats = mutableListOf<PrivateChat>()
+         val indexes = user.chats_list.chunked(10)
+         indexes.forEach { listOfIds ->
+             val list = mFirestore.collection(Collections.CHATS)
+                 .whereIn("cid", listOfIds)
+                 .get().await().toObjects(PrivateChat::class.java)
 
-            list.forEach {
-                chats.add(it)
-            }
-        }
+             list.forEach {
+                 chats.add(it)
+             }
+         }
 
-        return chats
+         return chats
 
-    }
+     }*/
 
 
     object Collections {

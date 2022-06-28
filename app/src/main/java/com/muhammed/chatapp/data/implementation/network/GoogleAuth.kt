@@ -1,4 +1,4 @@
-package com.muhammed.chatapp.data
+package com.muhammed.chatapp.data.implementation.network
 
 import android.content.Intent
 import com.google.android.gms.auth.api.signin.GoogleSignIn

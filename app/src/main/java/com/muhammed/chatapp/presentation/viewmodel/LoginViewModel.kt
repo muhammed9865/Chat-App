@@ -5,11 +5,11 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
-import com.muhammed.chatapp.data.GoogleAuth
-import com.muhammed.chatapp.data.GoogleAuthCallback
+import com.muhammed.chatapp.data.implementation.network.GoogleAuth
+import com.muhammed.chatapp.data.implementation.network.GoogleAuthCallback
 import com.muhammed.chatapp.data.repository.AuthRepository
 import com.muhammed.chatapp.data.repository.DataStoreRepository
-import com.muhammed.chatapp.data.repository.FirestoreRepository
+import com.muhammed.chatapp.data.repository.NetworkRepository
 import com.muhammed.chatapp.domain.use_cases.ValidateEmail
 import com.muhammed.chatapp.domain.use_cases.ValidatePassword
 import com.muhammed.chatapp.presentation.event.AuthenticationEvent
@@ -26,7 +26,7 @@ import javax.inject.Inject
 @HiltViewModel
 class LoginViewModel @Inject constructor(
     private val authRepository: AuthRepository,
-    private val fireStoreRepository: FirestoreRepository,
+    private val fireStoreRepository: NetworkRepository,
     private val dataStoreRepository: DataStoreRepository,
     private val googleAuth: GoogleAuth,
     private val validateEmail: ValidateEmail,

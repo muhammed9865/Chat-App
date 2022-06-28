@@ -6,7 +6,7 @@ import androidx.core.app.NotificationManagerCompat
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
 import com.muhammed.chatapp.R
-import com.muhammed.chatapp.data.FirestoreManager
+import com.muhammed.chatapp.data.implementation.network.FirestoreDatabaseImp
 import dagger.hilt.android.AndroidEntryPoint
 import java.lang.Exception
 import javax.inject.Inject
@@ -14,7 +14,7 @@ import javax.inject.Inject
 @AndroidEntryPoint
 class MessagingService: FirebaseMessagingService() {
     @Inject
-    lateinit var firestoreManager: FirestoreManager
+    lateinit var firestoreDatabaseImp: FirestoreDatabaseImp
 
 
     override fun onNewToken(token: String) {

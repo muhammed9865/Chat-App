@@ -20,7 +20,7 @@ import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
-class FirebaseModule {
+class FirestoreModule {
 
     @Provides
     fun provideStorage(): FirebaseStorage {
@@ -33,6 +33,7 @@ class FirebaseModule {
     }
 
     // Specify signIn Options.
+    // Options are t
     @Provides
     @Singleton
     fun provideGoogleSignInOptions() =
@@ -60,5 +61,7 @@ class FirebaseModule {
     @Provides
     @Singleton
     fun provideRealtimeDatabase(): DatabaseReference = Firebase.database.reference
+
+
 
 }

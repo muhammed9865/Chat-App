@@ -1,7 +1,7 @@
 package com.muhammed.chatapp.di
 
 import android.content.Context
-import com.muhammed.chatapp.data.DataStoreManager
+import com.muhammed.chatapp.data.implementation.local.DataStoreManager
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn

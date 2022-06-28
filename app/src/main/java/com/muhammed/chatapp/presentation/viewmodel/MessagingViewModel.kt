@@ -32,7 +32,7 @@ class MessagingViewModel @Inject constructor(
     private val _room = MutableStateFlow(MessagingRoom())
     val room = _room.asStateFlow()
 
-    private val _messages = MutableStateFlow(Messages())
+    private val _messages = MutableStateFlow(emptyList<Message>())
     val messages = _messages.asStateFlow()
 
     private val _states = MutableStateFlow<MessagingRoomStates>(MessagingRoomStates.Idle)
@@ -55,6 +55,9 @@ class MessagingViewModel @Inject constructor(
         }
     }
 
+    // Load the Other user details from intent
+    // Intent should have extra PRIVATE_CHAT
+    // @param intent is the activity intent, passed onCreate of activity
     private fun getUserDetailsFromIntent(intent: Intent?) {
         val roomAsString = intent?.getStringExtra(Constants.PRIVATE_CHAT)
         roomAsString?.let {
@@ -72,7 +75,7 @@ class MessagingViewModel @Inject constructor(
     private fun listenToMessages() {
         tryAsync {
             Log.d(TAG, "listenToMessages: ${_room.value}")
-            messagesListener = messagesRepository.listenToMessages(_room.value.messagesId) {
+           messagesRepository.listenToMessages(_room.value.messagesId) {
                 _messages.value = it
                 Log.d(TAG, "listenToMessages: $it")
             }
@@ -82,8 +85,9 @@ class MessagingViewModel @Inject constructor(
     private fun sendMessage(message: String) {
        tryAsync {
            val msg = Message(
-               currentUser.value,
-               message
+               messagesId = _room.value.messagesId,
+               sender = currentUser.value,
+               text = message
            )
            messagesRepository.sendMessage(
                chatId = _room.value.chatId,

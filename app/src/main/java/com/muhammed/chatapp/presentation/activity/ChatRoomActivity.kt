@@ -62,7 +62,7 @@ class ChatRoomActivity : AppCompatActivity() {
                 }
                 launch {
                     viewModel.messages.collect {
-                        mAdapter.submitList(it.messages)
+                        mAdapter.submitList(it)
                         messagesRv.smoothScrollToPosition(mAdapter.itemCount)
                     }
                 }

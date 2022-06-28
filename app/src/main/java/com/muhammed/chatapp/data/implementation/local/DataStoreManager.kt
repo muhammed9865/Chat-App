@@ -1,4 +1,4 @@
-package com.muhammed.chatapp.data
+package com.muhammed.chatapp.data.implementation.local
 
 import android.content.Context
 import androidx.datastore.preferences.core.edit
