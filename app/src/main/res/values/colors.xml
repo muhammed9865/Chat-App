@@ -12,5 +12,8 @@
     <color name="error">#E30101</color>
     <color name="h1_color">#676565</color>
     <color name="secondaryColor">#686A8A</color>
+    <color name="interest_unselected">#F6F5FF</color>
+    <color name="interest_selected">@color/primaryColor</color>
+    <color name="interest_title_unselected">#303030</color>
 
 </resources>

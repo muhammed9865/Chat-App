@@ -3,17 +3,14 @@ package com.muhammed.chatapp.data.implementation.network
 import com.google.firebase.firestore.*
 import com.muhammed.chatapp.Fields
 import com.muhammed.chatapp.data.NetworkDatabase
-import com.muhammed.chatapp.data.pojo.Message
-import com.muhammed.chatapp.data.pojo.Messages
-import com.muhammed.chatapp.data.pojo.PrivateChat
-import com.muhammed.chatapp.data.pojo.User
+import com.muhammed.chatapp.data.pojo.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 import javax.inject.Inject
 
-class FirestoreDatabaseImp @Inject constructor(private val mFirestore: FirebaseFirestore) :
+class FirestoreNetworkDatabaseImp @Inject constructor(private val mFirestore: FirebaseFirestore) :
     NetworkDatabase {
 
     override suspend fun saveUser(user: User) {
@@ -163,13 +160,34 @@ class FirestoreDatabaseImp @Inject constructor(private val mFirestore: FirebaseF
          return chats
 
      }*/
+    override suspend fun getInterests(): List<Interest> {
+        return mFirestore.collection(Collections.INTERESTS)
+            .get()
+            .await()
+            .toObjects(Interest::class.java)
+    }
 
+    override suspend fun getTopics(): List<Topic> {
+        return mFirestore.collection(Collections.TOPICS)
+            .get()
+            .await()
+            .toObjects(Topic::class.java)
+    }
+
+    override suspend fun updateUser(user: User) {
+        mFirestore.collection(user.collection)
+            .document(user.email)
+            .set(user)
+            .await()
+    }
 
     object Collections {
         const val USERS = "users"
         const val GOOGLE_USERS = "google_users"
         const val CHATS = "chats"
         const val MESSAGES = "messages"
+        const val INTERESTS = "interests"
+        const val TOPICS = "topics"
 
     }
 

@@ -2,9 +2,8 @@ package com.muhammed.chatapp.di
 
 import android.content.Context
 import androidx.room.Room
-import androidx.room.RoomDatabase
 import com.muhammed.chatapp.data.CacheDatabase
-import com.muhammed.chatapp.data.implementation.network.FirestoreDatabaseImp
+import com.muhammed.chatapp.data.implementation.network.FirestoreNetworkDatabaseImp
 import com.muhammed.chatapp.data.NetworkDatabase
 import com.muhammed.chatapp.data.implementation.local.ListConverter
 import com.muhammed.chatapp.data.implementation.local.RoomDB
@@ -12,7 +11,6 @@ import com.muhammed.chatapp.domain.use_cases.SerializeEntityUseCase
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
-import dagger.hilt.android.qualifiers.ActivityContext
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import javax.inject.Singleton
@@ -22,8 +20,8 @@ import javax.inject.Singleton
 class DatabasesModule {
     @Provides
     @Singleton
-    fun provideNetworkDatabase(firestoreDatabaseImp: FirestoreDatabaseImp): NetworkDatabase =
-        firestoreDatabaseImp
+    fun provideNetworkDatabase(firestoreNetworkDatabaseImp: FirestoreNetworkDatabaseImp): NetworkDatabase =
+        firestoreNetworkDatabaseImp
 
     @Provides
     @Singleton

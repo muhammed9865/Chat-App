@@ -7,14 +7,15 @@ import com.google.firebase.firestore.ListenerRegistration
 import com.muhammed.chatapp.data.pojo.PrivateChat
 import com.muhammed.chatapp.data.pojo.User
 import com.muhammed.chatapp.data.repository.AuthRepository
-import com.muhammed.chatapp.data.repository.DataStoreRepository
-import com.muhammed.chatapp.data.repository.NetworkRepository
+import com.muhammed.chatapp.data.repository.ChatsRepository
+import com.muhammed.chatapp.data.repository.UserRepository
 import com.muhammed.chatapp.domain.use_cases.CreateRoomUseCase
 import com.muhammed.chatapp.domain.use_cases.SerializeEntityUseCase
 import com.muhammed.chatapp.presentation.event.ChatsEvent
 import com.muhammed.chatapp.presentation.state.ChatsState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.filterNotNull
@@ -22,18 +23,18 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class ChatsViewModel @Inject constructor(
+class MainViewModel @Inject constructor(
     private val authRepository: AuthRepository,
-    private val fireStoreRepository: NetworkRepository,
-    private val dataStoreRepository: DataStoreRepository,
+    private val chatsRepository: ChatsRepository,
+    private val userRepository: UserRepository,
     private val createRoomUseCase: CreateRoomUseCase,
     private val serializeEntityUseCase: SerializeEntityUseCase
 ) : ViewModel() {
 
     private val _states = MutableStateFlow<ChatsState>(ChatsState.Idle)
     val states = _states.asStateFlow()
-    private val _privateChats = MutableStateFlow<List<PrivateChat>>(emptyList())
-    val privateChats = _privateChats.asStateFlow()
+    private val _userPrivateChats = MutableStateFlow<List<PrivateChat>>(emptyList())
+    val userPrivateChats = _userPrivateChats.asStateFlow()
     private val _currentUser = MutableStateFlow(User())
     val currentUser = _currentUser.asStateFlow()
 
@@ -45,10 +46,14 @@ class ChatsViewModel @Inject constructor(
 
     init {
         tryAsync {
-            dataStoreRepository.currentUser.filterNotNull().collect {
+            userRepository.currentUser.filterNotNull().collect {
                 _currentUser.value = it
                 listenToUserChats()
-
+                if (it.isFirstLogin) {
+                    // Delaying just to make it not too quick
+                    delay(5000)
+                    setState(ChatsState.FirstTime)
+                }
             }
         }
     }
@@ -66,48 +71,39 @@ class ChatsViewModel @Inject constructor(
                 setState(ChatsState.EnterChat(room))
             }
 
+            is ChatsEvent.SetFirstTimeToFalse -> {
+                tryAsync {
+                    _currentUser.value = _currentUser.value.copy(isFirstLogin = false)
+                    userRepository.updateUser(_currentUser.value)
+                }
+
+            }
+
 
         }
     }
-
-   /* private fun validateUserExists(email: String) {
-        tryAsync {
-            dataStoreRepository.currentUser.collect { user ->
-                user?.let {
-                    val isCurrentUser = checkIfCurrentUserUseCase.execute(user.email, email)
-                    if (!isCurrentUser.isSuccessful) {
-                        val exists = validateUserExists.execute(email, _privateChats.value)
-                        exists?.let { setState(ChatsState.UserExists(it)) }
-                            ?: createPrivateChat(email)
-                    } else {
-                        setState(ChatsState.Error("You can't add yourself"))
-                    }
-                }
-            }
-        }
-    }*/
 
     private fun createPrivateChat(otherUserEmail: String) {
         tryAsync {
             setState(ChatsState.Loading)
             // if current user is not null, start creating the chat,
             // and then update the current chat list on fireStore.
-            dataStoreRepository.currentUser.filterNotNull().collect { user ->
-                val room = createRoomUseCase.execute(otherUserEmail, user, _privateChats.value)
+            userRepository.currentUser.filterNotNull().collect { user ->
+                val room = createRoomUseCase.execute(otherUserEmail, user, _userPrivateChats.value)
                 room?.let {
-                    fireStoreRepository.updateUserChatsList(
+                    userRepository.updateUserChatsList(
                         user.email,
                         user.collection,
                         room.cid
                     )
                     setState(ChatsState.PrivateRoomCreated(it))
-                    updateCurrentUserChatsList(room.cid)
+                    updateCurrentUserChatsListState(room.cid)
                 }
             }
         }
     }
 
-    private fun updateCurrentUserChatsList(roomId: String) {
+    private fun updateCurrentUserChatsListState(roomId: String) {
         val usersChatList = _currentUser.value.chats_list.toMutableList()
         usersChatList.add(roomId)
         val newUser = _currentUser.value
@@ -119,8 +115,8 @@ class ChatsViewModel @Inject constructor(
     private fun listenToUserChats() {
         tryAsync {
             chatsListener =
-                fireStoreRepository.listenToChatsChanges(_currentUser.value) { rooms ->
-                    _privateChats.value = rooms
+                chatsRepository.listenToChatsChanges(_currentUser.value) { rooms ->
+                    _userPrivateChats.value = rooms
                 }
         }
     }

@@ -22,6 +22,12 @@
             app:enterAnim="@anim/slide_in_right"
             app:exitAnim="@anim/slide_out_left"
             app:popUpTo="@id/chatsFragment" />
+        <action
+            android:id="@+id/action_chatsFragment_to_interestsSelectionFragment"
+            app:destination="@id/interestsSelectionFragment"
+            app:enterAnim="@anim/slide_in_left"
+            app:exitAnim="@anim/slide_out_right"
+            app:popUpTo="@id/chatsFragment" />
     </fragment>
     <fragment
         android:id="@+id/communitiesFragment"
@@ -42,4 +48,9 @@
         android:name="com.muhammed.chatapp.presentation.activity.ChatRoomActivity"
         android:label="activity_chat_room"
         tools:layout="@layout/activity_chat_room" />
+    <fragment
+        android:id="@+id/interestsSelectionFragment"
+        android:name="com.muhammed.chatapp.presentation.fragments.InterestsSelectionFragment"
+        android:label="fragment_interests_selection"
+        tools:layout="@layout/fragment_interests_selection" />
 </navigation>

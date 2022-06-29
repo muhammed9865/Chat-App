@@ -17,14 +17,14 @@ import com.muhammed.chatapp.presentation.adapter.ChatsAdapter
 import com.muhammed.chatapp.presentation.common.*
 import com.muhammed.chatapp.presentation.event.ChatsEvent
 import com.muhammed.chatapp.presentation.state.ChatsState
-import com.muhammed.chatapp.presentation.viewmodel.ChatsViewModel
+import com.muhammed.chatapp.presentation.viewmodel.MainViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class ChatsFragment : Fragment() {
     private val binding: FragmentChatsBinding by lazy { FragmentChatsBinding.inflate(layoutInflater) }
-    private val viewModel by activityViewModels<ChatsViewModel>()
+    private val viewModel by activityViewModels<MainViewModel>()
     private val loadingDialog: LoadingDialog by lazy { LoadingDialog.getInstance() }
     private var mAdapter: ChatsAdapter? = null
 
@@ -39,7 +39,7 @@ class ChatsFragment : Fragment() {
 
         lifecycleScope.launch {
             launch {
-                viewModel.privateChats.collect {
+                viewModel.userPrivateChats.collect {
                     mAdapter?.submitList(it)
                 }
             }
@@ -81,6 +81,7 @@ class ChatsFragment : Fragment() {
     }
 
 
+    // Unused, States are handled in the activity MainActivity
     private fun doOnStateChanged() {
 
         lifecycleScope.launch {

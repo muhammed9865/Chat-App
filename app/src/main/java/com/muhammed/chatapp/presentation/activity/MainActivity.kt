@@ -4,7 +4,6 @@ import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.MenuItem
-import android.view.View
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
@@ -19,7 +18,7 @@ import com.muhammed.chatapp.databinding.ActivityMainBinding
 import com.muhammed.chatapp.presentation.common.*
 import com.muhammed.chatapp.presentation.event.ChatsEvent
 import com.muhammed.chatapp.presentation.state.ChatsState
-import com.muhammed.chatapp.presentation.viewmodel.ChatsViewModel
+import com.muhammed.chatapp.presentation.viewmodel.MainViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 
@@ -32,7 +31,7 @@ class MainActivity : AppCompatActivity(), NavigationBarView.OnItemSelectedListen
         host.navController
     }
     private val loadingDialog by lazy { LoadingDialog.getInstance() }
-    private val viewModel: ChatsViewModel by viewModels()
+    private val viewModel: MainViewModel by viewModels()
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -92,7 +91,18 @@ class MainActivity : AppCompatActivity(), NavigationBarView.OnItemSelectedListen
                         intent.putExtra(Constants.PRIVATE_CHAT, it.room)
                         startActivity(intent)
                         viewModel.doOnEvent(ChatsEvent.Idle)
-                       // navController.navigate(R.id.action_chatsFragment_to_chatRoomActivity)
+                    }
+
+                    is ChatsState.FirstTime -> {
+                        // Show Join Group Dialog here
+                        // On any action on this dialog, send event SetFirstTimeToFalse
+                        val jgd = JoinGroupDialog { joinPressed ->
+                            viewModel.doOnEvent(ChatsEvent.SetFirstTimeToFalse)
+                            if (joinPressed) {
+                                navController.navigate(R.id.communitiesFragment)
+                                binding.botNav.selectedItemId = R.id.community
+                            }
+                        }.showDialog(supportFragmentManager, null)
                     }
 
                     is ChatsState.Loading -> {

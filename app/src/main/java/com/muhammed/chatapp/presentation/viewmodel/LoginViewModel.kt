@@ -8,8 +8,7 @@ import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.muhammed.chatapp.data.implementation.network.GoogleAuth
 import com.muhammed.chatapp.data.implementation.network.GoogleAuthCallback
 import com.muhammed.chatapp.data.repository.AuthRepository
-import com.muhammed.chatapp.data.repository.DataStoreRepository
-import com.muhammed.chatapp.data.repository.NetworkRepository
+import com.muhammed.chatapp.data.repository.UserRepository
 import com.muhammed.chatapp.domain.use_cases.ValidateEmail
 import com.muhammed.chatapp.domain.use_cases.ValidatePassword
 import com.muhammed.chatapp.presentation.event.AuthenticationEvent
@@ -26,8 +25,7 @@ import javax.inject.Inject
 @HiltViewModel
 class LoginViewModel @Inject constructor(
     private val authRepository: AuthRepository,
-    private val fireStoreRepository: NetworkRepository,
-    private val dataStoreRepository: DataStoreRepository,
+    private val userRepository: UserRepository,
     private val googleAuth: GoogleAuth,
     private val validateEmail: ValidateEmail,
     private val validatePassword: ValidatePassword,
@@ -105,8 +103,8 @@ class LoginViewModel @Inject constructor(
             if (it.isEmailVerified) {
                 viewModelScope.launch(Dispatchers.IO) {
                     try {
-                        val user = fireStoreRepository.getUser(it.email!!)
-                        dataStoreRepository.saveUserDetails(user)
+                        val user = userRepository.getUser(it.email!!)
+                        userRepository.saveUserDetails(user)
                         sendState(AuthenticationState.AuthenticationSuccess)
                     } catch (e: Exception) {
                         sendState(AuthenticationState.AuthenticationFailure(e.message.toString()))
@@ -130,8 +128,8 @@ class LoginViewModel @Inject constructor(
             try {
                 authRepository.loginUser(email, password)?.let {
                     if (it.isEmailVerified) {
-                        val user = fireStoreRepository.getUser(it.email!!)
-                        dataStoreRepository.saveUserDetails(user)
+                        val user = userRepository.getUser(it.email!!)
+                        userRepository.saveUserDetails(user)
                         _authStates.send(AuthenticationState.AuthenticationSuccess)
                         return@launch
                     }
@@ -163,7 +161,7 @@ class LoginViewModel @Inject constructor(
                             val user = authRepository.authenticateGoogleUser(it)
                             user?.let {
                                 // Saving the User Details to later usage.
-                                dataStoreRepository.saveUserDetails(user)
+                                userRepository.saveUserDetails(user)
                                 sendState(AuthenticationState.AuthenticationSuccess)
                             } ?: throw Exception("User not found")
                         } catch (e: Exception) {

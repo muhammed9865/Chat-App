@@ -12,14 +12,14 @@ import com.muhammed.chatapp.presentation.common.hideKeyboard
 import com.muhammed.chatapp.presentation.common.showError
 import com.muhammed.chatapp.presentation.event.MessagingRoomEvents
 import com.muhammed.chatapp.presentation.state.MessagingRoomStates
-import com.muhammed.chatapp.presentation.viewmodel.MessagingViewModel
+import com.muhammed.chatapp.presentation.viewmodel.ChatsRoomViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class ChatRoomActivity : AppCompatActivity() {
     private val binding by lazy { ActivityChatRoomBinding.inflate(layoutInflater) }
-    private val viewModel by viewModels<MessagingViewModel>()
+    private val viewModel by viewModels<ChatsRoomViewModel>()
     private lateinit var mAdapter: MessageAdapter
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

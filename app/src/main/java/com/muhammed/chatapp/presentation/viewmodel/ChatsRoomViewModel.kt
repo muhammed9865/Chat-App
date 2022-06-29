@@ -7,11 +7,10 @@ import androidx.lifecycle.viewModelScope
 import com.google.firebase.firestore.ListenerRegistration
 import com.muhammed.chatapp.Constants
 import com.muhammed.chatapp.data.pojo.Message
-import com.muhammed.chatapp.data.pojo.Messages
 import com.muhammed.chatapp.data.pojo.MessagingRoom
 import com.muhammed.chatapp.data.pojo.User
-import com.muhammed.chatapp.data.repository.DataStoreRepository
 import com.muhammed.chatapp.data.repository.MessagesRepository
+import com.muhammed.chatapp.data.repository.UserRepository
 import com.muhammed.chatapp.domain.use_cases.SerializeEntityUseCase
 import com.muhammed.chatapp.presentation.event.MessagingRoomEvents
 import com.muhammed.chatapp.presentation.state.MessagingRoomStates
@@ -24,10 +23,10 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class MessagingViewModel @Inject constructor(
+class ChatsRoomViewModel @Inject constructor(
     private val serializeEntityUseCase: SerializeEntityUseCase,
     private val messagesRepository: MessagesRepository,
-    private val dataStoreRepository: DataStoreRepository
+    private val userRepository: UserRepository
 ) : ViewModel() {
     private val _room = MutableStateFlow(MessagingRoom())
     val room = _room.asStateFlow()
@@ -42,7 +41,7 @@ class MessagingViewModel @Inject constructor(
 
     init {
         tryAsync {
-            dataStoreRepository.currentUser.filterNotNull().collect {
+            userRepository.currentUser.filterNotNull().collect {
                 currentUser.value = it
             }
         }

@@ -4,7 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
-import com.muhammed.chatapp.data.implementation.network.FirestoreDatabaseImp
+import com.muhammed.chatapp.data.implementation.network.FirestoreNetworkDatabaseImp
 import com.muhammed.chatapp.data.repository.AuthRepository
 import com.muhammed.chatapp.data.implementation.network.GoogleAuth
 import com.muhammed.chatapp.data.implementation.network.GoogleAuthCallback
@@ -120,7 +120,7 @@ class RegisterViewModel @Inject constructor(
                     account.email?.let { doOnEvent(AuthenticationEvent.OnEmailChanged(it)) }
                     account.displayName?.let { doOnEvent(AuthenticationEvent.OnNicknameChanged(it)) }
 
-                    val user = User(account.id ?: "", account.displayName ?: "", account.email ?: "", "", collection = FirestoreDatabaseImp.Collections.GOOGLE_USERS)
+                    val user = User(account.id ?: "", account.displayName ?: "", account.email ?: "", "", collection = FirestoreNetworkDatabaseImp.Collections.GOOGLE_USERS)
 
                     viewModelScope.launch {
                         _authStates.send(

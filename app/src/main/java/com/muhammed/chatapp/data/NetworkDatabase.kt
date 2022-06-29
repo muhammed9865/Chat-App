@@ -4,14 +4,13 @@ import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.EventListener
 import com.google.firebase.firestore.ListenerRegistration
 import com.google.firebase.firestore.QuerySnapshot
-import com.muhammed.chatapp.data.pojo.Message
-import com.muhammed.chatapp.data.pojo.Messages
-import com.muhammed.chatapp.data.pojo.PrivateChat
-import com.muhammed.chatapp.data.pojo.User
+import com.muhammed.chatapp.data.pojo.*
 import java.lang.NullPointerException
 
 interface NetworkDatabase {
     suspend fun saveUser(user: User)
+
+    suspend fun updateUser(user: User)
 
     suspend fun saveGoogleUser(user: User)
 
@@ -20,6 +19,11 @@ interface NetworkDatabase {
 
     suspend fun getGoogleUser(email: String): User?
 
+    // General Interests. Should be static on database
+    suspend fun getInterests(): List<Interest>
+
+    // General Topics. Should be static on database
+    suspend fun getTopics(): List<Topic>
 
     suspend fun createPrivateChat(otherUserEmail: String, currentUser: User): PrivateChat?
 

@@ -5,10 +5,10 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.DialogFragment
-import com.muhammed.chatapp.databinding.NewPrivateChatDialogBinding
+import com.muhammed.chatapp.databinding.DialogNewPrivateChatBinding
 
 class NewChatDialog: DialogFragment() {
-    private lateinit var binding: NewPrivateChatDialogBinding
+    private lateinit var binding: DialogNewPrivateChatBinding
     private var onStartClicked: ((email: String) -> Unit)? = null
 
     override fun onCreateView(
@@ -16,7 +16,7 @@ class NewChatDialog: DialogFragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        binding = NewPrivateChatDialogBinding.inflate(layoutInflater)
+        binding = DialogNewPrivateChatBinding.inflate(layoutInflater)
 
         dialog?.window?.setBackgroundDrawableResource(android.R.color.transparent)
         binding.startBtn.setOnClickListener {

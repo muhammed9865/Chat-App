@@ -8,6 +8,10 @@ import com.muhammed.chatapp.data.pojo.PrivateChat
 sealed class ChatsState {
     object Idle : ChatsState()
     object Loading : ChatsState()
+    /*
+        On this state, show the Join group dialog
+     */
+    object FirstTime : ChatsState()
     data class StartListeningToRooms(val roomsQuery: Query): ChatsState()
     data class UserExists(val privateChat: PrivateChat) : ChatsState()
     data class PrivateRoomCreated(val room: PrivateChat): ChatsState()

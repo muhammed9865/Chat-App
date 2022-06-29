@@ -9,5 +9,6 @@ data class User(
     val password: String? = "",
     var profile_picture: String = Constants.MALE_PATH,
     val collection: String = "",
-    var chats_list: List<String> = emptyList()
+    var chats_list: List<String> = emptyList(),
+    var isFirstLogin: Boolean = true,
 )

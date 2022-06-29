@@ -6,6 +6,7 @@ import android.view.View
 import android.view.inputmethod.InputMethodManager
 import android.widget.Button
 import android.widget.EditText
+import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.FragmentManager
 import com.google.android.material.snackbar.BaseTransientBottomBar.ANIMATION_MODE_SLIDE
 import com.google.android.material.snackbar.Snackbar
@@ -82,14 +83,14 @@ fun toggleButtonAvailabilityOnAuth(
     }
 }
 
-fun LoadingDialog.hideDialog() {
+fun DialogFragment.hideDialog() {
     if (isVisible) {
         dismiss()
 
     }
 }
 
-fun LoadingDialog.showDialog(manager: FragmentManager, tag: String?) {
+fun DialogFragment.showDialog(manager: FragmentManager, tag: String?) {
     if (isAdded) {
         Log.d("LoadingDialog", "showDialog: showing")
         dialog?.show()
