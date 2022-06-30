@@ -1,11 +1,13 @@
 package com.muhammed.chatapp.presentation.common
 
+import android.app.Activity
 import android.content.Context
 import android.util.Log
 import android.view.View
 import android.view.inputmethod.InputMethodManager
 import android.widget.Button
 import android.widget.EditText
+import androidx.core.content.ContextCompat.getSystemService
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.FragmentManager
 import com.google.android.material.snackbar.BaseTransientBottomBar.ANIMATION_MODE_SLIDE
@@ -14,6 +16,7 @@ import com.muhammed.chatapp.R
 import com.muhammed.chatapp.presentation.state.ValidationState
 import java.text.SimpleDateFormat
 import java.util.*
+
 
 fun View.hideKeyboard() {
     val imm: InputMethodManager =

@@ -1,22 +1,27 @@
 package com.muhammed.chatapp.data.pojo
 
 import com.google.firebase.firestore.Exclude
+import com.google.firebase.firestore.IgnoreExtraProperties
 
+@IgnoreExtraProperties
 sealed class InterestAndTopic(
     open val title: String = "",
-    @Exclude
-    open var isChecked: Boolean = false
+    @get:Exclude
+    var isChecked: Boolean = false
 )
 
-data class Interest(
+class Interest(
     val imagePath: String? = null,
-    override val title: String
+    title: String = ""
 ): InterestAndTopic(title = title) {
     // Answers the question is there an image for this interest
-    fun doesImageExist() = !imagePath.isNullOrEmpty()
+    fun hasImage() = !imagePath.isNullOrEmpty()
 }
 
-data class Topic(
-    override val title: String,
-    val category: String
+class Topic(
+    title: String = "",
+    val category: String = ""
 ): InterestAndTopic(title = title)
+
+// Used in Fragments as Default State for either loading Interests or Topics
+object IdleState: InterestAndTopic()

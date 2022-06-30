@@ -4,10 +4,12 @@ import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.MenuItem
+import android.view.View
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavController
+import androidx.navigation.NavDestination
 import androidx.navigation.fragment.NavHostFragment
 import com.google.android.material.navigation.NavigationBarView
 import com.google.android.material.shape.CornerFamily
@@ -23,7 +25,8 @@ import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
-class MainActivity : AppCompatActivity(), NavigationBarView.OnItemSelectedListener{
+class MainActivity : AppCompatActivity(), NavigationBarView.OnItemSelectedListener,
+    NavController.OnDestinationChangedListener {
     private val binding: ActivityMainBinding by lazy { ActivityMainBinding.inflate(layoutInflater) }
     private val navController: NavController by lazy {
         val host =
@@ -40,6 +43,7 @@ class MainActivity : AppCompatActivity(), NavigationBarView.OnItemSelectedListen
         makeBotNavRoundedCorners()
 
         binding.botNav.setOnItemSelectedListener(this)
+        navController.addOnDestinationChangedListener(this)
 
         binding.newChatBtn.setOnClickListener {
             createNewChat()
@@ -96,11 +100,11 @@ class MainActivity : AppCompatActivity(), NavigationBarView.OnItemSelectedListen
                     is ChatsState.FirstTime -> {
                         // Show Join Group Dialog here
                         // On any action on this dialog, send event SetFirstTimeToFalse
-                        val jgd = JoinGroupDialog { joinPressed ->
-                            viewModel.doOnEvent(ChatsEvent.SetFirstTimeToFalse)
+                        JoinGroupDialog { joinPressed ->
+                            //viewModel.doOnEvent(ChatsEvent.SetFirstTimeToFalse)
                             if (joinPressed) {
-                                navController.navigate(R.id.communitiesFragment)
-                                binding.botNav.selectedItemId = R.id.community
+                                navController.navigate(R.id.interestsSelectionFragment)
+                                //binding.botNav.selectedItemId = R.id.community
                             }
                         }.showDialog(supportFragmentManager, null)
                     }
@@ -124,6 +128,38 @@ class MainActivity : AppCompatActivity(), NavigationBarView.OnItemSelectedListen
         newChatDialog.show(this.supportFragmentManager, null)
     }
 
+    override fun onDestinationChanged(
+        controller: NavController,
+        destination: NavDestination,
+        arguments: Bundle?
+    ) {
+        when (destination.id) {
+            R.id.interestsSelectionFragment, R.id.topicsSelectionFragment -> {
+               toggleBotBar(show = false)
+            }
+            else -> {
+               toggleBotBar(show = true)
+            }
+        }
+    }
+
+    private fun toggleBotBar(show: Boolean) {
+        if (show) {
+            with(binding) {
+                botBar.visibility = View.VISIBLE
+                newChatBtn.visibility = View.VISIBLE
+                botNav.visibility = View.VISIBLE
+                botBarDivider.setGuidelinePercent(0.82f)
+            }
+        }else {
+            with(binding) {
+                botBar.visibility = View.GONE
+                botNav.visibility = View.GONE
+                newChatBtn.visibility = View.GONE
+                botBarDivider.setGuidelinePercent(1f)
+            }
+        }
+    }
 
 
 

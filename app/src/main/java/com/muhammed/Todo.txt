@@ -1,1 +1,0 @@
-On Authentication, add current user details to Datastore as User object

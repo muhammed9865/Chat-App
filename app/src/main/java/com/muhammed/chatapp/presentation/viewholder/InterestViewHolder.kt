@@ -11,7 +11,7 @@ class InterestViewHolder(private val binding: ListItemInterestBinding) :
     fun bind(interest: Interest, onCheckedListener: ((interest: Interest) -> Unit)?) {
         with(binding) {
             interestTitle.text = interest.title
-            if (interest.doesImageExist()) {
+            if (interest.hasImage()) {
                 interestIcon.load(interest.imagePath!!)
             }
             interestCard.setOnClickListener {
@@ -28,13 +28,11 @@ class InterestViewHolder(private val binding: ListItemInterestBinding) :
         binding.apply {
             val cardColor =
                 if (isChecked) itemView.context.getColor(R.color.interest_selected) else itemView.context.getColor(
-                    R.color.interest_title_unselected
+                    R.color.interest_unselected
                 )
-            val iconColor = if (isChecked) itemView.context.getColor(R.color.white) else 0
             val textColor =
                 if (isChecked) cardColor else itemView.context.getColor(R.color.interest_title_unselected)
             interestCard.setCardBackgroundColor(cardColor)
-            interestIcon.setColorFilter(iconColor)
             interestTitle.setTextColor(textColor)
 
         }

@@ -52,5 +52,22 @@
         android:id="@+id/interestsSelectionFragment"
         android:name="com.muhammed.chatapp.presentation.fragments.InterestsSelectionFragment"
         android:label="fragment_interests_selection"
-        tools:layout="@layout/fragment_interests_selection" />
+        tools:layout="@layout/fragment_interests_selection" >
+        <action
+            android:id="@+id/action_interestsSelectionFragment_to_topicsSelectionFragment"
+            app:destination="@id/topicsSelectionFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left" />
+    </fragment>
+    <fragment
+        android:id="@+id/topicsSelectionFragment"
+        android:name="com.muhammed.chatapp.presentation.fragments.TopicsSelectionFragment"
+        android:label="fragment_topics_selection"
+        tools:layout="@layout/fragment_topics_selection" >
+        <action
+            android:id="@+id/action_topicsSelectionFragment_to_communitiesFragment"
+            app:destination="@id/communitiesFragment"
+            app:enterAnim="@anim/fade_out"
+            app:popUpTo="@id/chatsFragment" />
+    </fragment>
 </navigation>

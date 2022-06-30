@@ -11,4 +11,6 @@ data class User(
     val collection: String = "",
     var chats_list: List<String> = emptyList(),
     var isFirstLogin: Boolean = true,
+    var interests: List<Interest> = emptyList(),
+    var topics: List<Topic> = emptyList()
 )

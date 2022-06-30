@@ -1,7 +1,10 @@
 package com.muhammed.chatapp.data.implementation.local
 
 import androidx.room.*
+import com.muhammed.chatapp.data.pojo.Interest
+import com.muhammed.chatapp.data.pojo.InterestAndTopic
 import com.muhammed.chatapp.data.pojo.Message
+import com.muhammed.chatapp.data.pojo.Topic
 import com.muhammed.chatapp.domain.use_cases.SerializeEntityUseCase
 import javax.inject.Inject
 
@@ -25,6 +28,23 @@ class ListConverter @Inject constructor(private val serializer: SerializeEntityU
 
     @TypeConverter
     fun stringToList(string: String): List<String> {
+        return serializer.fromString(string)
+    }
+    @TypeConverter
+    fun interestToString(list: List<Interest>): String {
+        return serializer.toString(list)
+    }
+    @TypeConverter
+    fun stringToInterest(string: String): List<Interest> {
+        return serializer.fromString(string)
+    }
+
+    @TypeConverter
+    fun topicToString(list: List<Topic>): String {
+        return serializer.toString(list)
+    }
+    @TypeConverter
+    fun stringToTopic(string: String): List<Topic> {
         return serializer.fromString(string)
     }
 }

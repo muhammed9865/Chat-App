@@ -1,5 +1,6 @@
 package com.muhammed.chatapp.presentation.state
 
+import android.util.Log
 import com.google.firebase.firestore.Query
 import com.muhammed.chatapp.data.pojo.MessagingRoom
 import com.muhammed.chatapp.data.pojo.PrivateChat
@@ -18,5 +19,12 @@ sealed class ChatsState {
     // Serialized to String to be sent as Intent Extra, Deserialize to MessagingRoom
     data class EnterChat(val room: String) : ChatsState()
     object SignedOut : ChatsState()
-    data class Error(val errorMessage: String): ChatsState()
+    data class Error(val errorMessage: String): ChatsState() {
+        init {
+            Log.e(TAG, errorMessage)
+        }
+        companion object {
+            private const val TAG = "AuthenticationState"
+        }
+    }
 }

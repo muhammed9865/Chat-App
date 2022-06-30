@@ -8,28 +8,29 @@
         android:id="@+id/continue_btn"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:cornerRadius="@dimen/default_corner_radius"
-        android:textAllCaps="false"
         android:fontFamily="@font/sf_bold"
-        android:textSize="@dimen/_11ssp"
         android:paddingTop="@dimen/_10sdp"
         android:paddingBottom="@dimen/_10sdp"
         android:text="@string/_continue"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        android:textAllCaps="false"
+        android:textSize="@dimen/_11ssp"
+        app:cornerRadius="@dimen/default_corner_radius"
+        app:layout_constraintBottom_toTopOf="@+id/doItLaterBtn"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
 
     <com.google.android.material.button.MaterialButton
+        android:id="@+id/doItLaterBtn"
+        style="@style/Widget.Material3.Button.TextButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        style="@style/Widget.Material3.Button.TextButton"
-        android:text="@string/i_ll_do_it_later"
-        android:textSize="@dimen/_11ssp"
-        android:padding="0dp"
-        android:textColor="@color/h1_color"
         android:fontFamily="@font/sf_regular"
+        android:padding="0dp"
+        android:text="@string/i_ll_do_it_later"
+        android:textColor="@color/h1_color"
+        android:textSize="@dimen/_11ssp"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="@+id/continue_btn"
-        app:layout_constraintTop_toBottomOf="@+id/continue_btn" />
+        app:layout_constraintStart_toStartOf="@+id/continue_btn" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
