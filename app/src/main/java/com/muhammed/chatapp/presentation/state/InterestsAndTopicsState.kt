@@ -8,6 +8,8 @@ sealed class InterestsAndTopicsState {
     object Idle: InterestsAndTopicsState()
     data class InterestsLoaded(val interests: List<Interest>) : InterestsAndTopicsState()
     data class TopicsLoaded(val topics: List<Topic>) : InterestsAndTopicsState()
+    object EnableContinueBtn : InterestsAndTopicsState()
+    object DisableContinueBtn : InterestsAndTopicsState()
     object InterestsConfirmed : InterestsAndTopicsState()
     object TopicsConfirmed : InterestsAndTopicsState()
     data class Error(val message: String) : InterestsAndTopicsState() {

@@ -85,14 +85,26 @@ class InterestAndTopicViewModel @Inject constructor(
             is Interest -> {
                 if (selection.isChecked) selectedInterests.add(selection)
                 else selectedInterests.remove(selection)
+
+                _state.value = if (selectedInterests.size >= 3) {
+                    InterestsAndTopicsState.EnableContinueBtn
+                } else {
+                    InterestsAndTopicsState.DisableContinueBtn
+                }
             }
             is Topic -> {
                 if (selection.isChecked) selectedTopics.add(selection)
                 else selectedTopics.remove(selection)
-            }
-            else -> {
 
+                _state.value = if (selectedTopics.size >= 3) {
+                    InterestsAndTopicsState.EnableContinueBtn
+                } else {
+                    InterestsAndTopicsState.DisableContinueBtn
+                }
             }
+
+            else -> Unit
+
         }
     }
 

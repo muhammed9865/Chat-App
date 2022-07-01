@@ -47,6 +47,10 @@ class InterestsSelectionFragment : Fragment() {
             doItLaterBtn.setOnClickListener { viewModel.doEvent(InterestsAndTopicsEvent.DoItLater) }
         }
 
+        topBarBinding.backBtn.setOnClickListener {
+            findNavController().navigateUp()
+        }
+
         binding.interestsRv.adapter = mAdapter
 
         onStateChanged()
@@ -59,6 +63,12 @@ class InterestsSelectionFragment : Fragment() {
                 when (state) {
                     is InterestsAndTopicsState.InterestsLoaded -> {
                         mAdapter.submitList(state.interests)
+                    }
+                    is InterestsAndTopicsState.EnableContinueBtn -> {
+                        bottomBinding.continueBtn.isEnabled = true
+                    }
+                    is InterestsAndTopicsState.DisableContinueBtn -> {
+                        bottomBinding.continueBtn.isEnabled = false
                     }
                     is InterestsAndTopicsState.InterestsConfirmed -> {
                         findNavController().navigate(R.id.action_interestsSelectionFragment_to_topicsSelectionFragment)

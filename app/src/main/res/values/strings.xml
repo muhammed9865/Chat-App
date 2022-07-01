@@ -42,6 +42,7 @@
     <string name="join_group_ad_text">Join your first community and get\nfree 50 Viper Coins</string>
     <string name="join_now">Join now</string>
     <string name="enter_user_email">Enter the user\'s email you want to chat with</string>
+    <string name="pick_topics">Pick 4 or more topics</string>
 
     <string-array name="menu_rows">
         <item>Sign out</item>

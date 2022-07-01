@@ -117,10 +117,7 @@ dependencies {
     // Sdp/SSP
     implementation 'com.intuit.ssp:ssp-android:1.0.6'
     implementation 'com.intuit.sdp:sdp-android:1.0.6'
-
-    // Shimmer
-    implementation 'com.facebook.shimmer:shimmer:0.5.0'
-
+    
     // DataStore
     implementation "androidx.datastore:datastore-preferences:1.0.0"
 
@@ -129,4 +126,7 @@ dependencies {
 
     // Coil
     implementation 'io.coil-kt:coil:2.1.0'
+
+    // LayoutManager for Chips
+    implementation 'com.beloo.widget:ChipsLayoutManager:0.3.7@aar'
 }
