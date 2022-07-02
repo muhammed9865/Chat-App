@@ -9,7 +9,14 @@ class UserRepository @Inject constructor(
     private val networkDatabase: NetworkDatabase,
     private val dataStoreManager: DataStoreManager
 ) {
-    suspend fun updateUser(user: User) = networkDatabase.updateUser(user)
+    suspend fun updateUser(user: User) {
+        saveUserDetails(user)
+        networkDatabase.updateUser(user)
+    }
+
+    suspend fun updateDummyUser(user: User) {
+        saveUserDetails(user)
+    }
 
     suspend fun getUser(userEmail: String) = networkDatabase.getUser(userEmail)
 

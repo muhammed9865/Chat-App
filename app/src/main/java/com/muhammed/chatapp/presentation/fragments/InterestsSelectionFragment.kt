@@ -73,6 +73,9 @@ class InterestsSelectionFragment : Fragment() {
                     is InterestsAndTopicsState.InterestsConfirmed -> {
                         findNavController().navigate(R.id.action_interestsSelectionFragment_to_topicsSelectionFragment)
                     }
+                    is InterestsAndTopicsState.DoItLater -> {
+                        findNavController().navigate(R.id.communitiesFragment)
+                    }
                     is InterestsAndTopicsState.Error -> {
                         view?.showError(state.message)
                     }

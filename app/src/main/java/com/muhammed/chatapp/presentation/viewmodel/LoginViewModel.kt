@@ -126,16 +126,8 @@ class LoginViewModel @Inject constructor(
         val password = _validation.value.password
         viewModelScope.launch(Dispatchers.IO) {
             try {
-                authRepository.loginUser(email, password)?.let {
-                    if (it.isEmailVerified) {
-                        val user = userRepository.getUser(it.email!!)
-                        userRepository.saveUserDetails(user)
-                        _authStates.send(AuthenticationState.AuthenticationSuccess)
-                        return@launch
-                    }
-                    throw Exception("Either email or password is incorrect")
-                }
-
+                authRepository.loginUser(email, password)
+                _authStates.send(AuthenticationState.AuthenticationSuccess)
             } catch (e: Exception) {
                 _authStates.send(AuthenticationState.AuthenticationFailure(e.message.toString()))
             }

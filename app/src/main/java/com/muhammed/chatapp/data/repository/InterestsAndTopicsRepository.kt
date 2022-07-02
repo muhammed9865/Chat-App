@@ -1,6 +1,7 @@
 package com.muhammed.chatapp.data.repository
 
 import com.muhammed.chatapp.data.NetworkDatabase
+import com.muhammed.chatapp.data.pojo.User
 import javax.inject.Inject
 
 class InterestsAndTopicsRepository @Inject constructor(
@@ -8,4 +9,6 @@ class InterestsAndTopicsRepository @Inject constructor(
 ) {
     suspend fun getTopics() = networkDatabase.getTopics()
     suspend fun getInterests() = networkDatabase.getInterests()
+    fun getUserInterestsWithTopics(user: User) = networkDatabase.getUserInterestsWithTopics(user)
+
 }

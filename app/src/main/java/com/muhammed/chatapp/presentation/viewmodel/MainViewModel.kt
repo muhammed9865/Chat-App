@@ -51,7 +51,7 @@ class MainViewModel @Inject constructor(
                 listenToUserChats()
                 if (it.isFirstLogin) {
                     // Delaying just to make it not too quick
-                    delay(5000)
+                    delay(2000)
                     setState(ChatsState.FirstTime)
                 }
             }

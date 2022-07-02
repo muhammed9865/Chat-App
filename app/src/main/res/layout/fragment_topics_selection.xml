@@ -18,28 +18,32 @@
         android:id="@+id/textView12"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="16dp"
         android:fontFamily="@font/sf_bold"
         android:text="@string/pick_topics"
         android:textColor="@color/h1_color"
-        android:layout_marginTop="@dimen/_10sdp"
         android:textSize="@dimen/_16ssp"
-        app:layout_constraintEnd_toStartOf="@+id/guideline13"
         app:layout_constraintStart_toStartOf="@+id/guideline12"
         app:layout_constraintTop_toBottomOf="@+id/include4" />
 
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/topics_rv"
+        android:id="@+id/topicsRv"
         android:layout_width="0dp"
         android:layout_height="0dp"
+        android:layout_marginTop="@dimen/_5sdp"
         android:layout_marginBottom="@dimen/_20sdp"
-        android:paddingTop="@dimen/_10sdp"
         android:scrollbarStyle="insideOverlay"
         android:scrollbars="vertical"
-        android:layout_marginTop="@dimen/_15sdp"
+        android:orientation="vertical"
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
         app:layout_constraintBottom_toTopOf="@+id/include3"
         app:layout_constraintEnd_toStartOf="@+id/guideline13"
+        app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="@+id/guideline12"
-        app:layout_constraintTop_toBottomOf="@+id/textView12" />
+        app:layout_constraintTop_toBottomOf="@+id/textView12"
+        app:layout_constraintVertical_bias="0.0"
+        tools:listitem="@layout/list_item_interest_with_topics" />
 
     <include
         android:id="@+id/include3"

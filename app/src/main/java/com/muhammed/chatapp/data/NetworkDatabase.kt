@@ -5,6 +5,7 @@ import com.google.firebase.firestore.EventListener
 import com.google.firebase.firestore.ListenerRegistration
 import com.google.firebase.firestore.QuerySnapshot
 import com.muhammed.chatapp.data.pojo.*
+import kotlinx.coroutines.flow.Flow
 import java.lang.NullPointerException
 
 interface NetworkDatabase {
@@ -24,6 +25,8 @@ interface NetworkDatabase {
 
     // General Topics. Should be static on database
     suspend fun getTopics(): List<Topic>
+
+    fun getUserInterestsWithTopics(user: User): Flow<List<InterestWithTopics>>
 
     suspend fun createPrivateChat(otherUserEmail: String, currentUser: User): PrivateChat?
 

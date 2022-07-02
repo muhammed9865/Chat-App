@@ -43,7 +43,7 @@ class RegisterFragment : Fragment() {
     }
     private val viewModel: RegisterViewModel by viewModels()
 
-    private val loadingDialog: LoadingDialog by lazy { LoadingDialog() }
+    private val loadingDialog: LoadingDialog by lazy { LoadingDialog.getInstance() }
 
 
     @SuppressLint("ClickableViewAccessibility")
@@ -60,6 +60,7 @@ class RegisterFragment : Fragment() {
                 if (motionEvent.action == MotionEvent.ACTION_UP) {
                     binding.registerBtn.hideKeyboard()
                     binding.registerMotionLayout.transitionToEnd()
+                    loadingDialog.showDialog(parentFragmentManager, null)
                     viewModel.doOnEvent(AuthenticationEvent.Submit)
                 }
                 false
@@ -88,6 +89,7 @@ class RegisterFragment : Fragment() {
                     is AuthenticationState.Idle -> {}
 
                     is AuthenticationState.AuthenticationSuccess -> {
+                        loadingDialog.hideDialog()
                         findNavController().navigate(R.id.action_registerFragment_to_registerCompleteFragment)
                     }
 

@@ -6,7 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import com.muhammed.chatapp.databinding.DialogLoadingBinding
 
-class LoadingDialog : BaseDialog() {
+class LoadingDialog private constructor(): BaseDialog() {
     private lateinit var binding: DialogLoadingBinding
 
     override fun onCreateView(
@@ -16,9 +16,6 @@ class LoadingDialog : BaseDialog() {
     ): View {
         binding = DialogLoadingBinding.inflate(layoutInflater)
         isCancelable = false
-
-        dialog?.window?.setBackgroundDrawableResource(android.R.color.transparent)
-
         return binding.root
     }
 
@@ -29,13 +26,11 @@ class LoadingDialog : BaseDialog() {
         private var INSTANCE: LoadingDialog? = null
 
         fun getInstance(): LoadingDialog {
-            INSTANCE ?: synchronized(this) {
-                INSTANCE = LoadingDialog().also {
-                    INSTANCE = it
-                }
+            return INSTANCE ?: synchronized(this) {
+                INSTANCE = LoadingDialog()
+                return INSTANCE!!
             }
 
-            return INSTANCE!!
         }
     }
 }

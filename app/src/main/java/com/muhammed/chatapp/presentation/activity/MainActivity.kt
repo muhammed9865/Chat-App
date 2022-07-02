@@ -101,10 +101,11 @@ class MainActivity : AppCompatActivity(), NavigationBarView.OnItemSelectedListen
                         // Show Join Group Dialog here
                         // On any action on this dialog, send event SetFirstTimeToFalse
                         JoinGroupDialog { joinPressed ->
-                            //viewModel.doOnEvent(ChatsEvent.SetFirstTimeToFalse)
+                            viewModel.doOnEvent(ChatsEvent.SetFirstTimeToFalse)
                             if (joinPressed) {
+                                binding.botNav.selectedItemId = R.id.community
                                 navController.navigate(R.id.interestsSelectionFragment)
-                                //binding.botNav.selectedItemId = R.id.community
+
                             }
                         }.showDialog(supportFragmentManager, null)
                     }

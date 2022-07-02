@@ -127,6 +127,5 @@ dependencies {
     // Coil
     implementation 'io.coil-kt:coil:2.1.0'
 
-    // LayoutManager for Chips
-    implementation 'com.beloo.widget:ChipsLayoutManager:0.3.7@aar'
+
 }

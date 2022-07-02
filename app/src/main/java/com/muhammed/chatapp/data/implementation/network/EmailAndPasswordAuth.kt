@@ -26,9 +26,6 @@ class EmailAndPasswordAuth @Inject constructor(private val mAuth: FirebaseAuth) 
 
     }
 
-    fun loginWithGoogleAccount(googleAccount: GoogleSignInAccount) {
-
-    }
 
 
     suspend fun sendVerificationMessage(user: FirebaseUser) {

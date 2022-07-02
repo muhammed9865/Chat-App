@@ -13,6 +13,7 @@
         android:paddingBottom="@dimen/_10sdp"
         android:text="@string/_continue"
         android:textAllCaps="false"
+        android:enabled="false"
         android:textSize="@dimen/_11ssp"
         app:cornerRadius="@dimen/default_corner_radius"
         app:layout_constraintBottom_toTopOf="@+id/doItLaterBtn"

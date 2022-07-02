@@ -4,11 +4,14 @@ import com.muhammed.chatapp.data.implementation.network.EmailAndPasswordAuth
 import com.muhammed.chatapp.data.implementation.network.FirestoreNetworkDatabaseImp
 import com.muhammed.chatapp.domain.Encoder
 import com.muhammed.chatapp.data.pojo.User
+import com.muhammed.chatapp.presentation.state.AuthenticationState
+import java.util.*
 import javax.inject.Inject
 
 class AuthRepository @Inject constructor(
     private val mEmailAndPasswordAuth: EmailAndPasswordAuth,
     private val mFirestoreNetworkDatabaseImp: FirestoreNetworkDatabaseImp,
+    private val userRepository: UserRepository
 ) {
     suspend fun registerUser(
         nickname: String,
@@ -44,18 +47,36 @@ class AuthRepository @Inject constructor(
     suspend fun loginUser(
         email: String,
         password: String
-    ) = mEmailAndPasswordAuth.loginUserWithEmailAndPassword(email, password).user
+    ) {
+        mEmailAndPasswordAuth.loginUserWithEmailAndPassword(email, password).user.also { fbUser ->
+            if (fbUser != null) {
+                if (fbUser.isEmailVerified) {
+                    val user = userRepository.getUser(fbUser.email!!)
+                    userRepository.saveUserDetails(user)
+                    return
+                }
+            }
+            throw Exception("Either email or password is incorrect")
+        }
+    }
+
+    suspend fun loginUserDummyData(email: String, password: String) {
+        val user = User(UUID.randomUUID().toString(), "Ahlam Karara", email, password)
+        userRepository.saveUserDetails(user)
+    }
 
 
     fun getCurrentUser() = mEmailAndPasswordAuth.currentUser
 
     fun signOut() = mEmailAndPasswordAuth.signOut()
 
-    private suspend fun saveUserOnFirestore(user: User) = mFirestoreNetworkDatabaseImp.saveUser(user)
+    private suspend fun saveUserOnFirestore(user: User) =
+        mFirestoreNetworkDatabaseImp.saveUser(user)
 
 
     suspend fun saveGoogleUser(user: User) = mFirestoreNetworkDatabaseImp.saveGoogleUser(user)
 
-    suspend fun authenticateGoogleUser(uid: String) = mFirestoreNetworkDatabaseImp.getGoogleUser(uid)
+    suspend fun authenticateGoogleUser(uid: String) =
+        mFirestoreNetworkDatabaseImp.getGoogleUser(uid)
 
 }

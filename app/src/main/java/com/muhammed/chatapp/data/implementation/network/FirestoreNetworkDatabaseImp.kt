@@ -1,11 +1,14 @@
 package com.muhammed.chatapp.data.implementation.network
 
+import android.util.Log
 import com.google.firebase.firestore.*
 import com.muhammed.chatapp.Fields
 import com.muhammed.chatapp.data.NetworkDatabase
 import com.muhammed.chatapp.data.pojo.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 import javax.inject.Inject
@@ -122,8 +125,11 @@ class FirestoreNetworkDatabaseImp @Inject constructor(private val mFirestore: Fi
                             onUpdate(it)
                         }
                     }
-                }else {
-                    throw FirebaseFirestoreException("Something went wrong", FirebaseFirestoreException.Code.NOT_FOUND)
+                } else {
+                    throw FirebaseFirestoreException(
+                        "Something went wrong",
+                        FirebaseFirestoreException.Code.NOT_FOUND
+                    )
                 }
             }
     }
@@ -172,6 +178,25 @@ class FirestoreNetworkDatabaseImp @Inject constructor(private val mFirestore: Fi
             .get()
             .await()
             .toObjects(Topic::class.java)
+    }
+
+    override fun getUserInterestsWithTopics(user: User): Flow<List<InterestWithTopics>> {
+        val interestsChunks = user.interests.chunked(10)
+        Log.d("NetworkDatabase", "interestsWithTopicsSize: ${interestsChunks.size}")
+        return flow {
+            interestsChunks.forEach { interestChunk ->
+                val titles = interestChunk.map { interest -> interest.title }
+                Log.d("UserInterests", "getUserInterestsWithTopics: $titles")
+                mFirestore.collection(Collections.TOPICS)
+                    .whereIn("category", titles)
+                    .get()
+                    .await()
+                    .toObjects(Topic::class.java).also { topics ->
+                        val interestsWithTopics = InterestWithTopics.combine(interestChunk, topics)
+                        emit(interestsWithTopics)
+                    }
+            }
+        }
     }
 
     override suspend fun updateUser(user: User) {
