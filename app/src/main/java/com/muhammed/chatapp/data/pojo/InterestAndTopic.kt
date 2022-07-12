@@ -2,7 +2,6 @@ package com.muhammed.chatapp.data.pojo
 
 import com.google.firebase.firestore.Exclude
 import com.google.firebase.firestore.IgnoreExtraProperties
-import okhttp3.internal.immutableListOf
 
 @IgnoreExtraProperties
 sealed class InterestAndTopic(
@@ -46,7 +45,7 @@ data class InterestWithTopics(
     }
 
     companion object {
-        fun combine(mInterests: List<Interest>, mTopics: List<Topic>): List<InterestWithTopics> {
+        fun create(mInterests: List<Interest>, mTopics: List<Topic>): List<InterestWithTopics> {
             val interestsWithTopics = mutableListOf<InterestWithTopics>()
             val topicsCategorizedByCategory = mTopics.groupBy { topic -> topic.category }
             mInterests.forEach { interest ->

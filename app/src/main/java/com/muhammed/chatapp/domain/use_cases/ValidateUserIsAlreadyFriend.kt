@@ -1,6 +1,6 @@
 package com.muhammed.chatapp.domain.use_cases
 
-import com.muhammed.chatapp.data.pojo.PrivateChat
+import com.muhammed.chatapp.data.pojo.chat.PrivateChat
 import javax.inject.Inject
 
 // Validates if the email is in user chats list

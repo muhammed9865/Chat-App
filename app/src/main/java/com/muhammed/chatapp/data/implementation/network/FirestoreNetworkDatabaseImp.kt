@@ -5,6 +5,11 @@ import com.google.firebase.firestore.*
 import com.muhammed.chatapp.Fields
 import com.muhammed.chatapp.data.NetworkDatabase
 import com.muhammed.chatapp.data.pojo.*
+import com.muhammed.chatapp.data.pojo.chat.GroupChat
+import com.muhammed.chatapp.data.pojo.chat.PrivateChat
+import com.muhammed.chatapp.data.pojo.message.Message
+import com.muhammed.chatapp.data.pojo.message.Messages
+import com.muhammed.chatapp.data.pojo.user.User
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
@@ -12,9 +17,12 @@ import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 import javax.inject.Inject
+import kotlin.random.Random
 
 class FirestoreNetworkDatabaseImp @Inject constructor(private val mFirestore: FirebaseFirestore) :
     NetworkDatabase {
+
+    private var lastVisibleCommunityDocument: DocumentSnapshot? = null
 
     override suspend fun saveUser(user: User) {
         mFirestore.collection(Collections.USERS)
@@ -112,7 +120,7 @@ class FirestoreNetworkDatabaseImp @Inject constructor(private val mFirestore: Fi
             .addSnapshotListener(listener)
     }
 
-    override fun listenToChatMessages(
+    override suspend fun listenToChatMessages(
         messagesId: String,
         onUpdate: suspend (messages: Messages) -> Unit
     ) {
@@ -121,7 +129,7 @@ class FirestoreNetworkDatabaseImp @Inject constructor(private val mFirestore: Fi
             .addSnapshotListener { value, error ->
                 if (error == null) {
                     value?.toObject(Messages::class.java)?.let {
-                        CoroutineScope(Dispatchers.IO).launch {
+                        CoroutineScope(Dispatchers.Main).launch {
                             onUpdate(it)
                         }
                     }
@@ -132,6 +140,37 @@ class FirestoreNetworkDatabaseImp @Inject constructor(private val mFirestore: Fi
                     )
                 }
             }
+    }
+
+    override suspend fun getRandomMessages(messagesId: String): List<Message> {
+        return mFirestore.collection(Collections.MESSAGES)
+            .document(messagesId)
+            .get()
+            .await()
+            .toObject(Messages::class.java)
+            ?.messages?.takeLast(3) ?: emptyList()
+
+    }
+
+    override fun getUserCommunities(user: User): Flow<List<GroupChat>> {
+        return flow {
+            val interestsChunked = user.interests.groupBy { it.title }
+        }
+    }
+
+    override suspend fun getRandomCommunitiesBasedOnCategory(category: String): List<GroupChat> {
+        val documents = mFirestore.collection(Collections.CHATS)
+            .whereEqualTo("title", category)
+            .orderBy("createdSince")
+            .startAfter(lastVisibleCommunityDocument ?: 0)
+            .limit(10)
+            .get()
+            .await()
+
+        // For Paginating
+        lastVisibleCommunityDocument = documents.documents[documents.size() - 1]
+
+        return documents.toObjects(GroupChat::class.java).shuffled()
     }
 
     override suspend fun sendMessage(
@@ -150,22 +189,6 @@ class FirestoreNetworkDatabaseImp @Inject constructor(private val mFirestore: Fi
             .await()
     }
 
-    /* suspend fun getUserChatList(user: User): List<PrivateChat> {
-         val chats = mutableListOf<PrivateChat>()
-         val indexes = user.chats_list.chunked(10)
-         indexes.forEach { listOfIds ->
-             val list = mFirestore.collection(Collections.CHATS)
-                 .whereIn("cid", listOfIds)
-                 .get().await().toObjects(PrivateChat::class.java)
-
-             list.forEach {
-                 chats.add(it)
-             }
-         }
-
-         return chats
-
-     }*/
     override suspend fun getInterests(): List<Interest> {
         return mFirestore.collection(Collections.INTERESTS)
             .get()
@@ -192,7 +215,7 @@ class FirestoreNetworkDatabaseImp @Inject constructor(private val mFirestore: Fi
                     .get()
                     .await()
                     .toObjects(Topic::class.java).also { topics ->
-                        val interestsWithTopics = InterestWithTopics.combine(interestChunk, topics)
+                        val interestsWithTopics = InterestWithTopics.create(interestChunk, topics)
                         emit(interestsWithTopics)
                     }
             }

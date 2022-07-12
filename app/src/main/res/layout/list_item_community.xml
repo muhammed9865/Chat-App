@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:paddingEnd="@dimen/_10sdp"
+    android:orientation="vertical">
+
+    <com.google.android.material.imageview.ShapeableImageView
+        android:id="@+id/comm_photo"
+        android:layout_width="@dimen/_120sdp"
+        android:layout_height="@dimen/_80sdp"
+        android:scaleType="centerCrop"
+        android:background="#fff"
+        android:theme="@style/CustomCommunityCard"
+        app:srcCompat="@drawable/test2" />
+
+    <TextView
+        android:id="@+id/comm_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/_3sdp"
+        android:layout_marginTop="@dimen/_5sdp"
+        android:maxLength="30"
+        android:ellipsize="end"
+        android:fontFamily="@font/sf_medium"
+        android:textColor="#303030"
+        android:textSize="@dimen/_12ssp"
+        tools:text="Star Wars Torrent" />
+
+    <TextView
+        android:id="@+id/comm_member_count"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/_3sdp"
+        android:fontFamily="@font/sf_regular"
+        android:textColor="#686A8A"
+        android:textSize="@dimen/_10ssp"
+        tools:text="14,000 Members" />
+
+    <com.google.android.material.chip.Chip
+        android:id="@+id/comm_category"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:checkable="false"
+        android:focusable="false"
+        android:textColor="#686A8A"
+        android:textSize="@dimen/_10ssp"
+        app:chipBackgroundColor="#EFECFE"
+        tools:text="Tech" />
+
+
+</LinearLayout>

@@ -1,4 +1,4 @@
-package com.muhammed.chatapp.presentation.common
+package com.muhammed.chatapp.presentation.dialogs
 
 import android.os.Bundle
 import android.view.LayoutInflater

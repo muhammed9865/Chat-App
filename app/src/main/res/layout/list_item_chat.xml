@@ -19,7 +19,7 @@
         app:shapeAppearanceOverlay="@style/SingleChatPersonImage" />
 
     <TextView
-        android:id="@+id/chat_person_name"
+        android:id="@+id/chatName"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textColor="#303030"
@@ -31,7 +31,7 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
-        android:id="@+id/chat_last_msg"
+        android:id="@+id/chatSubTitle"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:ellipsize="end"
@@ -43,8 +43,8 @@
         android:textSize="@dimen/_10ssp"
         app:layout_constraintEnd_toStartOf="@+id/guideline3"
         app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="@+id/chat_person_name"
-        app:layout_constraintTop_toBottomOf="@+id/chat_person_name"
+        app:layout_constraintStart_toStartOf="@+id/chatName"
+        app:layout_constraintTop_toBottomOf="@+id/chatName"
         tools:text="asdasdasdasd" />
 
     <TextView
@@ -52,9 +52,9 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         tools:text="7:11PM"
-        app:layout_constraintBottom_toBottomOf="@+id/chat_person_name"
+        app:layout_constraintBottom_toBottomOf="@+id/chatName"
         app:layout_constraintEnd_toStartOf="@+id/guideline4"
-        app:layout_constraintTop_toTopOf="@+id/chat_person_name" />
+        app:layout_constraintTop_toTopOf="@+id/chatName" />
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/guideline3"

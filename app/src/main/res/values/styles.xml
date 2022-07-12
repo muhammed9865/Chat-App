@@ -36,4 +36,36 @@
         <item name="android:textSize">@dimen/_10ssp</item>
         <item name="android:fontFamily">@font/sf_regular</item>
     </style>
+
+    <style name="CommunitiesFilterChip" parent="Widget.MaterialComponents.Chip.Filter">
+        <item name="android:textColor">@color/checkbox_button_tint</item>
+        <item name="checkedIconVisible">false</item>
+        <item name="fontFamily">@font/sf_semibold</item>
+        <item name="chipBackgroundColor">@color/white</item>
+    </style>
+
+    <style name="CustomCommunityCard">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSizeTopRight">@dimen/_15sdp</item>
+        <item name="cornerSizeTopLeft">@dimen/_15sdp</item>
+        <item name="cornerSizeBottomRight">@dimen/_15sdp</item>
+        <item name="cornerSizeBottomLeft">@dimen/_15sdp</item>
+    </style>
+
+    <style name="CustomBottomSheetDialog" parent="@style/ThemeOverlay.MaterialComponents.BottomSheetDialog">
+        <item name="bottomSheetStyle">@style/CustomBottomSheet</item>
+    </style>
+
+    <style name="CustomBottomSheet" parent="Widget.MaterialComponents.BottomSheet">
+        <item name="shapeAppearanceOverlay">@style/CustomShapeAppearanceBottomSheet</item>
+    </style>
+
+    <style name="CustomShapeAppearanceBottomSheet">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSizeTopRight">@dimen/_15sdp</item>
+        <item name="cornerSizeTopLeft">@dimen/_15sdp</item>
+        <item name="cornerSizeBottomRight">@dimen/_15sdp</item>
+        <item name="cornerSizeBottomLeft">@dimen/_15sdp</item>
+    </style>
+
 </resources>

@@ -14,5 +14,13 @@ object Fields {
     const val MESSAGE_DATE = "messageDate"
     const val MESSAGES = "messages"
     const val LAST_MESSAGE = "lastMessage"
+}
 
+sealed class Filter(open val title: String) {
+    data class All(override val title: String = "all") : Filter(title)
+    data class Movies(override val title: String = "Movies") : Filter(title)
+    data class Art(override val title: String = "Art") : Filter(title)
+    data class Sports(override val title: String = "Sports") : Filter(title)
+    data class Crypto(override val title: String = "Crypto") : Filter(title)
+    data class Finance(override val title: String = "Finance") : Filter(title)
 }

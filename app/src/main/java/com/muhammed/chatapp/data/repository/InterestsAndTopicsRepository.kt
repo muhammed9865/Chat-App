@@ -1,7 +1,7 @@
 package com.muhammed.chatapp.data.repository
 
 import com.muhammed.chatapp.data.NetworkDatabase
-import com.muhammed.chatapp.data.pojo.User
+import com.muhammed.chatapp.data.pojo.user.User
 import javax.inject.Inject
 
 class InterestsAndTopicsRepository @Inject constructor(

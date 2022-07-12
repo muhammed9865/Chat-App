@@ -5,7 +5,7 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import com.muhammed.chatapp.data.CacheDatabase
-import com.muhammed.chatapp.data.pojo.Message
+import com.muhammed.chatapp.data.pojo.message.Message
 
 @Dao
 abstract class CacheDatabaseImp : CacheDatabase {

@@ -3,8 +3,7 @@ package com.muhammed.chatapp.data.repository
 import com.muhammed.chatapp.data.implementation.network.EmailAndPasswordAuth
 import com.muhammed.chatapp.data.implementation.network.FirestoreNetworkDatabaseImp
 import com.muhammed.chatapp.domain.Encoder
-import com.muhammed.chatapp.data.pojo.User
-import com.muhammed.chatapp.presentation.state.AuthenticationState
+import com.muhammed.chatapp.data.pojo.user.User
 import java.util.*
 import javax.inject.Inject
 

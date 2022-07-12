@@ -12,7 +12,7 @@ import com.muhammed.chatapp.domain.use_cases.ValidateEmail
 import com.muhammed.chatapp.domain.use_cases.ValidateNickname
 import com.muhammed.chatapp.domain.use_cases.ValidatePassword
 import com.muhammed.chatapp.domain.use_cases.ValidateRepeatedPassword
-import com.muhammed.chatapp.data.pojo.User
+import com.muhammed.chatapp.data.pojo.user.User
 import com.muhammed.chatapp.presentation.event.AuthenticationEvent
 import com.muhammed.chatapp.presentation.state.AuthenticationState
 import com.muhammed.chatapp.presentation.state.ValidationState

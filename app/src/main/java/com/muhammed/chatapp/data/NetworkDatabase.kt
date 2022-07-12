@@ -1,10 +1,15 @@
 package com.muhammed.chatapp.data
 
-import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.EventListener
 import com.google.firebase.firestore.ListenerRegistration
 import com.google.firebase.firestore.QuerySnapshot
 import com.muhammed.chatapp.data.pojo.*
+import com.muhammed.chatapp.data.pojo.chat.Chat
+import com.muhammed.chatapp.data.pojo.chat.GroupChat
+import com.muhammed.chatapp.data.pojo.chat.PrivateChat
+import com.muhammed.chatapp.data.pojo.message.Message
+import com.muhammed.chatapp.data.pojo.message.Messages
+import com.muhammed.chatapp.data.pojo.user.User
 import kotlinx.coroutines.flow.Flow
 import java.lang.NullPointerException
 
@@ -20,6 +25,8 @@ interface NetworkDatabase {
 
     suspend fun getGoogleUser(email: String): User?
 
+    suspend fun getChat(chatId: String): Chat
+
     // General Interests. Should be static on database
     suspend fun getInterests(): List<Interest>
 
@@ -28,16 +35,22 @@ interface NetworkDatabase {
 
     fun getUserInterestsWithTopics(user: User): Flow<List<InterestWithTopics>>
 
+    fun getUserCommunities(user: User): Flow<List<GroupChat>>
+
+    suspend fun getRandomCommunitiesBasedOnCategory(category: String): List<GroupChat>
+
     suspend fun createPrivateChat(otherUserEmail: String, currentUser: User): PrivateChat?
 
     suspend fun updateUserChatsList(userEmail: String, userCollection: String, chatId: String)
 
     fun listenToChatsChanges(listener: EventListener<QuerySnapshot>): ListenerRegistration
 
-    fun listenToChatMessages(
+    suspend fun listenToChatMessages(
         messagesId: String,
         onUpdate: suspend (messages: Messages) -> Unit
     )
+
+    suspend fun getRandomMessages(messagesId: String): List<Message>
 
     /*
     @param ChatId to set the last chat message to the @param message

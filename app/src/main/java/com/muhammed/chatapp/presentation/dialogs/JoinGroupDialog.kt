@@ -1,12 +1,12 @@
-package com.muhammed.chatapp.presentation.common
+package com.muhammed.chatapp.presentation.dialogs
 
 import android.content.DialogInterface
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.fragment.app.DialogFragment
 import com.muhammed.chatapp.databinding.DialogJoinGroupBinding
+import com.muhammed.chatapp.presentation.common.hideDialog
 
 // This Dialog is shown only if it's the first time for the user in the application
 class JoinGroupDialog(private val actionTakenListener: (joinPressed: Boolean) -> Unit) : BaseDialog() {

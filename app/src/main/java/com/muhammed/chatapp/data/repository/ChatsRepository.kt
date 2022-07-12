@@ -1,9 +1,10 @@
 package com.muhammed.chatapp.data.repository
 
+import com.google.firebase.firestore.FirebaseFirestoreException
 import com.google.firebase.firestore.ListenerRegistration
 import com.muhammed.chatapp.data.NetworkDatabase
-import com.muhammed.chatapp.data.pojo.PrivateChat
-import com.muhammed.chatapp.data.pojo.User
+import com.muhammed.chatapp.data.pojo.chat.PrivateChat
+import com.muhammed.chatapp.data.pojo.user.User
 import com.muhammed.chatapp.domain.use_cases.FilterUserPrivateRoom
 import javax.inject.Inject
 
@@ -23,10 +24,15 @@ class ChatsRepository @Inject constructor(
                 roomsValue?.documents?.let { documents ->
                     val rooms = filterUserPrivateRoom.execute(documents, user)
                     onChange(rooms)
+
                 }
+            }else {
+                throw FirebaseFirestoreException("Something went wrong", FirebaseFirestoreException.Code.DATA_LOSS)
             }
         }
     }
+
+
 
     companion object {
         private const val TAG = "FirestoreRepository"

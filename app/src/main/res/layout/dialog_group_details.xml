@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/appCompatImageView3"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/ic_line"
+        tools:layout_editor_absoluteX="0dp" />
+
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/group_photo"
+        android:layout_width="@dimen/_50sdp"
+        android:layout_height="@dimen/_50sdp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="46dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/appCompatImageView3"
+        app:srcCompat="@drawable/test2" />
+
+    <TextView
+        android:id="@+id/group_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:fontFamily="@font/sf_medium"
+        android:textSize="@dimen/_14ssp"
+        tools:text="Crypto Winners"
+        android:textColor="#303030"
+        app:layout_constraintStart_toEndOf="@+id/group_photo"
+        app:layout_constraintTop_toTopOf="@+id/group_photo" />
+
+    <TextView
+        android:id="@+id/group_members_count"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="6dp"
+        tools:text="15,555 Members"
+        android:textColor="#686A8A"
+        android:fontFamily="@font/sf_regular"
+        app:layout_constraintStart_toStartOf="@+id/group_title"
+        app:layout_constraintTop_toBottomOf="@+id/group_title" />
+
+    <com.google.android.material.chip.Chip
+        android:id="@+id/group_category"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="16dp"
+        android:checkable="false"
+        android:focusable="false"
+        android:textColor="#686A8A"
+        app:chipBackgroundColor="#EFECFE"
+        app:layout_constraintBottom_toBottomOf="@+id/group_title"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/group_title"
+        tools:text="Crypto" />
+
+    <TextView
+        android:id="@+id/group_description"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/_15sdp"
+        android:ellipsize="end"
+        android:fontFamily="@font/sf_regular"
+        android:maxLines="3"
+        android:textColor="#303030"
+        android:textSize="@dimen/_12ssp"
+        app:layout_constraintEnd_toEndOf="@+id/group_category"
+        app:layout_constraintStart_toStartOf="@+id/group_photo"
+        app:layout_constraintTop_toBottomOf="@+id/group_photo"
+        tools:text="@tools:sample/lorem/random" />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/join_group_btn"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/_10sdp"
+        android:text="@string/join_community"
+        android:textAllCaps="false"
+        android:fontFamily="@font/sf_bold"
+        android:padding="@dimen/_10sdp"
+        app:cornerRadius="@dimen/bot_nav_corners"
+        app:layout_constraintEnd_toEndOf="@+id/group_description"
+        app:layout_constraintStart_toStartOf="@+id/group_description"
+        app:layout_constraintTop_toBottomOf="@+id/group_description" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

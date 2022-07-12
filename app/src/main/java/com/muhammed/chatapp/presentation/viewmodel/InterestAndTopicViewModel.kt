@@ -4,6 +4,7 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.muhammed.chatapp.data.pojo.*
+import com.muhammed.chatapp.data.pojo.user.User
 import com.muhammed.chatapp.data.repository.InterestsAndTopicsRepository
 import com.muhammed.chatapp.data.repository.UserRepository
 import com.muhammed.chatapp.presentation.event.InterestsAndTopicsEvent
@@ -135,7 +136,7 @@ class InterestAndTopicViewModel @Inject constructor(
     private fun loadTopics() {
         tryAsync {
             _currentUser?.let { user ->
-                interestsAndTopicsRepository.getUserInterestsWithTopics(user).collect {
+                interestsAndTopicsRepository.getUserInterestsWithTopics(user).collect { it ->
                     it.forEach {
                         Log.d(TAG, "loadTopics: ${it.interest.title}")
                     }

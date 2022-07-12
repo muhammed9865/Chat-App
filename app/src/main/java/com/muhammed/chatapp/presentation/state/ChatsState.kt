@@ -2,8 +2,7 @@ package com.muhammed.chatapp.presentation.state
 
 import android.util.Log
 import com.google.firebase.firestore.Query
-import com.muhammed.chatapp.data.pojo.MessagingRoom
-import com.muhammed.chatapp.data.pojo.PrivateChat
+import com.muhammed.chatapp.data.pojo.chat.PrivateChat
 
 // Chats Fragment States
 sealed class ChatsState {

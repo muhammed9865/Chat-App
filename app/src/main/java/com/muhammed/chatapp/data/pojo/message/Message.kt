@@ -1,9 +1,8 @@
-package com.muhammed.chatapp.data.pojo
+package com.muhammed.chatapp.data.pojo.message
 
 import androidx.room.Embedded
 import androidx.room.Entity
-import androidx.room.PrimaryKey
-import com.google.firebase.firestore.Exclude
+import com.muhammed.chatapp.data.pojo.user.User
 
 @Entity(
     primaryKeys = ["messageDate","text"]
@@ -16,6 +15,10 @@ data class Message(
     val messageDate: Long = System.currentTimeMillis()
 ) {
 
+    override fun equals(other: Any?): Boolean {
+        val otherMsg = other as Message
+        return text == otherMsg.text && messageDate == otherMsg.messageDate
+    }
 
     companion object {
         fun emptyMessage() = Message()

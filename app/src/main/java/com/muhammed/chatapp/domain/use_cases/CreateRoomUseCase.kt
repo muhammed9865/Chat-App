@@ -1,8 +1,8 @@
 package com.muhammed.chatapp.domain.use_cases
 
 import com.muhammed.chatapp.data.repository.ChatsRepository
-import com.muhammed.chatapp.data.pojo.PrivateChat
-import com.muhammed.chatapp.data.pojo.User
+import com.muhammed.chatapp.data.pojo.chat.PrivateChat
+import com.muhammed.chatapp.data.pojo.user.User
 import javax.inject.Inject
 
 class CreateRoomUseCase @Inject constructor(

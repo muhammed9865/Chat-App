@@ -5,17 +5,34 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.02" />
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline8"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.98" />
 
 
     <androidx.fragment.app.FragmentContainerView
         android:id="@+id/fragmentsContainer"
         android:name="androidx.navigation.fragment.NavHostFragment"
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
         android:layout_height="0dp"
+        android:visibility="visible"
         app:defaultNavHost="true"
         app:layout_behavior="com.google.android.material.appbar.AppBarLayout$ScrollingViewBehavior"
         app:layout_constraintBottom_toTopOf="@+id/botBarDivider"
+        app:layout_constraintEnd_toStartOf="@+id/guideline8"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="@+id/guideline2"
         app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.0"
         app:navGraph="@navigation/main_graph" />
 
     <androidx.coordinatorlayout.widget.CoordinatorLayout
@@ -46,9 +63,9 @@
             android:layout_width="match_parent"
             android:layout_height="@dimen/_70sdp"
             android:layout_gravity="bottom"
-            app:elevation="4dp"
+            app:elevation="3dp"
             app:fabCradleMargin="10dp"
-            app:fabCradleRoundedCornerRadius="0dp"
+            app:fabCradleRoundedCornerRadius="10dp"
             app:layout_behavior="com.google.android.material.bottomappbar.BottomAppBar$Behavior">
 
             <com.google.android.material.bottomnavigation.BottomNavigationView

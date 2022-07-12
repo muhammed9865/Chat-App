@@ -5,6 +5,7 @@ import android.widget.PopupMenu
 import androidx.annotation.MenuRes
 import androidx.fragment.app.FragmentActivity
 import com.muhammed.chatapp.R
+import com.muhammed.chatapp.presentation.dialogs.SignOutDialog
 
 class MenuOptions(private val fragmentActivity: FragmentActivity, attachTo: View, @MenuRes private val menu: Int) {
     private var popUp: PopupMenu = PopupMenu(fragmentActivity, attachTo)

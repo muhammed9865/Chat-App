@@ -16,6 +16,7 @@ import androidx.navigation.fragment.findNavController
 import com.muhammed.chatapp.*
 import com.muhammed.chatapp.databinding.FragmentLoginBinding
 import com.muhammed.chatapp.presentation.common.*
+import com.muhammed.chatapp.presentation.dialogs.LoadingDialog
 import com.muhammed.chatapp.presentation.event.AuthenticationEvent
 import com.muhammed.chatapp.presentation.state.AuthenticationState
 import com.muhammed.chatapp.presentation.viewmodel.LoginViewModel

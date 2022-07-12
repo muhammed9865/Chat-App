@@ -1,12 +1,256 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".presentation.fragments.CommunitiesFragment">
 
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <ImageView
+            android:id="@+id/imageView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:contentDescription="@string/logo"
+            android:src="@drawable/ic_chat_logo"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <ImageView
+            android:id="@+id/menu_btn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/icon_rounded_bg"
+            android:clickable="true"
+            android:contentDescription="@string/sign_out"
+            android:focusable="true"
+            android:padding="@dimen/_3sdp"
+            android:src="@drawable/ic_list"
+            app:layout_constraintBottom_toBottomOf="@+id/imageView"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/imageView"
+            app:layout_constraintVertical_bias="0.533"
+            app:tint="#686A8A" />
+
+        <ImageView
+            android:id="@+id/imageView3"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="8dp"
+            android:background="@drawable/icon_rounded_bg"
+            android:clickable="true"
+            android:contentDescription="@string/search"
+            android:focusable="true"
+            android:padding="@dimen/_3sdp"
+            android:src="@drawable/ic_baseline_search_24"
+            app:layout_constraintBottom_toBottomOf="@+id/imageView"
+            app:layout_constraintEnd_toStartOf="@+id/menu_btn"
+            app:layout_constraintTop_toTopOf="@+id/imageView"
+            app:layout_constraintVertical_bias="0.533" />
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/imageView2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="8dp"
+            android:background="@drawable/icon_rounded_bg"
+            android:clickable="true"
+            android:contentDescription="@string/take_a_photo"
+            android:focusable="true"
+            android:padding="@dimen/_5sdp"
+            app:layout_constraintBottom_toBottomOf="@+id/imageView"
+            app:layout_constraintEnd_toStartOf="@+id/imageView3"
+            app:layout_constraintTop_toTopOf="@+id/imageView"
+            app:layout_constraintVertical_bias="0.533"
+            app:srcCompat="@drawable/ic_new_group" />
+
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/materialCardView"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/_90sdp"
+            android:layout_marginTop="@dimen/_15sdp"
+            app:cardCornerRadius="@dimen/_10sdp"
+            app:cardUseCompatPadding="true"
+            app:cardElevation="@dimen/_5sdp"
+            app:layout_constraintTop_toBottomOf="@+id/imageView3"
+            tools:layout_editor_absoluteX="7dp">
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <androidx.appcompat.widget.AppCompatImageView
+                    android:id="@+id/appCompatImageView2"
+                    android:layout_width="@dimen/_120sdp"
+                    android:layout_height="match_parent"
+                    android:layout_marginBottom="@dimen/_3sdp"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:srcCompat="@drawable/group_43" />
+
+                <androidx.appcompat.widget.AppCompatImageView
+                    android:id="@+id/appCompatImageView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="16dp"
+                    android:layout_marginTop="8dp"
+                    android:background="@drawable/icon_rounded_bg"
+                    android:padding="@dimen/_7sdp"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:srcCompat="@drawable/ic_group_users" />
+
+                <TextView
+                    android:id="@+id/textView13"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    android:fontFamily="@font/sf_bold"
+                    android:text="@string/get_50_coins"
+                    android:textColor="@color/primaryColor"
+                    app:layout_constraintStart_toStartOf="@+id/appCompatImageView"
+                    app:layout_constraintTop_toBottomOf="@+id/appCompatImageView" />
+
+                <TextView
+                    android:id="@+id/textView14"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/sf_semibold"
+                    android:text="@string/for_your_first_communitiy"
+                    android:textColor="@color/black"
+                    app:layout_constraintStart_toStartOf="@+id/textView13"
+                    app:layout_constraintTop_toBottomOf="@+id/textView13" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
 
 
+        </com.google.android.material.card.MaterialCardView>
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+        <TextView
+            android:id="@+id/textView15"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/_10sdp"
+            android:fontFamily="@font/sf_bold"
+            android:text="@string/for_you"
+            android:textColor="@color/black"
+            android:textSize="@dimen/_15ssp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/materialCardView" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/for_you_comms_rv"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/_8sdp"
+            android:orientation="horizontal"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="@+id/textView15"
+            app:layout_constraintTop_toBottomOf="@+id/textView15"
+            tools:listitem="@layout/list_item_community" />
+
+        <TextView
+            android:id="@+id/textView16"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/_15sdp"
+            android:fontFamily="@font/sf_bold"
+            android:text="Communities by Interests"
+            android:textColor="@color/black"
+            android:textSize="@dimen/_15ssp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/for_you_comms_rv" />
+
+        <HorizontalScrollView
+            android:id="@+id/horizontalScrollView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:scrollbars="none"
+            app:layout_constraintTop_toBottomOf="@+id/textView16"
+            tools:layout_editor_absoluteX="37dp">
+
+            <com.google.android.material.chip.ChipGroup
+                android:id="@+id/filter_group"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                app:singleSelection="true"
+                app:checkedChip="@id/filter_all"
+                app:chipSpacingHorizontal="0dp">
+
+                <com.google.android.material.chip.Chip
+                    android:id="@+id/filter_all"
+                    style="@style/CommunitiesFilterChip"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/all" />
+
+                <com.google.android.material.chip.Chip
+                    android:id="@+id/filter_movies"
+                    style="@style/CommunitiesFilterChip"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/movies"
+                    tools:checked="false" />
+
+                <com.google.android.material.chip.Chip
+                    android:id="@+id/filter_art"
+                    style="@style/CommunitiesFilterChip"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/art"
+                    tools:checked="false" />
+
+                <com.google.android.material.chip.Chip
+                    android:id="@+id/filter_sports"
+                    style="@style/CommunitiesFilterChip"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/sports"
+                    tools:checked="false" />
+
+                <com.google.android.material.chip.Chip
+                    android:id="@+id/filter_crypto"
+                    style="@style/CommunitiesFilterChip"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/crypto"
+                    tools:checked="false" />
+
+                <com.google.android.material.chip.Chip
+                    android:id="@+id/filter_finance"
+                    style="@style/CommunitiesFilterChip"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/finance"
+                    tools:checked="false" />
+
+                <com.google.android.material.chip.Chip
+                    android:id="@+id/filter_health"
+                    style="@style/CommunitiesFilterChip"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/health"
+                    tools:checked="false" />
+            </com.google.android.material.chip.ChipGroup>
+        </HorizontalScrollView>
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/all_comms_rv"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            tools:listitem="@layout/list_item_community"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="@+id/textView15"
+            app:layout_constraintTop_toBottomOf="@+id/horizontalScrollView" />
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</ScrollView>

@@ -7,7 +7,7 @@ import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
 import com.google.gson.Gson
 import com.muhammed.chatapp.Constants
-import com.muhammed.chatapp.data.pojo.User
+import com.muhammed.chatapp.data.pojo.user.User
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.map

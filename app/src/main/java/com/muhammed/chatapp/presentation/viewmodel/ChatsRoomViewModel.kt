@@ -6,9 +6,10 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.firebase.firestore.ListenerRegistration
 import com.muhammed.chatapp.Constants
-import com.muhammed.chatapp.data.pojo.Message
-import com.muhammed.chatapp.data.pojo.MessagingRoom
-import com.muhammed.chatapp.data.pojo.User
+import com.muhammed.chatapp.data.pojo.message.Message
+import com.muhammed.chatapp.data.pojo.chat.MessagingRoom
+import com.muhammed.chatapp.data.pojo.user.User
+import com.muhammed.chatapp.data.repository.ChatsRepository
 import com.muhammed.chatapp.data.repository.MessagesRepository
 import com.muhammed.chatapp.data.repository.UserRepository
 import com.muhammed.chatapp.domain.use_cases.SerializeEntityUseCase
@@ -26,7 +27,8 @@ import javax.inject.Inject
 class ChatsRoomViewModel @Inject constructor(
     private val serializeEntityUseCase: SerializeEntityUseCase,
     private val messagesRepository: MessagesRepository,
-    private val userRepository: UserRepository
+    private val userRepository: UserRepository,
+    private val chatsRepository: ChatsRepository,
 ) : ViewModel() {
     private val _room = MutableStateFlow(MessagingRoom())
     val room = _room.asStateFlow()
@@ -63,10 +65,15 @@ class ChatsRoomViewModel @Inject constructor(
             Log.d(TAG, "getUserDetailsFromIntent: $it")
             val room = serializeEntityUseCase.fromString<MessagingRoom>(it)
             _room.value = room
-            listenToMessages()
+
+            if (room.isJoined) {
+                listenToMessages()
+            }else {
+
+            }
         }
 
-        // Used it here instead of init because I'm not sure if it will be executed first and would lead to NullPointerException
+        // Used listenToMessages  here instead of init because I'm not sure if it will be executed first and would lead to NullPointerException
         // And since getUserDetailsFromIntent is called once entering the activity, so it's like init.
 
     }
@@ -74,26 +81,42 @@ class ChatsRoomViewModel @Inject constructor(
     private fun listenToMessages() {
         tryAsync {
             Log.d(TAG, "listenToMessages: ${_room.value}")
-           messagesRepository.listenToMessages(_room.value.messagesId) {
+            messagesRepository.listenToMessages(_room.value.messagesId) {
                 _messages.value = it
-                Log.d(TAG, "listenToMessages: $it")
+                it.forEach { msg -> Log.d(TAG, "listenToMessages: ${msg.text}") }
+
+            }
+        }
+    }
+
+    // Used when user isn't part of the group but is just exploring it
+    private fun showGroupDetails(room: MessagingRoom) {
+        tryAsync {
+            val chat =  chatsRepository.
+        }
+    }
+
+    private fun setRandomMessages(messagesId: String) {
+        tryAsync {
+            messagesRepository.getRandomMessages(messagesId).also {
+                _messages.value = it
             }
         }
     }
 
     private fun sendMessage(message: String) {
-       tryAsync {
-           val msg = Message(
-               messagesId = _room.value.messagesId,
-               sender = currentUser.value,
-               text = message
-           )
-           messagesRepository.sendMessage(
-               chatId = _room.value.chatId,
-               messagesId = _room.value.messagesId,
-               message = msg
-           )
-       }
+        tryAsync {
+            val msg = Message(
+                messagesId = _room.value.messagesId,
+                sender = currentUser.value,
+                text = message
+            )
+            messagesRepository.sendMessage(
+                chatId = _room.value.chatId,
+                messagesId = _room.value.messagesId,
+                message = msg
+            )
+        }
 
     }
 

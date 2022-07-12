@@ -8,15 +8,13 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
-import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.muhammed.chatapp.R
 import com.muhammed.chatapp.databinding.FragmentChatsBinding
 import com.muhammed.chatapp.domain.use_cases.CheckIfCurrentUserUseCase
 import com.muhammed.chatapp.presentation.adapter.ChatsAdapter
-import com.muhammed.chatapp.presentation.common.*
+import com.muhammed.chatapp.presentation.common.MenuOptions
 import com.muhammed.chatapp.presentation.event.ChatsEvent
-import com.muhammed.chatapp.presentation.state.ChatsState
 import com.muhammed.chatapp.presentation.viewmodel.MainViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
@@ -25,8 +23,7 @@ import kotlinx.coroutines.launch
 class ChatsFragment : Fragment() {
     private val binding: FragmentChatsBinding by lazy { FragmentChatsBinding.inflate(layoutInflater) }
     private val viewModel by activityViewModels<MainViewModel>()
-    private val loadingDialog: LoadingDialog by lazy { LoadingDialog.getInstance() }
-    private var mAdapter: ChatsAdapter? = null
+    private lateinit var mAdapter: ChatsAdapter
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -39,14 +36,17 @@ class ChatsFragment : Fragment() {
 
         lifecycleScope.launch {
             launch {
-                viewModel.userPrivateChats.collect {
-                    mAdapter?.submitList(it)
+                viewModel.userChats.collect {
+                    it.forEach { chat ->
+                        Log.d("ChatsFragment", "listenToUserChats: ${chat.lastMessage.text}")
+                    }
+                    mAdapter.submitList(it)
                 }
             }
 
             launch {
                 viewModel.currentUser.collect {
-                    mAdapter?.setCurrentUser(it)
+                    mAdapter.setCurrentUser(it)
                 }
             }
         }
@@ -56,16 +56,11 @@ class ChatsFragment : Fragment() {
             layoutManager = LinearLayoutManager(requireContext())
         }
 
-        mAdapter?.registerClickListener {
+        mAdapter.registerClickListener {
             viewModel.doOnEvent(ChatsEvent.JoinPrivateChat(it))
         }
 
         return binding.root
-    }
-
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-        //doOnStateChanged()
     }
 
 
@@ -81,61 +76,9 @@ class ChatsFragment : Fragment() {
     }
 
 
-    // Unused, States are handled in the activity MainActivity
-    private fun doOnStateChanged() {
-
-        lifecycleScope.launch {
-            viewModel.states.collect { state ->
-                Log.d("Chat State", "onStateChanged from fragment: $state")
-                when (state) {
-                    is ChatsState.SignedOut -> {
-                        findNavController().navigate(R.id.action_chatsFragment_to_authActivity)
-                        requireActivity().finish()
-                    }
-
-                    is ChatsState.UserExists -> {
-                        Log.d(TAG, "doOnStateChanged: ${state.privateChat}")
-                        loadingDialog.hideDialog()
-                    }
-
-                    is ChatsState.PrivateRoomCreated -> {
-                        loadingDialog.hideDialog()
-                    }
-
-                    is ChatsState.StartListeningToRooms -> {
-                        lifecycleScope.launch {
-                            initializeRecyclerViewWithAdapter()
-                            viewModel.currentUser.collect {
-                                mAdapter?.setCurrentUser(it)
-                                loadingDialog.hideDialog()
-                            }
-                        }
-                    }
-                    is ChatsState.Error -> {
-                        view?.showError(state.errorMessage)
-                        loadingDialog.hideDialog()
-                    }
-
-                    is ChatsState.Loading -> {
-                        loadingDialog.showDialog(requireActivity().supportFragmentManager, null)
-                    }
-                    else -> {}
-                }
-            }
-        }
-    }
-
-
-    private fun initializeRecyclerViewWithAdapter() {
-        if (mAdapter == null) {
-            binding.chatsRv.apply {
-                adapter = mAdapter
-                layoutManager = LinearLayoutManager(requireContext())
-            }
-        }
-    }
 
     companion object {
+        @Suppress("unused")
         private const val TAG = "ChatsFragment"
     }
 

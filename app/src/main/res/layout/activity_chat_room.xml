@@ -42,13 +42,13 @@
         android:elevation="0dp"
         android:scaleType="centerCrop"
         android:src="@drawable/messaging_bg"
-        app:layout_constraintBottom_toTopOf="@+id/constraintLayout2"
+        app:layout_constraintBottom_toTopOf="@+id/messaging_layout"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/messaging_toolbar" />
 
     <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/constraintLayout2"
+        android:id="@+id/messaging_layout"
         android:layout_width="match_parent"
         android:layout_height="@dimen/_50sdp"
         android:paddingTop="@dimen/_10sdp"
@@ -102,5 +102,6 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
     </androidx.constraintlayout.widget.ConstraintLayout>
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>

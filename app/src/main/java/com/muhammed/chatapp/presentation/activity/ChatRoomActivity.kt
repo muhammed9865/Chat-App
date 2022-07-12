@@ -5,11 +5,12 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.widget.doOnTextChanged
 import androidx.lifecycle.lifecycleScope
-import com.muhammed.chatapp.data.pojo.MessagingRoom
+import com.muhammed.chatapp.data.pojo.chat.MessagingRoom
 import com.muhammed.chatapp.databinding.ActivityChatRoomBinding
 import com.muhammed.chatapp.presentation.adapter.MessageAdapter
 import com.muhammed.chatapp.presentation.common.hideKeyboard
 import com.muhammed.chatapp.presentation.common.showError
+import com.muhammed.chatapp.presentation.dialogs.GroupDetailsBottomDialog
 import com.muhammed.chatapp.presentation.event.MessagingRoomEvents
 import com.muhammed.chatapp.presentation.state.MessagingRoomStates
 import com.muhammed.chatapp.presentation.viewmodel.ChatsRoomViewModel
@@ -30,9 +31,6 @@ class ChatRoomActivity : AppCompatActivity() {
 
             setSupportActionBar(messagingToolbar)
             messagingToolbar.setNavigationOnClickListener { onBackPressed() }
-
-
-
 
 
             toggleSendButton()
@@ -88,6 +86,11 @@ class ChatRoomActivity : AppCompatActivity() {
         lifecycleScope.launch {
             viewModel.states.collect { state ->
                 when (state) {
+                    is MessagingRoomStates.ShowGroupDetails -> {
+                        GroupDetailsBottomDialog(state.group).also {
+                            it.setOnJoinClicked {  }
+                        }.show(supportFragmentManager, null)
+                    }
                     is MessagingRoomStates.Error -> {
                         binding.root.showError(state.error)
                     }

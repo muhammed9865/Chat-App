@@ -1,6 +1,6 @@
 package com.muhammed.chatapp.data
 
-import com.muhammed.chatapp.data.pojo.Message
+import com.muhammed.chatapp.data.pojo.message.Message
 
 interface CacheDatabase {
 

@@ -18,6 +18,9 @@ import com.muhammed.chatapp.Constants
 import com.muhammed.chatapp.R
 import com.muhammed.chatapp.databinding.ActivityMainBinding
 import com.muhammed.chatapp.presentation.common.*
+import com.muhammed.chatapp.presentation.dialogs.JoinGroupDialog
+import com.muhammed.chatapp.presentation.dialogs.LoadingDialog
+import com.muhammed.chatapp.presentation.dialogs.NewChatDialog
 import com.muhammed.chatapp.presentation.event.ChatsEvent
 import com.muhammed.chatapp.presentation.state.ChatsState
 import com.muhammed.chatapp.presentation.viewmodel.MainViewModel
