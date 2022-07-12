@@ -1,0 +1,1 @@
+Handle Casting From Chat to GroupChat/PrivateChat when listening to chat rooms

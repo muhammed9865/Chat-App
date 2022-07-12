@@ -5,8 +5,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.firebase.firestore.ListenerRegistration
 import com.muhammed.chatapp.Filter
-import com.muhammed.chatapp.data.pojo.chat.GroupChat
-import com.muhammed.chatapp.data.pojo.chat.PrivateChat
+import com.muhammed.chatapp.data.pojo.chat.*
 import com.muhammed.chatapp.data.pojo.user.User
 import com.muhammed.chatapp.data.repository.AuthRepository
 import com.muhammed.chatapp.data.repository.ChatsRepository
@@ -38,7 +37,7 @@ class MainViewModel @Inject constructor(
 
     private val _states = MutableStateFlow<ChatsState>(ChatsState.Idle)
     val states = _states.asStateFlow()
-    private val _userChats = MutableStateFlow<List<PrivateChat>>(emptyList())
+    private val _userChats = MutableStateFlow<List<Chat>>(emptyList())
     val userChats = _userChats.asStateFlow()
 
     // Used to display groups in For You Section in Community Fragment
@@ -83,8 +82,7 @@ class MainViewModel @Inject constructor(
             is ChatsEvent.CreatePrivateRoom -> createPrivateChat(otherUserEmail = event.email)
 
             is ChatsEvent.JoinPrivateChat -> {
-                // Serializing toString because the MessagingRoom object will be sent as Extra in the MainActivity to ChatRoomActivity Intent
-                val room = serializeEntityUseCase.toString(event.chat)
+                val room = serializeEntityUseCase.toString(event.chatAndRoom)
                 setState(ChatsState.EnterChat(room))
             }
 
@@ -98,8 +96,17 @@ class MainViewModel @Inject constructor(
             is ChatsEvent.LoadRandomCommunitiesBasedOnFilter -> loadRandomCommunitiesBasedOnFilter(event.filter)
 
             is ChatsEvent.ShowGroupDetails -> {
-                val room = serializeEntityUseCase.toString(event.group.copy(isJoined = false))
-                setState(ChatsState.EnterChat(room))
+                val group = event.group
+                val room = MessagingRoom(
+                    chatId = group.cid,
+                    messagesId = group.messagesId,
+                    title = group.title,
+                    subTitle = group.serializeMembersCount(),
+                    isJoined = false
+                )
+                val chatAndRoom = ChatAndRoom<GroupChat>(group, room)
+                val chatAndRoomSerialized = serializeEntityUseCase.toString(chatAndRoom)
+                setState(ChatsState.EnterChat(chatAndRoomSerialized))
             }
 
         }
@@ -111,7 +118,8 @@ class MainViewModel @Inject constructor(
             // if current user is not null, start creating the chat,
             // and then update the current chat list on fireStore.
             userRepository.currentUser.filterNotNull().collect { user ->
-                val room = createRoomUseCase.execute(otherUserEmail, user, _userChats.value)
+                val userPrivateChats = _userChats.value.filterIsInstance<PrivateChat>()
+                val room = createRoomUseCase.execute(otherUserEmail, user, userPrivateChats)
                 room?.let {
                     userRepository.updateUserChatsList(
                         user.email,
@@ -149,6 +157,7 @@ class MainViewModel @Inject constructor(
             communityRepository.loadCommunitiesByInterest(filter).also {
                 groups.addAll(it)
             }
+            _userCommunities.value = groups
             _randomCommunitiesBasedOnInterest.value = groups
         }
     }

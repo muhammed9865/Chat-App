@@ -73,20 +73,20 @@
         app:layout_constraintEnd_toEndOf="@+id/group_category"
         app:layout_constraintStart_toStartOf="@+id/group_photo"
         app:layout_constraintTop_toBottomOf="@+id/group_photo"
-        tools:text="@tools:sample/lorem/random" />
+        android:text="@tools:sample/lorem/random" />
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/join_group_btn"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/_10sdp"
-        android:text="@string/join_community"
-        android:textAllCaps="false"
         android:fontFamily="@font/sf_bold"
         android:padding="@dimen/_10sdp"
+        android:text="@string/join_community"
+        android:textAllCaps="false"
         app:cornerRadius="@dimen/bot_nav_corners"
-        app:layout_constraintEnd_toEndOf="@+id/group_description"
-        app:layout_constraintStart_toStartOf="@+id/group_description"
+        app:layout_constraintEnd_toEndOf="@+id/group_category"
+        app:layout_constraintStart_toStartOf="@+id/group_photo"
         app:layout_constraintTop_toBottomOf="@+id/group_description" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

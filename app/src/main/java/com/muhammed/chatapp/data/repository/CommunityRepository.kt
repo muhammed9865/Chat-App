@@ -17,6 +17,8 @@ class CommunityRepository @Inject constructor(private val networkDatabase: Netwo
             it.addAll(
                 listOf(
                     GroupChat(
+                        cid = "1n4H1xQ0FLQLLfM5gojU",
+                        messagesId = "681EeP5CACaEVt1XhGwr",
                         title = "Crypto For Tech",
                         category = "Crypto",
                         membersCount = 2000

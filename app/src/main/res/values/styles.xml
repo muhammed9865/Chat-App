@@ -22,6 +22,7 @@
         <item name="android:layout_height">wrap_content</item>
         <item name="android:layout_marginEnd">@dimen/_5sdp</item>
         <item name="boxBackgroundMode">outline</item>
+
         <item name="boxStrokeColor">@color/secondaryColor</item>
         <item name="boxStrokeErrorColor">@color/error</item>
         <item name="boxStrokeWidth">1dp</item>
@@ -61,11 +62,18 @@
     </style>
 
     <style name="CustomShapeAppearanceBottomSheet">
+        <item name="background">@color/white</item>
         <item name="cornerFamily">rounded</item>
         <item name="cornerSizeTopRight">@dimen/_15sdp</item>
         <item name="cornerSizeTopLeft">@dimen/_15sdp</item>
-        <item name="cornerSizeBottomRight">@dimen/_15sdp</item>
-        <item name="cornerSizeBottomLeft">@dimen/_15sdp</item>
+    </style>
+
+    <style name="CircularImageView">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSizeTopRight">50%</item>
+        <item name="cornerSizeTopLeft">50%</item>
+        <item name="cornerSizeBottomRight">50%</item>
+        <item name="cornerSizeBottomLeft">50%</item>
     </style>
 
 </resources>

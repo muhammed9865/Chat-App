@@ -3,10 +3,7 @@ package com.muhammed.chatapp.presentation.viewholder
 import android.view.View
 import androidx.recyclerview.widget.RecyclerView
 import coil.load
-import com.muhammed.chatapp.data.pojo.chat.Chat
-import com.muhammed.chatapp.data.pojo.chat.GroupChat
-import com.muhammed.chatapp.data.pojo.chat.MessagingRoom
-import com.muhammed.chatapp.data.pojo.chat.PrivateChat
+import com.muhammed.chatapp.data.pojo.chat.*
 import com.muhammed.chatapp.data.pojo.user.User
 import com.muhammed.chatapp.databinding.ListItemChatBinding
 import com.muhammed.chatapp.domain.use_cases.CheckIfCurrentUserUseCase
@@ -17,7 +14,7 @@ class ChatViewHolder(
     private val binding: ListItemChatBinding,
     private val checkIfCurrentUserUseCase: CheckIfCurrentUserUseCase
 ) : RecyclerView.ViewHolder(binding.root) {
-    fun bind(chat: Chat, currentUser: User?, listener: OnItemClickListener<MessagingRoom>?) {
+    fun bind(chat: Chat, currentUser: User?, listener: OnItemClickListener<ChatAndRoom<Chat>>?) {
         binding.apply {
             setCardDetails(currentUser, chat)
             chatSubTitle.text = chat.lastMessage.text
@@ -35,7 +32,8 @@ class ChatViewHolder(
                     if (chat is GroupChat) {
                         messagingRoom = messagingRoom.copy(subTitle = chat.serializeMembersCount())
                     }
-                    listener(messagingRoom)
+                    val chatAndRoom = ChatAndRoom(chat, messagingRoom)
+                    listener(chatAndRoom)
                 }
             }
         }

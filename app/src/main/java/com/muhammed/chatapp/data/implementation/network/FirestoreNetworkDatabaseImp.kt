@@ -4,8 +4,12 @@ import android.util.Log
 import com.google.firebase.firestore.*
 import com.muhammed.chatapp.Fields
 import com.muhammed.chatapp.data.NetworkDatabase
-import com.muhammed.chatapp.data.pojo.*
+import com.muhammed.chatapp.data.pojo.Interest
+import com.muhammed.chatapp.data.pojo.InterestWithTopics
+import com.muhammed.chatapp.data.pojo.Topic
+import com.muhammed.chatapp.data.pojo.chat.Chat
 import com.muhammed.chatapp.data.pojo.chat.GroupChat
+import com.muhammed.chatapp.data.pojo.chat.NewGroupChat
 import com.muhammed.chatapp.data.pojo.chat.PrivateChat
 import com.muhammed.chatapp.data.pojo.message.Message
 import com.muhammed.chatapp.data.pojo.message.Messages
@@ -15,9 +19,9 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.tasks.asDeferred
 import kotlinx.coroutines.tasks.await
 import javax.inject.Inject
-import kotlin.random.Random
 
 class FirestoreNetworkDatabaseImp @Inject constructor(private val mFirestore: FirebaseFirestore) :
     NetworkDatabase {
@@ -70,6 +74,18 @@ class FirestoreNetworkDatabaseImp @Inject constructor(private val mFirestore: Fi
             .toObject(User::class.java)
     }
 
+    override suspend fun getChat(chatId: String, chatType: Chat.TYPE): Chat {
+        val chat = mFirestore.collection(Collections.CHATS).document(chatId).get().await()
+
+        if (chat.data == null) {
+            throw NullPointerException("Chat is not found")
+        }
+        return when (chatType) {
+            Chat.TYPE.PRIVATE -> chat.toObject(PrivateChat::class.java)!!
+            Chat.TYPE.GROUP -> chat.toObject(GroupChat::class.java)!!
+        }
+    }
+
 
     override suspend fun createPrivateChat(
         otherUserEmail: String,
@@ -98,6 +114,34 @@ class FirestoreNetworkDatabaseImp @Inject constructor(private val mFirestore: Fi
         messagesDocument.set(Messages()).await()
 
         return chatDocument.get().await().toObject(PrivateChat::class.java)
+    }
+
+    override suspend fun createGroupChat(newGroupChat: NewGroupChat): GroupChat {
+        val chatDocument = mFirestore.collection(Collections.CHATS)
+            .document()
+
+        // Create Messages Document to save it's id in the PrivateChat object if user is not null
+        val messagesDocument = mFirestore.collection(Collections.MESSAGES)
+            .document()
+
+        val groupChat = GroupChat(
+            cid = chatDocument.id,
+            messagesId = messagesDocument.id,
+            title = newGroupChat.title,
+            membersCount = 1,
+            description = newGroupChat.description,
+            category = newGroupChat.category,
+            photo = newGroupChat.photo,
+            membersIds = listOf(newGroupChat.currentUser.email),
+            admins = mutableListOf(newGroupChat.currentUser)
+        )
+
+        chatDocument.set(groupChat).await()
+        messagesDocument.set(Messages()).await()
+
+        updateUserChatsList(newGroupChat.currentUser.email, newGroupChat.currentUser.collection, chatDocument.id)
+
+        return groupChat
     }
 
 

@@ -16,7 +16,7 @@ sealed class ChatsState {
     data class UserExists(val privateChat: PrivateChat) : ChatsState()
     data class PrivateRoomCreated(val room: PrivateChat): ChatsState()
     // Serialized to String to be sent as Intent Extra, Deserialize to MessagingRoom
-    data class EnterChat(val room: String) : ChatsState()
+    data class EnterChat(val chatAndRoom: String) : ChatsState()
     object SignedOut : ChatsState()
     data class Error(val errorMessage: String): ChatsState() {
         init {

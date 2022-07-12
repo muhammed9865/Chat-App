@@ -10,7 +10,8 @@ class GroupChat(
     val description: String = "",
     val category: String = "",
     val photo: String = "",
-    val admins: MutableSet<User> = mutableSetOf(),
+    val membersIds: List<String> = emptyList(),
+    val admins: MutableList<User> = mutableListOf(),
 ) : Chat(cid = cid, messagesId = messagesId) {
 
     fun isUserAdmin(user: User) = user in admins

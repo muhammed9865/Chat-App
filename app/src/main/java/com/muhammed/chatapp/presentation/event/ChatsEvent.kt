@@ -1,6 +1,9 @@
 package com.muhammed.chatapp.presentation.event
 
 import com.muhammed.chatapp.Filter
+import com.muhammed.chatapp.data.pojo.chat.Chat
+import com.muhammed.chatapp.data.pojo.chat.ChatAndRoom
+import com.muhammed.chatapp.data.pojo.chat.GroupChat
 import com.muhammed.chatapp.data.pojo.chat.MessagingRoom
 
 sealed class ChatsEvent {
@@ -11,8 +14,8 @@ sealed class ChatsEvent {
     object SignOut : ChatsEvent()
 
     data class CreatePrivateRoom(val email: String): ChatsEvent()
-    data class JoinPrivateChat(val chat: MessagingRoom): ChatsEvent()
-    data class ShowGroupDetails(val group: MessagingRoom) : ChatsEvent()
+    data class JoinPrivateChat(val chatAndRoom: ChatAndRoom<Chat>): ChatsEvent()
+    data class ShowGroupDetails(val group: GroupChat) : ChatsEvent()
 
     // Concerned with CommunityFragment
     object LoadForUserCommunities : ChatsEvent()

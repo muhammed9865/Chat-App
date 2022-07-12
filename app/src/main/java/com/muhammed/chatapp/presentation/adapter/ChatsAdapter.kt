@@ -5,7 +5,7 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import com.muhammed.chatapp.data.pojo.chat.Chat
-import com.muhammed.chatapp.data.pojo.chat.MessagingRoom
+import com.muhammed.chatapp.data.pojo.chat.ChatAndRoom
 import com.muhammed.chatapp.data.pojo.chat.PrivateChat
 import com.muhammed.chatapp.data.pojo.user.User
 import com.muhammed.chatapp.databinding.ListItemChatBinding
@@ -21,7 +21,7 @@ class ChatsAdapter @AssistedInject constructor(
 ): ListAdapter<Chat, ChatViewHolder>(ChatDiffUtl()) {
 
     private var user: User? = null
-    private var listener: OnItemClickListener<MessagingRoom>? = null
+    private var listener: OnItemClickListener<ChatAndRoom<Chat>>? = null
 
 
 
@@ -39,7 +39,7 @@ class ChatsAdapter @AssistedInject constructor(
         this.user = user
     }
 
-    fun registerClickListener(listener: OnItemClickListener<MessagingRoom>) {
+    fun registerClickListener(listener: OnItemClickListener<ChatAndRoom<Chat>>) {
         this.listener = listener
     }
 
@@ -52,6 +52,6 @@ class ChatDiffUtl: DiffUtil.ItemCallback<Chat>() {
     }
 
     override fun areContentsTheSame(oldItem: Chat, newItem: Chat): Boolean {
-        return oldItem == newItem
+        return oldItem.cid == newItem.cid
     }
 }

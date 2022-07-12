@@ -55,6 +55,10 @@
     <string name="health">Health</string>
     <string name="members_count">%1$s Members</string>
     <string name="join_community">Join Community</string>
+    <string name="title">Title</string>
+    <string name="description">Description</string>
+    <string name="group_info">Community Info</string>
+    <string name="create_community">Create Community</string>
 
     <string-array name="menu_rows">
         <item>Sign out</item>

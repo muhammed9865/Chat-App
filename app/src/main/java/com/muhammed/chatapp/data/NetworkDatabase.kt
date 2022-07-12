@@ -6,6 +6,7 @@ import com.google.firebase.firestore.QuerySnapshot
 import com.muhammed.chatapp.data.pojo.*
 import com.muhammed.chatapp.data.pojo.chat.Chat
 import com.muhammed.chatapp.data.pojo.chat.GroupChat
+import com.muhammed.chatapp.data.pojo.chat.NewGroupChat
 import com.muhammed.chatapp.data.pojo.chat.PrivateChat
 import com.muhammed.chatapp.data.pojo.message.Message
 import com.muhammed.chatapp.data.pojo.message.Messages
@@ -25,7 +26,8 @@ interface NetworkDatabase {
 
     suspend fun getGoogleUser(email: String): User?
 
-    suspend fun getChat(chatId: String): Chat
+    @Throws(NullPointerException::class)
+    suspend fun getChat(chatId: String, chatType: Chat.TYPE): Chat
 
     // General Interests. Should be static on database
     suspend fun getInterests(): List<Interest>
@@ -40,6 +42,8 @@ interface NetworkDatabase {
     suspend fun getRandomCommunitiesBasedOnCategory(category: String): List<GroupChat>
 
     suspend fun createPrivateChat(otherUserEmail: String, currentUser: User): PrivateChat?
+
+    suspend fun createGroupChat(newGroupChat: NewGroupChat): GroupChat
 
     suspend fun updateUserChatsList(userEmail: String, userCollection: String, chatId: String)
 

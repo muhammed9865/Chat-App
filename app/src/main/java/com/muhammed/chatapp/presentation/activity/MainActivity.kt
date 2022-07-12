@@ -76,9 +76,9 @@ class MainActivity : AppCompatActivity(), NavigationBarView.OnItemSelectedListen
 
     private fun onStateChanged() {
         lifecycleScope.launch {
-            viewModel.states.collect {
-                Log.d("Chat State", "onStateChanged from activity: ${it.javaClass}")
-                when (it) {
+            viewModel.states.collect { state ->
+                Log.d("Chat State", "onStateChanged from activity: ${state.javaClass}")
+                when (state) {
                     is ChatsState.Idle -> {
                     }
                     is ChatsState.SignedOut -> {
@@ -87,7 +87,7 @@ class MainActivity : AppCompatActivity(), NavigationBarView.OnItemSelectedListen
                     }
                     is ChatsState.Error -> {
                         loadingDialog.hideDialog()
-                        binding.root.showError(it.errorMessage)
+                        binding.root.showError(state.errorMessage)
                     }
                     is ChatsState.PrivateRoomCreated -> {
                         loadingDialog.hideDialog()
@@ -95,7 +95,7 @@ class MainActivity : AppCompatActivity(), NavigationBarView.OnItemSelectedListen
 
                     is ChatsState.EnterChat -> {
                         val intent = Intent(this@MainActivity, ChatRoomActivity::class.java)
-                        intent.putExtra(Constants.PRIVATE_CHAT, it.room)
+                        intent.putExtra(Constants.CHAT, state.chatAndRoom)
                         startActivity(intent)
                         viewModel.doOnEvent(ChatsEvent.Idle)
                     }

@@ -31,7 +31,7 @@ class CommunityAdapter: ListAdapter<GroupChat, CommunityGroupViewHolder>(Communi
         }
 
         override fun areContentsTheSame(oldItem: GroupChat, newItem: GroupChat): Boolean {
-            return oldItem == newItem
+            return oldItem.cid == newItem.cid
         }
     }
 }

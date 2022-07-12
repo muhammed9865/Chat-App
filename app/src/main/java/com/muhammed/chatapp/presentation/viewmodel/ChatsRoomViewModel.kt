@@ -6,8 +6,11 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.firebase.firestore.ListenerRegistration
 import com.muhammed.chatapp.Constants
-import com.muhammed.chatapp.data.pojo.message.Message
+import com.muhammed.chatapp.data.pojo.chat.Chat
+import com.muhammed.chatapp.data.pojo.chat.ChatAndRoom
+import com.muhammed.chatapp.data.pojo.chat.GroupChat
 import com.muhammed.chatapp.data.pojo.chat.MessagingRoom
+import com.muhammed.chatapp.data.pojo.message.Message
 import com.muhammed.chatapp.data.pojo.user.User
 import com.muhammed.chatapp.data.repository.ChatsRepository
 import com.muhammed.chatapp.data.repository.MessagesRepository
@@ -28,7 +31,7 @@ class ChatsRoomViewModel @Inject constructor(
     private val serializeEntityUseCase: SerializeEntityUseCase,
     private val messagesRepository: MessagesRepository,
     private val userRepository: UserRepository,
-    private val chatsRepository: ChatsRepository,
+    private val chatsRepository: ChatsRepository
 ) : ViewModel() {
     private val _room = MutableStateFlow(MessagingRoom())
     val room = _room.asStateFlow()
@@ -57,19 +60,22 @@ class ChatsRoomViewModel @Inject constructor(
     }
 
     // Load the Other user details from intent
-    // Intent should have extra PRIVATE_CHAT
+    // Intent should have extra CHAT
     // @param intent is the activity intent, passed onCreate of activity
     private fun getUserDetailsFromIntent(intent: Intent?) {
-        val roomAsString = intent?.getStringExtra(Constants.PRIVATE_CHAT)
+        val roomAsString = intent?.getStringExtra(Constants.CHAT)
         roomAsString?.let {
             Log.d(TAG, "getUserDetailsFromIntent: $it")
-            val room = serializeEntityUseCase.fromString<MessagingRoom>(it)
+
+            val chatAndRoom = serializeEntityUseCase.fromString<ChatAndRoom<Chat>>(it)
+            val room = chatAndRoom.room
+
             _room.value = room
 
             if (room.isJoined) {
                 listenToMessages()
             }else {
-
+                showGroupDetails(room)
             }
         }
 
@@ -92,7 +98,10 @@ class ChatsRoomViewModel @Inject constructor(
     // Used when user isn't part of the group but is just exploring it
     private fun showGroupDetails(room: MessagingRoom) {
         tryAsync {
-            val chat =  chatsRepository.
+            val chat = chatsRepository.getChat(room.chatId, Chat.TYPE.GROUP) as GroupChat
+            setState(MessagingRoomStates.ShowGroupDetails(chat))
+            _room.value = room
+            setRandomMessages(room.messagesId)
         }
     }
 

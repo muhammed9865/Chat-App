@@ -88,7 +88,9 @@ class ChatRoomActivity : AppCompatActivity() {
                 when (state) {
                     is MessagingRoomStates.ShowGroupDetails -> {
                         GroupDetailsBottomDialog(state.group).also {
-                            it.setOnJoinClicked {  }
+                            it.setOnJoinClicked {
+                                //TODO Implement when user clicks on Join
+                            }
                         }.show(supportFragmentManager, null)
                     }
                     is MessagingRoomStates.Error -> {
