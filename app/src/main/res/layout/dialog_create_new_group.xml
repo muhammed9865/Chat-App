@@ -177,6 +177,26 @@
             android:layout_height="wrap_content"
             android:text="@string/health"
             tools:checked="false" />
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/add_interest_text"
+            android:layout_width="@dimen/_50sdp"
+            android:visibility="gone"
+            android:inputType="textPersonName"
+            android:layout_height="wrap_content"/>
+
+        <com.google.android.material.chip.Chip
+            android:id="@+id/add_interest"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/add"
+            app:chipBackgroundColor="@color/white"
+            android:textColor="@color/primaryColor"
+            app:chipStrokeWidth="1dp"
+            app:chipStrokeColor="@color/primaryColor"
+            app:chipIcon="@drawable/ic_baseline_add_24"
+            app:chipIconTint="@color/primaryColor"
+            style="@style/Widget.MaterialComponents.Chip.Action"/>
     </com.google.android.material.chip.ChipGroup>
 
     <androidx.constraintlayout.widget.Guideline
@@ -198,6 +218,7 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/_10sdp"
+        android:layout_marginBottom="16dp"
         android:padding="@dimen/_5sdp"
         android:text="@string/create_community"
         android:textAllCaps="false"

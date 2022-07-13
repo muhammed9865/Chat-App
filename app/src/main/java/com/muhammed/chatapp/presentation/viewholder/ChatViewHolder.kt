@@ -3,6 +3,7 @@ package com.muhammed.chatapp.presentation.viewholder
 import android.view.View
 import androidx.recyclerview.widget.RecyclerView
 import coil.load
+import com.muhammed.chatapp.R
 import com.muhammed.chatapp.data.pojo.chat.*
 import com.muhammed.chatapp.data.pojo.user.User
 import com.muhammed.chatapp.databinding.ListItemChatBinding
@@ -30,7 +31,9 @@ class ChatViewHolder(
                         messagesId = chat.messagesId
                     )
                     if (chat is GroupChat) {
-                        messagingRoom = messagingRoom.copy(subTitle = chat.serializeMembersCount())
+                        val context = itemView.context
+                        val membersCount = String.format(context.getString(R.string.members_count), chat.serializeMembersCount())
+                        messagingRoom = messagingRoom.copy(subTitle = membersCount)
                     }
                     val chatAndRoom = ChatAndRoom(chat, messagingRoom)
                     listener(chatAndRoom)
@@ -69,6 +72,7 @@ class ChatViewHolder(
     private fun setCardDetailsAsGroupChat(chat: GroupChat) {
         with(binding) {
             chatName.text = chat.title
+            chatProfilePic.load(chat.photo)
         }
     }
 

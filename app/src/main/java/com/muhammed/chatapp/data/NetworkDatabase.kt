@@ -54,6 +54,8 @@ interface NetworkDatabase {
         onUpdate: suspend (messages: Messages) -> Unit
     )
 
+    fun cancelListeningToMessages()
+
     suspend fun getRandomMessages(messagesId: String): List<Message>
 
     /*

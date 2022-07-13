@@ -2,9 +2,8 @@ package com.muhammed.chatapp.presentation.fragments
 
 import android.os.Bundle
 import android.util.Log
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
+import androidx.core.view.MenuProvider
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
@@ -29,11 +28,18 @@ class ChatsFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        binding.menuBtn.setOnClickListener {
-            showOptionsMenu()
-        }
-        mAdapter = ChatsAdapter(CheckIfCurrentUserUseCase())
 
+        mAdapter = ChatsAdapter(CheckIfCurrentUserUseCase())
+        mAdapter.registerClickListener {
+            viewModel.doOnEvent(ChatsEvent.JoinPrivateChat(it))
+        }
+
+        setHasOptionsMenu(true)
+        return binding.root
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
         lifecycleScope.launch {
             launch {
                 viewModel.userChats.collect {
@@ -56,24 +62,34 @@ class ChatsFragment : Fragment() {
             layoutManager = LinearLayoutManager(requireContext())
         }
 
-        mAdapter.registerClickListener {
-            viewModel.doOnEvent(ChatsEvent.JoinPrivateChat(it))
-        }
-
-        return binding.root
     }
 
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        super.onCreateOptionsMenu(menu, inflater)
+        inflater.inflate(R.menu.main_menu_chat_frag, menu)
+    }
 
-    private fun showOptionsMenu() {
-        val menuOptions = MenuOptions(requireActivity(), binding.menuBtn, R.menu.options_menu)
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        return when (item.itemId) {
+            R.id.menu_options_chat -> {
+                showOptionsMenu(item.actionView)
+                true
+            }
+
+
+            else -> false
+        }
+    }
+
+    private fun showOptionsMenu(view: View) {
+        val menuOptions = MenuOptions(requireActivity(), view, R.menu.options_menu)
         menuOptions.onSignOutSelected {
             viewModel.doOnEvent(ChatsEvent.SignOut)
         }
         menuOptions.showMenu()
-
-
-
     }
+
+
 
 
 
@@ -81,5 +97,7 @@ class ChatsFragment : Fragment() {
         @Suppress("unused")
         private const val TAG = "ChatsFragment"
     }
+
+
 
 }

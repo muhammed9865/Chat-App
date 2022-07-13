@@ -1,20 +1,18 @@
 package com.muhammed.chatapp.presentation.fragments
 
 import android.os.Bundle
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
 import com.google.android.material.chip.ChipGroup
 import com.muhammed.chatapp.Filter
+import com.muhammed.chatapp.R
 import com.muhammed.chatapp.data.pojo.chat.GroupChat
 import com.muhammed.chatapp.databinding.FragmentCommunitiesBinding
 import com.muhammed.chatapp.presentation.adapter.CommunityAdapter
 import com.muhammed.chatapp.presentation.adapter.OnItemClickListener
-import com.muhammed.chatapp.presentation.common.showError
-import com.muhammed.chatapp.presentation.common.showSnackBar
+import com.muhammed.chatapp.presentation.common.MenuOptions
 import com.muhammed.chatapp.presentation.dialogs.CreateGroupDialog
 import com.muhammed.chatapp.presentation.event.ChatsEvent
 import com.muhammed.chatapp.presentation.viewmodel.MainViewModel
@@ -38,6 +36,8 @@ class CommunitiesFragment : Fragment(), OnItemClickListener<GroupChat>, ChipGrou
             filterGroup.setOnCheckedStateChangeListener(this@CommunitiesFragment)
         }
 
+        setHasOptionsMenu(true)
+
         tryAsync {
             viewModel.userCommunities.collect {
                 mForYouAdapter.submitList(it)
@@ -57,14 +57,6 @@ class CommunitiesFragment : Fragment(), OnItemClickListener<GroupChat>, ChipGrou
         return binding.root
     }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-        with(binding) {
-            createGroup.setOnClickListener {
-                CreateGroupDialog().show(requireActivity().supportFragmentManager, null)
-            }
-        }
-    }
 
     // Invoking onItemClickListener for CommunityAdapter
     override fun invoke(group: GroupChat) {
@@ -100,6 +92,36 @@ class CommunitiesFragment : Fragment(), OnItemClickListener<GroupChat>, ChipGrou
             allCommsRv.visibility = View.INVISIBLE
         }
         viewModel.doOnEvent(ChatsEvent.LoadRandomCommunitiesBasedOnFilter(filter))
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        super.onCreateOptionsMenu(menu, inflater)
+        inflater.inflate(R.menu.main_menu_community_frag, menu)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        return when (item.itemId) {
+            R.id.menu_options_chat -> {
+                showOptionsMenu(item.actionView.rootView)
+                true
+            }
+
+            R.id.menu_new_group -> {
+                CreateGroupDialog().show(requireActivity().supportFragmentManager, null)
+                true
+            }
+
+
+            else -> false
+        }
+    }
+
+    private fun showOptionsMenu(view: View) {
+        val menuOptions = MenuOptions(requireActivity(), view, R.menu.options_menu)
+        menuOptions.onSignOutSelected {
+            viewModel.doOnEvent(ChatsEvent.SignOut)
+        }
+        menuOptions.showMenu()
     }
 
 

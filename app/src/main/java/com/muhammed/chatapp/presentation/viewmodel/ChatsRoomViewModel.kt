@@ -42,7 +42,6 @@ class ChatsRoomViewModel @Inject constructor(
     private val _states = MutableStateFlow<MessagingRoomStates>(MessagingRoomStates.Idle)
     val states = _states.asStateFlow()
     var currentUser = MutableStateFlow(User())
-    private var messagesListener: ListenerRegistration? = null
 
     init {
         tryAsync {
@@ -134,7 +133,7 @@ class ChatsRoomViewModel @Inject constructor(
             try {
                 asyncFunction()
             } catch (e: Exception) {
-                Log.e(TAG, "tryAsync: ${e.message}")
+                Log.e(TAG, "tryAsync: ${e.printStackTrace()}")
                 setState(MessagingRoomStates.Error(e.message.toString()))
             }
         }
@@ -149,7 +148,7 @@ class ChatsRoomViewModel @Inject constructor(
     }
 
     override fun onCleared() {
-        messagesListener?.remove()
+        messagesRepository.unregisterMessagesListener()
         super.onCleared()
     }
 

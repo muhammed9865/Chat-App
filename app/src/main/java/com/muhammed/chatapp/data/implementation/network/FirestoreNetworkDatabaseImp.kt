@@ -27,6 +27,7 @@ class FirestoreNetworkDatabaseImp @Inject constructor(private val mFirestore: Fi
     NetworkDatabase {
 
     private var lastVisibleCommunityDocument: DocumentSnapshot? = null
+    private var messagesListener: ListenerRegistration? = null
 
     override suspend fun saveUser(user: User) {
         mFirestore.collection(Collections.USERS)
@@ -164,11 +165,15 @@ class FirestoreNetworkDatabaseImp @Inject constructor(private val mFirestore: Fi
             .addSnapshotListener(listener)
     }
 
+    override fun cancelListeningToMessages() {
+        messagesListener?.remove()
+    }
+
     override suspend fun listenToChatMessages(
         messagesId: String,
         onUpdate: suspend (messages: Messages) -> Unit
     ) {
-        mFirestore.collection(Collections.MESSAGES)
+        messagesListener = mFirestore.collection(Collections.MESSAGES)
             .document(messagesId)
             .addSnapshotListener { value, error ->
                 if (error == null) {

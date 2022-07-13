@@ -3,10 +3,13 @@ package com.muhammed.chatapp.presentation.activity
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
+import android.view.Menu
+import android.view.MenuInflater
 import android.view.MenuItem
 import android.view.View
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.MenuProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavController
 import androidx.navigation.NavDestination
@@ -17,10 +20,14 @@ import com.google.android.material.shape.MaterialShapeDrawable
 import com.muhammed.chatapp.Constants
 import com.muhammed.chatapp.R
 import com.muhammed.chatapp.databinding.ActivityMainBinding
-import com.muhammed.chatapp.presentation.common.*
+import com.muhammed.chatapp.presentation.common.MenuOptions
+import com.muhammed.chatapp.presentation.common.hideDialog
+import com.muhammed.chatapp.presentation.common.showDialog
+import com.muhammed.chatapp.presentation.common.showError
+import com.muhammed.chatapp.presentation.dialogs.CreateGroupDialog
 import com.muhammed.chatapp.presentation.dialogs.JoinGroupDialog
 import com.muhammed.chatapp.presentation.dialogs.LoadingDialog
-import com.muhammed.chatapp.presentation.dialogs.NewChatDialog
+import com.muhammed.chatapp.presentation.dialogs.NewPrivateChat
 import com.muhammed.chatapp.presentation.event.ChatsEvent
 import com.muhammed.chatapp.presentation.state.ChatsState
 import com.muhammed.chatapp.presentation.viewmodel.MainViewModel
@@ -29,6 +36,7 @@ import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity(), NavigationBarView.OnItemSelectedListener,
+    MenuProvider,
     NavController.OnDestinationChangedListener {
     private val binding: ActivityMainBinding by lazy { ActivityMainBinding.inflate(layoutInflater) }
     private val navController: NavController by lazy {
@@ -43,13 +51,20 @@ class MainActivity : AppCompatActivity(), NavigationBarView.OnItemSelectedListen
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
+
+
         makeBotNavRoundedCorners()
+        setSupportActionBar(binding.mainToolbar)
+
+        supportActionBar?.title = null
+
+        binding.mainToolbar.addMenuProvider(this)
 
         binding.botNav.setOnItemSelectedListener(this)
         navController.addOnDestinationChangedListener(this)
 
         binding.newChatBtn.setOnClickListener {
-            createNewChat()
+            createNewPrivateChat()
         }
 
         onStateChanged()
@@ -124,8 +139,8 @@ class MainActivity : AppCompatActivity(), NavigationBarView.OnItemSelectedListen
     }
 
 
-    private fun createNewChat() {
-        val newChatDialog = NewChatDialog()
+    private fun createNewPrivateChat() {
+        val newChatDialog = NewPrivateChat()
         newChatDialog.setOnStartClickedListener { email ->
             viewModel.doOnEvent(ChatsEvent.CreatePrivateRoom(email))
         }
@@ -139,13 +154,26 @@ class MainActivity : AppCompatActivity(), NavigationBarView.OnItemSelectedListen
     ) {
         when (destination.id) {
             R.id.interestsSelectionFragment, R.id.topicsSelectionFragment -> {
-               toggleBotBar(show = false)
+                toggleBotBar(show = false)
+            }
+
+            R.id.chatsFragment -> {
+                binding.mainToolbar.inflateMenu(R.menu.main_menu_chat_frag)
+                invalidateMenu()
+                toggleBotBar(show = true)
+            }
+
+            R.id.communitiesFragment -> {
+                binding.mainToolbar.inflateMenu(R.menu.main_menu_community_frag)
+                invalidateMenu()
+                toggleBotBar(show = true)
             }
             else -> {
-               toggleBotBar(show = true)
+                toggleBotBar(show = true)
             }
         }
     }
+
 
     private fun toggleBotBar(show: Boolean) {
         if (show) {
@@ -155,7 +183,7 @@ class MainActivity : AppCompatActivity(), NavigationBarView.OnItemSelectedListen
                 botNav.visibility = View.VISIBLE
                 botBarDivider.setGuidelinePercent(0.82f)
             }
-        }else {
+        } else {
             with(binding) {
                 botBar.visibility = View.GONE
                 botNav.visibility = View.GONE
@@ -164,6 +192,39 @@ class MainActivity : AppCompatActivity(), NavigationBarView.OnItemSelectedListen
             }
         }
     }
+
+    private fun showOptionsMenu(view: View) {
+        val menuOptions = MenuOptions(this, view, R.menu.options_menu)
+        menuOptions.onSignOutSelected {
+            viewModel.doOnEvent(ChatsEvent.SignOut)
+        }
+        menuOptions.showMenu()
+
+
+    }
+
+
+    override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
+        val menuId: Int = R.menu.main_menu_chat_frag
+        menuInflater.inflate(menuId, menu)
+    }
+
+    override fun onMenuItemSelected(menuItem: MenuItem): Boolean {
+        return when (menuItem.itemId) {
+            R.id.menu_options_chat -> {
+                showOptionsMenu(menuItem.actionView.rootView)
+                true
+            }
+
+            R.id.menu_new_group -> {
+                CreateGroupDialog().show(supportFragmentManager, null)
+                true
+            }
+
+            else -> false
+        }
+    }
+
 
 
 

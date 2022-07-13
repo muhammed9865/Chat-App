@@ -26,6 +26,8 @@ class MessagesRepository @Inject constructor(
         }
     }
 
+    fun unregisterMessagesListener() = networkDatabase.cancelListeningToMessages()
+
     suspend fun getRandomMessages(messagesId: String) = networkDatabase.getRandomMessages(messagesId)
 
     private suspend fun loadChatMessages(messagesId: String): List<Message> =

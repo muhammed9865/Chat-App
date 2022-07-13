@@ -8,78 +8,16 @@
     tools:context=".presentation.fragments.ChatsFragment">
 
 
-    <ImageView
-        android:id="@+id/imageView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:contentDescription="@string/logo"
-        android:src="@drawable/ic_chat_logo"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-
-    <ImageView
-        android:id="@+id/menu_btn"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:background="@drawable/icon_rounded_bg"
-        android:clickable="true"
-        android:contentDescription="@string/sign_out"
-        android:focusable="true"
-        android:padding="@dimen/_5sdp"
-        android:src="@drawable/ic_list"
-        app:layout_constraintBottom_toBottomOf="@+id/imageView"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/imageView"
-        app:layout_constraintVertical_bias="0.533"
-        app:tint="#686A8A" />
-
-
-    <ImageView
-        android:id="@+id/search_groups"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="8dp"
-        android:background="@drawable/icon_rounded_bg"
-        android:clickable="true"
-        android:contentDescription="@string/search"
-        android:focusable="true"
-        android:padding="@dimen/_5sdp"
-        android:src="@drawable/ic_baseline_search_24"
-        app:layout_constraintBottom_toBottomOf="@+id/imageView"
-        app:layout_constraintEnd_toStartOf="@+id/menu_btn"
-        app:layout_constraintTop_toTopOf="@+id/imageView"
-        app:layout_constraintVertical_bias="0.533" />
-
-    <ImageView
-        android:id="@+id/imageView2"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="8dp"
-        android:background="@drawable/icon_rounded_bg"
-        android:clickable="true"
-        android:contentDescription="@string/take_a_photo"
-        android:focusable="true"
-        android:padding="@dimen/_5sdp"
-        android:src="@drawable/ic_baseline_photo_camera_24"
-        app:layout_constraintBottom_toBottomOf="@+id/imageView"
-        app:layout_constraintEnd_toStartOf="@+id/search_groups"
-        app:layout_constraintTop_toTopOf="@+id/imageView"
-        app:layout_constraintVertical_bias="0.533" />
-
-
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/chats_Rv"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:scrollbars="vertical"
-        android:scrollbarAlwaysDrawVerticalTrack="true"
         android:fadeScrollbars="false"
-        android:layout_marginTop="@dimen/_16sdp"
+        android:scrollbarAlwaysDrawVerticalTrack="true"
+        android:scrollbars="vertical"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/imageView2"/>
+        app:layout_constraintTop_toTopOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

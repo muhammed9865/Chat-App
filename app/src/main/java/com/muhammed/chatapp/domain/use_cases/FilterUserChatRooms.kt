@@ -9,18 +9,20 @@ import javax.inject.Inject
 
 class FilterUserChatRooms @Inject constructor() {
     fun execute(documents: List<DocumentSnapshot>, user: User): List<Chat> {
+        // The chats that the user is part of
         val filteredDocuments =
             documents.filter { documentChange ->
-               val document = documentChange.toObject(Chat::class.java)
+               val document = Chat.fromDocument(documentChange)
                 when (document) {
                     is PrivateChat -> document.firstUser.uid == user.uid || document.secondUser.uid == user.uid
                     is GroupChat -> document.membersIds.contains(user.email)
                     else -> false
                 }
-            }
-                .toSet()
+            }.toSet()
+
+
         return filteredDocuments.mapNotNull { dc ->
-            dc.toObject(Chat::class.java)
+            Chat.fromDocument(dc)
         }
 
     }

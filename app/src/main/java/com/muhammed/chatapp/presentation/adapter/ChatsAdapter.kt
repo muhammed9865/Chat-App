@@ -31,7 +31,7 @@ class ChatsAdapter @AssistedInject constructor(
     }
 
     override fun onBindViewHolder(holder: ChatViewHolder, position: Int) {
-        holder.bind(getItem(position) as PrivateChat, user, listener)
+        holder.bind(getItem(position), user, listener)
     }
 
 

@@ -7,7 +7,7 @@ import android.view.ViewGroup
 import androidx.fragment.app.DialogFragment
 import com.muhammed.chatapp.databinding.DialogNewPrivateChatBinding
 
-class NewChatDialog: DialogFragment() {
+class NewPrivateChat: DialogFragment() {
     private lateinit var binding: DialogNewPrivateChatBinding
     private var onStartClicked: ((email: String) -> Unit)? = null
 
