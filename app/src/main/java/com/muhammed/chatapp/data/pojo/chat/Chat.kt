@@ -10,6 +10,21 @@ open class Chat(
     val lastMessage: Message = Message(),
     val newMessagesCount: Int = 0
 ) {
+
+    override fun equals(other: Any?): Boolean {
+        val otherChat = other as Chat
+        return hashCode() == otherChat.hashCode()
+    }
+
+    override fun hashCode(): Int {
+        var result = cid.hashCode()
+        result = 31 * result + messagesId.hashCode()
+        result = 31 * result + createdSince.hashCode()
+        result = 31 * result + lastMessage.hashCode()
+        result = 31 * result + newMessagesCount
+        return result
+    }
+
     enum class TYPE {
         PRIVATE, GROUP
     }

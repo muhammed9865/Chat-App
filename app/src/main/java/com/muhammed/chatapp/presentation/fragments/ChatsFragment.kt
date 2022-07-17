@@ -57,8 +57,6 @@ class ChatsFragment : Fragment() {
                         )
                     }
                     mAdapter.submitList(it)
-                    mAdapter.notifyDataSetChanged()
-
 
                     mAdapter.currentList.forEach { chat ->
                         Log.d("ChatsFragment", "listenToUserChatsAdapter: ${chat.lastMessage.text}")

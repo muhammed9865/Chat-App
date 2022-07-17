@@ -6,6 +6,7 @@ import android.util.Log
 import android.view.MenuItem
 import android.view.View
 import androidx.activity.viewModels
+import androidx.annotation.IdRes
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavController
@@ -76,11 +77,17 @@ class MainActivity : AppCompatActivity(), NavigationBarView.OnItemSelectedListen
 
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
-            R.id.chats -> navController.navigate(R.id.chatsFragment)
-            R.id.community -> navController.navigate(R.id.communitiesFragment)
+            R.id.chats -> navigateTo(R.id.chatsFragment)
+            R.id.community -> navigateTo(R.id.communitiesFragment)
         }
 
         return true
+    }
+
+    private fun navigateTo(@IdRes destinationId: Int) {
+        if(navController.currentDestination?.id != destinationId) {
+            navController.navigate(destinationId)
+        }
     }
 
     private fun onStateChanged() {

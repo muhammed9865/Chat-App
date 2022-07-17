@@ -162,18 +162,19 @@ class MainViewModel @Inject constructor(
             }
 
             if (!query.isNullOrEmpty()) {
+                val loweredCaseQuery = query.lowercase()
                 val searchList = mutableListOf<Chat>()
                 val currPrivateChats = _userChats.value.filterIsInstance(PrivateChat::class.java)
                 val matchedPrivateChats =
                     currPrivateChats.filter {
-                        it.firstUser.nickname.contains(query) || it.secondUser.nickname.contains(
+                        it.firstUser.nickname.lowercase().contains(query) || it.secondUser.nickname.lowercase().contains(
                             query
                         )
                     }
                         .sortedByDescending { it.lastMessage.messageDate }
 
                 val currGroupChats = _userChats.value.filterIsInstance(GroupChat::class.java)
-                val matchedGroupChats = currGroupChats.filter { it.title.contains(query) }
+                val matchedGroupChats = currGroupChats.filter { it.title.lowercase().contains(query) }
                     .sortedByDescending { it.lastMessage.messageDate }
 
                 searchList.addAll(matchedPrivateChats)

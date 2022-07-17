@@ -18,7 +18,7 @@ class FilterUserChatRooms @Inject constructor() {
                     is GroupChat -> document.membersIds.contains(user.email)
                     else -> false
                 }
-            }.toSet()
+            }
 
 
         return filteredDocuments.mapNotNull { dc ->

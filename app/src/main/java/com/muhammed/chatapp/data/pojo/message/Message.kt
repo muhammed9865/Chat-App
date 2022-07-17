@@ -15,10 +15,7 @@ data class Message(
     val messageDate: Long = System.currentTimeMillis()
 ) {
 
-    override fun equals(other: Any?): Boolean {
-        val otherMsg = other as Message
-        return text == otherMsg.text && messageDate == otherMsg.messageDate
-    }
+
 
     companion object {
         fun emptyMessage() = Message()

@@ -40,6 +40,10 @@ class ChatsAdapter @AssistedInject constructor(
 
     }
 
+    override fun submitList(list: List<Chat>?) {
+        super.submitList(list?.let { ArrayList(it) })
+    }
+
 
     fun setCurrentUser(user: User) {
         this.user = user
@@ -58,6 +62,6 @@ class ChatDiffUtl: DiffUtil.ItemCallback<Chat>() {
     }
 
     override fun areContentsTheSame(oldItem: Chat, newItem: Chat): Boolean {
-        return oldItem.cid == newItem.cid
+        return oldItem == newItem
     }
 }
