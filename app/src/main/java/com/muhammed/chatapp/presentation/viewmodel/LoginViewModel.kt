@@ -18,6 +18,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -38,6 +39,7 @@ class LoginViewModel @Inject constructor(
 
     init {
         initGoogleAuthListener()
+
     }
 
     fun doOnEvent(event: AuthenticationEvent) {
@@ -100,20 +102,12 @@ class LoginViewModel @Inject constructor(
     }
 
     private fun loginInInstantly() {
-        val currentUser = authRepository.getCurrentUser()
-        currentUser?.let {
-            if (it.isEmailVerified) {
-                viewModelScope.launch(Dispatchers.IO) {
-                    try {
-                        val user = userRepository.getUser(it.email!!)
-                        userRepository.saveUserDetails(user)
-                        sendState(AuthenticationState.AuthenticationSuccess)
-                    } catch (e: Exception) {
-                        sendState(AuthenticationState.AuthenticationFailure(e.message.toString()))
-                    }
-                }
+        viewModelScope.launch(Dispatchers.IO) {
+            userRepository.currentUser.filterNotNull().collect {
+                sendState(AuthenticationState.AuthenticationSuccess)
             }
         }
+
     }
 
 

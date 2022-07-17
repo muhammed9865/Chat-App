@@ -6,8 +6,9 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.DialogFragment
 import com.muhammed.chatapp.databinding.DialogNewPrivateChatBinding
+import com.muhammed.chatapp.presentation.common.showKeyboard
 
-class NewPrivateChat: DialogFragment() {
+class NewPrivateChatDialog: DialogFragment() {
     private lateinit var binding: DialogNewPrivateChatBinding
     private var onStartClicked: ((email: String) -> Unit)? = null
 
@@ -33,6 +34,7 @@ class NewPrivateChat: DialogFragment() {
         with(binding) {
             emailAddress.showSoftInputOnFocus = true
             emailAddress.requestFocus()
+            emailAddress.showKeyboard()
         }
     }
 

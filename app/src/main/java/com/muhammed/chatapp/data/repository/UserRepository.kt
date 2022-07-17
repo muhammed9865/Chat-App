@@ -25,7 +25,7 @@ class UserRepository @Inject constructor(
 
     val currentUser = dataStoreManager.currentUserDetails
 
-    suspend fun saveUserDetails(user: User) = dataStoreManager.saveCurrentUserDetails(user = user)
+    suspend fun saveUserDetails(user: User?) = dataStoreManager.saveCurrentUserDetails(user = user)
 
 
 }

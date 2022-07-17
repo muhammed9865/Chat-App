@@ -18,10 +18,15 @@ private val Context.dataStore by preferencesDataStore(name = Constants.USER_TOKE
 class DataStoreManager @Inject constructor(@ApplicationContext appContext: Context) {
     private val dataStore = appContext.dataStore
 
-    suspend fun saveCurrentUserDetails(user: User) {
+    suspend fun saveCurrentUserDetails(user: User?) {
         dataStore.edit {
-            val userAsString = Gson().toJson(user).toString()
-            it[currentUserDetailsKey] = userAsString
+            if (user != null) {
+                val userAsString = Gson().toJson(user).toString()
+                it[currentUserDetailsKey] = userAsString
+                return@edit
+            }
+
+            it[currentUserDetailsKey] = ""
         }
     }
 

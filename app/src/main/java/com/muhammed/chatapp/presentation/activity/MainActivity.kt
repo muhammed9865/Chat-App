@@ -24,7 +24,7 @@ import com.muhammed.chatapp.presentation.common.showError
 import com.muhammed.chatapp.presentation.dialogs.CreateGroupDialog
 import com.muhammed.chatapp.presentation.dialogs.JoinGroupDialog
 import com.muhammed.chatapp.presentation.dialogs.LoadingDialog
-import com.muhammed.chatapp.presentation.dialogs.NewPrivateChat
+import com.muhammed.chatapp.presentation.dialogs.NewPrivateChatDialog
 import com.muhammed.chatapp.presentation.event.ChatsEvent
 import com.muhammed.chatapp.presentation.state.ChatsState
 import com.muhammed.chatapp.presentation.viewmodel.MainViewModel
@@ -142,7 +142,7 @@ class MainActivity : AppCompatActivity(), NavigationBarView.OnItemSelectedListen
 
 
     private fun createNewPrivateChat() {
-        val newChatDialog = NewPrivateChat()
+        val newChatDialog = NewPrivateChatDialog()
         newChatDialog.setOnStartClickedListener { email ->
             viewModel.doOnEvent(ChatsEvent.CreatePrivateRoom(email))
         }

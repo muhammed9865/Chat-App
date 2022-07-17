@@ -72,7 +72,10 @@ class AuthRepository @Inject constructor(
 
     fun getCurrentUser() = mEmailAndPasswordAuth.currentUser
 
-    fun signOut() = mEmailAndPasswordAuth.signOut()
+    suspend fun signOut() {
+        mEmailAndPasswordAuth.signOut()
+        userRepository.saveUserDetails(null)
+    }
 
     private suspend fun saveUserOnFirestore(user: User) =
         mFirestoreNetworkDatabaseImp.saveUser(user)
