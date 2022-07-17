@@ -1,9 +1,9 @@
 package com.muhammed.chatapp.presentation.viewholder
 
 import androidx.recyclerview.widget.RecyclerView
-import coil.load
 import com.muhammed.chatapp.data.pojo.message.Message
 import com.muhammed.chatapp.databinding.ListItemMessageReceivedBinding
+import com.muhammed.chatapp.presentation.common.loadImage
 import com.muhammed.chatapp.presentation.common.toDateAsString
 
 
@@ -12,7 +12,7 @@ class MessageReceivedViewHolder(private val binding: ListItemMessageReceivedBind
         with(binding) {
             messageTxt.text = message.text
             messageDate.text = message.messageDate.toDateAsString()
-            messageUserIcon.load(message.sender.profile_picture)
+            messageUserIcon.loadImage(message.sender.profile_picture)
         }
     }
 }

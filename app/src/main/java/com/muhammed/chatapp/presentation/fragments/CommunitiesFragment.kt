@@ -6,7 +6,6 @@ import android.widget.ImageView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
-import coil.load
 import com.google.android.material.chip.ChipGroup
 import com.muhammed.chatapp.Filter
 import com.muhammed.chatapp.R
@@ -15,10 +14,12 @@ import com.muhammed.chatapp.databinding.FragmentCommunitiesBinding
 import com.muhammed.chatapp.presentation.adapter.CommunityAdapter
 import com.muhammed.chatapp.presentation.adapter.OnItemClickListener
 import com.muhammed.chatapp.presentation.common.MenuOptions
+import com.muhammed.chatapp.presentation.common.loadImage
 import com.muhammed.chatapp.presentation.event.ChatsEvent
 import com.muhammed.chatapp.presentation.viewmodel.MainViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.channels.consumeEach
 import kotlinx.coroutines.launch
 
 
@@ -62,7 +63,7 @@ class CommunitiesFragment : Fragment(), OnItemClickListener<GroupChat>,
         }
 
         tryAsync {
-            viewModel.randomCommunitiesBasedOnInterest.collect { groups ->
+            viewModel.randomCommunitiesBasedOnInterest.consumeEach { groups ->
                 with(binding) {
                     loadingPb.visibility = View.GONE
                     allCommsRv.visibility = View.VISIBLE
@@ -109,7 +110,7 @@ class CommunitiesFragment : Fragment(), OnItemClickListener<GroupChat>,
         super.onCreateOptionsMenu(menu, inflater)
         val userIcon = menu.findItem(R.id.menu_options_comm)
         userIcon.setActionView(R.layout.user_icon)
-        (userIcon.actionView as ImageView).load(viewModel.currentUser.value.profile_picture)
+        (userIcon.actionView as ImageView).loadImage(viewModel.currentUser.value.profile_picture)
         userIcon.actionView.setOnClickListener {
             showOptionsMenu(it)
         }

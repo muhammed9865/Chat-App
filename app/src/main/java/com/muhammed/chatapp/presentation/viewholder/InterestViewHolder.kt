@@ -1,10 +1,10 @@
 package com.muhammed.chatapp.presentation.viewholder
 
 import androidx.recyclerview.widget.RecyclerView
-import coil.load
 import com.muhammed.chatapp.R
 import com.muhammed.chatapp.data.pojo.Interest
 import com.muhammed.chatapp.databinding.ListItemInterestBinding
+import com.muhammed.chatapp.presentation.common.loadImage
 
 class InterestViewHolder(private val binding: ListItemInterestBinding) :
     RecyclerView.ViewHolder(binding.root) {
@@ -12,7 +12,7 @@ class InterestViewHolder(private val binding: ListItemInterestBinding) :
         with(binding) {
             interestTitle.text = interest.title
             if (interest.hasImage()) {
-                interestIcon.load(interest.imagePath!!)
+                interestIcon.loadImage(interest.imagePath!!)
             }
             interestCard.setOnClickListener {
                 interest.isChecked = !interest.isChecked

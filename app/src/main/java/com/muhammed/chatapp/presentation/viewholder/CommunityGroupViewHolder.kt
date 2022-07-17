@@ -1,17 +1,17 @@
 package com.muhammed.chatapp.presentation.viewholder
 
 import androidx.recyclerview.widget.RecyclerView
-import coil.load
 import com.muhammed.chatapp.R
 import com.muhammed.chatapp.data.pojo.chat.GroupChat
 import com.muhammed.chatapp.databinding.ListItemCommunityBinding
 import com.muhammed.chatapp.presentation.adapter.OnItemClickListener
+import com.muhammed.chatapp.presentation.common.loadImage
 
 class CommunityGroupViewHolder(private val binding: ListItemCommunityBinding): RecyclerView.ViewHolder(binding.root) {
     fun bind(group: GroupChat, onItemClickListener: OnItemClickListener<GroupChat>?) {
         with(binding) {
             if (group.hasImage()) {
-                commPhoto.load(group.photo)
+                commPhoto.loadImage(group.photo)
             }
             commCategory.text = group.category
 

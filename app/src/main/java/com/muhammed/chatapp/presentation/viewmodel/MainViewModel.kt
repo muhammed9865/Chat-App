@@ -23,7 +23,6 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.filterNotNull
-import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -48,7 +47,7 @@ class MainViewModel @Inject constructor(
 
     // Used to display groups in Communities by Interest Section in Community Fragment
     private val _randomCommunitiesBasedOnInterest = Channel<List<GroupChat>>()
-    val randomCommunitiesBasedOnInterest = _randomCommunitiesBasedOnInterest.receiveAsFlow()
+    val randomCommunitiesBasedOnInterest = _randomCommunitiesBasedOnInterest
 
     var lastFilterChecked = -1
     private var hasEnteredCommunityFragment = false

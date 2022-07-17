@@ -9,6 +9,7 @@ import com.muhammed.chatapp.data.pojo.user.User
 import com.muhammed.chatapp.databinding.ListItemChatBinding
 import com.muhammed.chatapp.domain.use_cases.CheckIfCurrentUserUseCase
 import com.muhammed.chatapp.presentation.adapter.OnItemClickListener
+import com.muhammed.chatapp.presentation.common.loadImage
 import com.muhammed.chatapp.presentation.common.toDateAsString
 
 class ChatViewHolder(
@@ -63,7 +64,7 @@ class ChatViewHolder(
                     chatProfilePic.load(chat.secondUser.profile_picture)
                 } else {
                     chatName.text = chat.firstUser.nickname
-                    chatProfilePic.load(chat.firstUser.profile_picture)
+                    chatProfilePic.loadImage(chat.firstUser.profile_picture)
                 }
             }
         }
@@ -72,7 +73,7 @@ class ChatViewHolder(
     private fun setCardDetailsAsGroupChat(chat: GroupChat) {
         with(binding) {
             chatName.text = chat.title
-            chatProfilePic.load(chat.photo)
+            chatProfilePic.loadImage(chat.photo)
         }
     }
 

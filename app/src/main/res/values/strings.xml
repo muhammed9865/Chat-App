@@ -63,6 +63,7 @@
     <string name="camera">Camera</string>
     <string name="add">Add</string>
     <string name="communities_by_interests">Communities by Interests</string>
+    <string name="no_groups_were_found">No groups were found</string>
 
     <string-array name="menu_rows">
         <item>Sign out</item>

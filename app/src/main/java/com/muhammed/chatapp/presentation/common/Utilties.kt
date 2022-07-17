@@ -6,8 +6,13 @@ import android.view.View
 import android.view.inputmethod.InputMethodManager
 import android.widget.Button
 import android.widget.EditText
+import android.widget.ImageView
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.FragmentManager
+import com.bumptech.glide.Glide
+import com.facebook.shimmer.Shimmer
+import com.facebook.shimmer.Shimmer.Direction.RIGHT_TO_LEFT
+import com.facebook.shimmer.ShimmerDrawable
 import com.google.android.material.snackbar.BaseTransientBottomBar.ANIMATION_MODE_SLIDE
 import com.google.android.material.snackbar.Snackbar
 import com.muhammed.chatapp.R
@@ -99,5 +104,27 @@ fun DialogFragment.showDialog(manager: FragmentManager, tag: String?) {
         Log.d("LoadingDialog", "hideDialog: hiding")
         show(manager, tag)
     }
+}
+
+
+fun ImageView.loadImage(url: String) {
+    val shimmer = Shimmer.AlphaHighlightBuilder()
+        .setBaseAlpha(0.6f)
+        .setHighlightAlpha(0.7f)
+        .setDuration(1000)
+        .setDirection(RIGHT_TO_LEFT)
+        .setAutoStart(true)
+        .build()
+
+    val shimmerDrawable = ShimmerDrawable().apply {
+        setShimmer(shimmer)
+    }
+
+    Glide.with(context)
+        .load(url)
+        .placeholder(shimmerDrawable)
+        .error(R.drawable.ic_baseline_broken_image_24)
+        .into(this)
+
 }
 

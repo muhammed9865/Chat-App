@@ -1,8 +1,9 @@
 package com.muhammed.chatapp.presentation.viewmodel
 
+import android.app.Application
 import android.graphics.Bitmap
 import android.util.Log
-import androidx.lifecycle.ViewModel
+import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.muhammed.chatapp.data.implementation.network.StorageNetworkImp
 import com.muhammed.chatapp.data.pojo.chat.NewGroupChat
@@ -22,9 +23,10 @@ import javax.inject.Inject
 class CreateGroupViewModel @Inject constructor(
     private val chatsRepository: ChatsRepository,
     private val userRepository: UserRepository,
-    private val storage: StorageNetworkImp
-): ViewModel() {
+    private val storage: StorageNetworkImp,
+): AndroidViewModel(Application()) {
     private val _states = MutableStateFlow<CreateGroupStates>(CreateGroupStates.Idle)
+
     val states = _states.asStateFlow()
     private var _currentUser: User? = null
     var title: String = ""
@@ -39,30 +41,35 @@ class CreateGroupViewModel @Inject constructor(
         }
     }
 
-    fun createGroup() {
-        if (title.isEmpty() || description.isEmpty() || category.isEmpty() || image == null || _currentUser == null) {
-            _states.value = CreateGroupStates.Failed("Something went wrong")
-        }else {
-            tryAsync {
-                _states.value = CreateGroupStates.Creating
-                val photoPath = storage.saveImage(image!!)
-                val newChat = NewGroupChat(
-                    title = title,
-                    description = description,
-                    category = category,
-                    photo = photoPath,
-                    currentUser = _currentUser!!
-                )
-                chatsRepository.createGroupChat(newChat).also {
-                    Log.d("CreateGroup", it.cid)
-                    // Updating User chatlist with the new group id locally
-                    val userChatsList = _currentUser!!.chats_list.toMutableList()
-                    userChatsList.add(it.cid)
-                    _currentUser = _currentUser!!.copy(chats_list = userChatsList)
-                    userRepository.saveUserDetails(_currentUser!!)
+    fun createGroup(hasInternetConnection: Boolean) {
+
+        if (hasInternetConnection) {
+            if (title.isEmpty() || description.isEmpty() || category.isEmpty() || image == null || _currentUser == null) {
+                _states.value = CreateGroupStates.Failed("Something went wrong")
+            } else {
+                tryAsync {
+                    _states.value = CreateGroupStates.Creating
+                    val photoPath = storage.saveImage(image!!)
+                    val newChat = NewGroupChat(
+                        title = title,
+                        description = description,
+                        category = category,
+                        photo = photoPath,
+                        currentUser = _currentUser!!
+                    )
+                    chatsRepository.createGroupChat(newChat).also {
+                        Log.d("CreateGroup", it.cid)
+                        // Updating User chatlist with the new group id locally
+                        val userChatsList = _currentUser!!.chats_list.toMutableList()
+                        userChatsList.add(it.cid)
+                        _currentUser = _currentUser!!.copy(chats_list = userChatsList)
+                        userRepository.saveUserDetails(_currentUser!!)
+                    }
+                    _states.value = CreateGroupStates.CreatedSuccessfully
                 }
-                _states.value = CreateGroupStates.CreatedSuccessfully
             }
+        }else {
+            _states.value = CreateGroupStates.Failed("Check your internet connection")
         }
     }
 

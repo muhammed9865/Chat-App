@@ -9,12 +9,12 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
-import coil.load
 import com.muhammed.chatapp.R
 import com.muhammed.chatapp.databinding.FragmentChatsBinding
 import com.muhammed.chatapp.domain.use_cases.CheckIfCurrentUserUseCase
 import com.muhammed.chatapp.presentation.adapter.ChatsAdapter
 import com.muhammed.chatapp.presentation.common.MenuOptions
+import com.muhammed.chatapp.presentation.common.loadImage
 import com.muhammed.chatapp.presentation.event.ChatsEvent
 import com.muhammed.chatapp.presentation.viewmodel.MainViewModel
 import dagger.hilt.android.AndroidEntryPoint
@@ -82,7 +82,8 @@ class ChatsFragment : Fragment() {
         inflater.inflate(R.menu.main_menu_chat_frag, menu)
         val userIcon = menu.findItem(R.id.menu_options_chat)
         userIcon.setActionView(R.layout.user_icon)
-        (userIcon.actionView as ImageView).load(viewModel.currentUser.value.profile_picture)
+        (userIcon.actionView as ImageView).loadImage(viewModel.currentUser.value.profile_picture)
+
         userIcon.actionView.setOnClickListener {
             showOptionsMenu(it)
         }

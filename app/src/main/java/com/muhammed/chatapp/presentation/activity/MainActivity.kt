@@ -51,6 +51,7 @@ class MainActivity : AppCompatActivity(), NavigationBarView.OnItemSelectedListen
         makeBotNavRoundedCorners()
         setSupportActionBar(binding.mainToolbar)
         supportActionBar?.title = null
+        //NavigationUI.setupWithNavController(binding, navController)
 
         binding.botNav.setOnItemSelectedListener(this)
         navController.addOnDestinationChangedListener(this)

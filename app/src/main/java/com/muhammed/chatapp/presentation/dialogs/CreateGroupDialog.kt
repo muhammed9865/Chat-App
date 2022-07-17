@@ -25,11 +25,14 @@ import com.google.android.material.chip.ChipGroup
 import com.muhammed.chatapp.Filter
 import com.muhammed.chatapp.databinding.DialogCreateNewGroupBinding
 import com.muhammed.chatapp.presentation.common.hideKeyboard
+import com.muhammed.chatapp.presentation.common.showError
 import com.muhammed.chatapp.presentation.common.showKeyboard
 import com.muhammed.chatapp.presentation.state.CreateGroupStates
 import com.muhammed.chatapp.presentation.viewmodel.CreateGroupViewModel
+import com.muhammed.chatapp.services.ConnectionState
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 
 @AndroidEntryPoint
@@ -37,19 +40,27 @@ class CreateGroupDialog : BottomSheetDialogFragment(), ChipGroup.OnCheckedStateC
     private val binding by lazy { DialogCreateNewGroupBinding.inflate(layoutInflater) }
     private val viewModel by viewModels<CreateGroupViewModel>()
 
-    private var isNewInterestAdded = false
+    private var hasInternetConnection = true
+
+    @Inject
+    lateinit var connectionState: ConnectionState
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
+
+        connectionState.observe(viewLifecycleOwner) {
+            hasInternetConnection = it
+        }
+
         return binding.root
     }
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         val dialog = super.onCreateDialog(savedInstanceState) as BottomSheetDialog
-
+        // Setting the dialog to be Extended
         dialog.setOnShowListener { dialog ->
             val d = dialog as BottomSheetDialog
             val bottomSheet =
@@ -82,7 +93,7 @@ class CreateGroupDialog : BottomSheetDialogFragment(), ChipGroup.OnCheckedStateC
                 it.showKeyboard()
                 addInterest()
             }
-            createGroupBtn.setOnClickListener { viewModel.createGroup() }
+            createGroupBtn.setOnClickListener { viewModel.createGroup(hasInternetConnection) }
         }
     }
 
@@ -184,9 +195,22 @@ class CreateGroupDialog : BottomSheetDialogFragment(), ChipGroup.OnCheckedStateC
                 when (state) {
                     is CreateGroupStates.Failed -> {
                         binding.creatingPb.visibility = View.GONE
+                        dialog?.window?.decorView?.showError(state.error)
                         Log.e("CreateGroup", state.error)
                     }
-                    is CreateGroupStates.Creating -> binding.creatingPb.visibility = View.VISIBLE
+                    is CreateGroupStates.Creating -> {
+                        with(binding) {
+                            creatingPb.visibility = View.VISIBLE
+                            groupPhoto.isEnabled = false
+                            groupCategory.isEnabled = false
+                            createGroupBtn.isEnabled = false
+                            crGroupTitle.isEnabled = false
+                            crGroupDescrption.isEnabled = false
+
+                            // Setting the dialog be not cancelled so
+                            isCancelable = false
+                        }
+                    }
                     is CreateGroupStates.CreatedSuccessfully -> {
                         binding.creatingPb.visibility = View.GONE
                         dismiss()

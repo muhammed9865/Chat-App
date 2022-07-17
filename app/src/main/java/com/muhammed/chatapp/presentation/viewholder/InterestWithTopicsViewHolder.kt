@@ -3,13 +3,13 @@ package com.muhammed.chatapp.presentation.viewholder
 import android.util.Log
 import android.view.LayoutInflater
 import androidx.recyclerview.widget.RecyclerView
-import coil.load
 import com.google.android.material.chip.Chip
 import com.muhammed.chatapp.data.pojo.InterestAndTopic
 import com.muhammed.chatapp.data.pojo.InterestWithTopics
 import com.muhammed.chatapp.data.pojo.Topic
 import com.muhammed.chatapp.databinding.ListItemInterestWithTopicsBinding
 import com.muhammed.chatapp.databinding.ListItemTopicBinding
+import com.muhammed.chatapp.presentation.common.loadImage
 
 class InterestWithTopicsViewHolder(private val binding: ListItemInterestWithTopicsBinding) :
     RecyclerView.ViewHolder(binding.root) {
@@ -18,7 +18,7 @@ class InterestWithTopicsViewHolder(private val binding: ListItemInterestWithTopi
         with(binding) {
             interestTitle.text = item.interest.title
             if (item.interest.hasImage()) {
-                interestIcon.load(item.interest.imagePath)
+                interestIcon.loadImage(item.interest.imagePath!!)
             }
 
             // inflating topics as Chips

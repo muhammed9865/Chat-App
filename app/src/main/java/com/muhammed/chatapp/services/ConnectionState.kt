@@ -28,6 +28,7 @@ class ConnectionState(context: Context) : LiveData<Boolean>() {
         cm.registerNetworkCallback(networkRequest, networkCallback)
     }
 
+
     override fun onInactive() {
         super.onInactive()
         cm.unregisterNetworkCallback(networkCallback)
