@@ -3,7 +3,6 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-
     android:layout_height="match_parent"
     tools:context=".presentation.fragments.CommunitiesFragment">
 
@@ -94,6 +93,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/_8sdp"
             android:orientation="horizontal"
+            tools:visibility="gone"
             app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="@+id/textView15"
@@ -106,11 +106,11 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/_15sdp"
             android:fontFamily="@font/sf_bold"
-            android:text="Communities by Interests"
+            android:text="@string/communities_by_interests"
             android:textColor="@color/black"
             android:textSize="@dimen/_13ssp"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/for_you_comms_rv" />
+            app:layout_constraintTop_toBottomOf="@+id/no_comms_for_you_found" />
 
         <HorizontalScrollView
             android:id="@+id/horizontalScrollView"
@@ -207,25 +207,45 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            android:visibility="invisible"
+            android:visibility="visible"
             app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="@+id/textView15"
             app:layout_constraintTop_toBottomOf="@+id/horizontalScrollView" />
 
         <TextView
-            android:id="@+id/no_comms_found"
+            android:id="@+id/no_comms_by_interest_found"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/_20sdp"
             android:fontFamily="@font/sf_medium"
             android:text="No groups were found"
             android:textSize="@dimen/_12ssp"
-            android:visibility="visible"
+            android:visibility="gone"
+            android:background="@drawable/rounded_tv"
+            android:padding="@dimen/_10sdp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/all_comms_rv"
             app:layout_constraintVertical_bias="0.151" />
+
+        <TextView
+            android:id="@+id/no_comms_for_you_found"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:clickable="false"
+            android:focusable="false"
+            android:gravity="center"
+            android:background="@drawable/rounded_tv"
+            android:padding="@dimen/_10sdp"
+            android:fontFamily="@font/sf_medium"
+            android:text="No groups were found"
+            android:textSize="@dimen/_12ssp"
+            android:visibility="gone"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/textView15" />
 
 
     </androidx.constraintlayout.widget.ConstraintLayout>

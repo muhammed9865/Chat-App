@@ -52,8 +52,12 @@ class CommunitiesFragment : Fragment(), OnItemClickListener<GroupChat>,
 
 
         tryAsync {
-            viewModel.userCommunities.collect {
-                mForYouAdapter.submitList(it)
+            viewModel.userCommunities.collect { groups ->
+                mForYouAdapter.submitList(groups)
+
+                with(binding) {
+                    noCommsForYouFound.visibility = if (groups.isEmpty()) View.VISIBLE else View.GONE
+                }
             }
         }
 
@@ -64,12 +68,11 @@ class CommunitiesFragment : Fragment(), OnItemClickListener<GroupChat>,
                     allCommsRv.visibility = View.VISIBLE
                     mAllAdapter.submitList(groups)
                     root.smoothScrollBy(0, 500)
-                    noCommsFound.visibility = if (groups.isEmpty()) View.VISIBLE else View.GONE
+                    noCommsByInterestFound.visibility = if (groups.isEmpty()) View.VISIBLE else View.GONE
                 }
 
             }
         }
-
 
         return binding.root
     }
@@ -80,12 +83,6 @@ class CommunitiesFragment : Fragment(), OnItemClickListener<GroupChat>,
         viewModel.doOnEvent(ChatsEvent.ShowGroupDetails(group))
     }
 
-
-    private fun tryAsync(function: suspend () -> Unit): Job {
-        return lifecycleScope.launch {
-            function()
-        }
-    }
 
     override fun onCheckedChanged(group: ChipGroup, checkedIds: MutableList<Int>) {
         with(binding) {
@@ -106,15 +103,6 @@ class CommunitiesFragment : Fragment(), OnItemClickListener<GroupChat>,
         }
     }
 
-    private fun changeFilterTo(filter: Filter) {
-        with(binding) {
-            loadingPb.visibility = View.VISIBLE
-            allCommsRv.visibility = View.INVISIBLE
-        }
-        viewModel.doOnEvent(ChatsEvent.LoadRandomCommunitiesBasedOnFilter(filter))
-
-    }
-
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         inflater.inflate(R.menu.main_menu_community_frag, menu)
@@ -129,12 +117,27 @@ class CommunitiesFragment : Fragment(), OnItemClickListener<GroupChat>,
     }
 
 
+    private fun changeFilterTo(filter: Filter) {
+        with(binding) {
+            loadingPb.visibility = View.VISIBLE
+            allCommsRv.visibility = View.INVISIBLE
+        }
+        viewModel.doOnEvent(ChatsEvent.LoadRandomCommunitiesBasedOnFilter(filter))
+    }
+
+
     private fun showOptionsMenu(view: View) {
         val menuOptions = MenuOptions(requireActivity(), view, R.menu.options_menu)
         menuOptions.onSignOutSelected {
             viewModel.doOnEvent(ChatsEvent.SignOut)
         }
         menuOptions.showMenu()
+    }
+
+    private fun tryAsync(function: suspend () -> Unit): Job {
+        return lifecycleScope.launch {
+            function()
+        }
     }
 
 

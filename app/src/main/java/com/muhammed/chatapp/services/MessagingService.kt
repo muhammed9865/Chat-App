@@ -18,7 +18,9 @@ import com.muhammed.chatapp.domain.use_cases.SerializeEntityUseCase
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -82,19 +84,32 @@ class MessagingService : FirebaseMessagingService() {
 
 
     private fun showNotification(title: String, message: Message) {
-        val builder =
-            NotificationCompat.Builder(this, getString(R.string.default_notification_channel_id))
-                .setContentTitle(title)
-                .setContentText(message.text)
-                .setSmallIcon(R.drawable.ic_chat_logo)
-                .setColor(getColor(R.color.primaryColor))
-                .setPriority(NotificationCompat.PRIORITY_HIGH)
-                .build()
+        CoroutineScope(Dispatchers.IO).launch {
+        val currUser = userRepository.currentUser.first()
+            if (message.sender.email != currUser.email) {
+                val builder =
+                    NotificationCompat.Builder(
+                        this@MessagingService,
+                        getString(R.string.default_notification_channel_id)
+                    )
+                        .setContentTitle(title)
+                        .setContentText(message.text)
+                        .setSmallIcon(R.drawable.ic_chat_logo)
+                        .setColor(getColor(R.color.primaryColor))
+                        .setPriority(NotificationCompat.PRIORITY_HIGH)
+                        .build()
 
 
-        val notificationManager: NotificationManagerCompat = NotificationManagerCompat.from(this)
-        notificationManager.notify(1, builder)
+                withContext(Dispatchers.Main) {
+                    val notificationManager: NotificationManagerCompat =
+                        NotificationManagerCompat.from(this@MessagingService)
+                    notificationManager.notify(1, builder)
+                }
+            }
+        }
     }
+
+
 
 
 }

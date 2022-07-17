@@ -10,6 +10,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:layout_constraintTop_toTopOf="parent"
+        android:layout_marginTop="@dimen/_10sdp"
         app:srcCompat="@drawable/ic_line"
         tools:layout_editor_absoluteX="0dp" />
 
@@ -20,7 +21,7 @@
         android:scaleType="centerCrop"
         android:theme="@style/CustomCommunityCard"
         android:layout_marginStart="16dp"
-        android:layout_marginTop="46dp"
+        android:layout_marginTop="@dimen/_20sdp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/top_line"
         app:srcCompat="@drawable/test2" />
