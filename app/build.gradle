@@ -26,6 +26,9 @@ android {
     }
 
     buildTypes {
+        debug {
+            buildConfigField("String", "FCM_BASE_URL", "\"https://fcm.googleapis.com/\"")
+        }
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
@@ -47,7 +50,7 @@ dependencies {
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
     implementation 'androidx.legacy:legacy-support-v13:1.0.0'
     def lifecycle_version = "2.5.0-rc02"
-    def nav_version = "2.4.2"
+    def nav_version = "2.5.0"
     def room_version = "2.4.2"
 
 
@@ -110,8 +113,8 @@ dependencies {
     kapt "com.google.dagger:hilt-compiler:2.38.1"
 
     // Fragment
-    implementation "androidx.fragment:fragment:1.5.0-rc01"
-    implementation 'androidx.navigation:navigation-fragment:2.4.2'
+    implementation "androidx.fragment:fragment:1.5.0"
+    implementation 'androidx.navigation:navigation-fragment:2.5.0'
     implementation "androidx.navigation:navigation-ui-ktx:$nav_version"
 
     // Sdp/SSP
@@ -126,6 +129,13 @@ dependencies {
 
     // Coil
     implementation 'io.coil-kt:coil:2.1.0'
+
+    // Retrofit
+    implementation 'com.squareup.retrofit2:retrofit:2.4.0'
+    implementation 'com.squareup.retrofit2:converter-gson:2.3.0'
+    implementation "com.squareup.retrofit2:adapter-rxjava2:2.3.0"
+    implementation "com.squareup.okhttp3:logging-interceptor:4.3.1"
+
 
 
 }

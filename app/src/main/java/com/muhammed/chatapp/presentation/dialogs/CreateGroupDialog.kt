@@ -9,6 +9,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.inputmethod.EditorInfo
 import android.widget.FrameLayout
 import android.widget.ImageView
 import androidx.activity.result.contract.ActivityResultContracts
@@ -23,6 +24,8 @@ import com.google.android.material.chip.ChipDrawable
 import com.google.android.material.chip.ChipGroup
 import com.muhammed.chatapp.Filter
 import com.muhammed.chatapp.databinding.DialogCreateNewGroupBinding
+import com.muhammed.chatapp.presentation.common.hideKeyboard
+import com.muhammed.chatapp.presentation.common.showKeyboard
 import com.muhammed.chatapp.presentation.state.CreateGroupStates
 import com.muhammed.chatapp.presentation.viewmodel.CreateGroupViewModel
 import dagger.hilt.android.AndroidEntryPoint
@@ -76,6 +79,7 @@ class CreateGroupDialog : BottomSheetDialogFragment(), ChipGroup.OnCheckedStateC
             }
 
             addInterest.setOnClickListener {
+                it.showKeyboard()
                 addInterest()
             }
             createGroupBtn.setOnClickListener { viewModel.createGroup() }
@@ -85,15 +89,18 @@ class CreateGroupDialog : BottomSheetDialogFragment(), ChipGroup.OnCheckedStateC
     override fun onCheckedChanged(group: ChipGroup, checkedIds: MutableList<Int>) {
         with(binding) {
             var filter: Filter = Filter.Default()
-            when (checkedIds[0]) {
-                categoryArt.id -> filter = Filter.Art()
-                categoryHealth.id -> filter = Filter.Health()
-                categoryCrypto.id -> filter = Filter.Crypto()
-                categoryFinance.id -> filter = Filter.Finance()
-                categoryMovies.id -> filter = Filter.Movies()
-                categorySports.id -> filter = Filter.Sports()
+            addInterestText.clearFocus()
+            if (checkedIds.isNotEmpty()) {
+                when (checkedIds[0]) {
+                    categoryArt.id -> filter = Filter.Art()
+                    categoryHealth.id -> filter = Filter.Health()
+                    categoryCrypto.id -> filter = Filter.Crypto()
+                    categoryFinance.id -> filter = Filter.Finance()
+                    categoryMovies.id -> filter = Filter.Movies()
+                    categorySports.id -> filter = Filter.Sports()
+                }
+                viewModel.category = filter.title
             }
-            viewModel.category = filter.title
         }
     }
 
@@ -127,40 +134,44 @@ class CreateGroupDialog : BottomSheetDialogFragment(), ChipGroup.OnCheckedStateC
 
     private fun addInterest() {
         with(binding) {
+
             addInterest.visibility = View.GONE
 
             addInterestText.apply {
                 visibility = View.VISIBLE
-                showSoftInputOnFocus = true
                 requestFocus()
-                setOnFocusChangeListener { _  , hasFocus ->
-                    if (!hasFocus) {
-                        if (editableText.isNotEmpty()) {
-                            val chipDrawable = ChipDrawable.createFromAttributes(
-                                requireContext(),
-                                null,
-                                0,
-                                com.google.android.material.R.style.Widget_MaterialComponents_Chip_Choice
-                            )
-                            addInterest.apply {
-                                setChipDrawable(chipDrawable)
-                                text = editableText.toString()
-                                visibility = View.VISIBLE
-                                isChecked = true
+
+
+                setOnEditorActionListener { _, actionId, _ ->
+                    when (actionId) {
+                        EditorInfo.IME_ACTION_DONE -> {
+                            hideKeyboard()
+                            if (editableText.isNotEmpty()) {
+                                val chipDrawable = ChipDrawable.createFromAttributes(
+                                    requireContext(),
+                                    null,
+                                    0,
+                                    com.google.android.material.R.style.Widget_MaterialComponents_Chip_Choice
+                                )
+                                addInterest.apply {
+                                    setChipDrawable(chipDrawable)
+                                    text = addInterestText.text.toString()
+                                    visibility = View.VISIBLE
+                                    isChecked = true
+                                }
+                                visibility = View.GONE
+
+                                viewModel.category = editableText.toString()
+                            } else {
+                                visibility = View.GONE
+                                addInterest.visibility = View.VISIBLE
                             }
 
-
-                            visibility = View.GONE
-
-                            viewModel.category = editableText.toString()
-                        }else {
-                            visibility = View.GONE
-                            addInterest.visibility = View.VISIBLE
                         }
                     }
+                    true
                 }
             }
-
 
 
         }
@@ -185,5 +196,5 @@ class CreateGroupDialog : BottomSheetDialogFragment(), ChipGroup.OnCheckedStateC
             }
         }
     }
-
 }
+

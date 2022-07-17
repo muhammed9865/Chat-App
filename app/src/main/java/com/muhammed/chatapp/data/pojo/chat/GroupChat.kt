@@ -6,11 +6,12 @@ class GroupChat(
     cid: String = "",
     messagesId: String = "",
     val title: String = "",
-    val membersCount: Int = 0,
+    var membersCount: Int = 0,
     val description: String = "",
     val category: String = "",
     val photo: String = "",
-    val membersIds: List<String> = emptyList(),
+    // save members email
+    var membersIds: List<String> = emptyList(),
     val admins: MutableList<User> = mutableListOf(),
 ) : Chat(cid = cid, messagesId = messagesId) {
 

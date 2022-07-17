@@ -3,7 +3,9 @@ package com.muhammed.chatapp.data.implementation.network
 import android.util.Log
 import com.google.firebase.firestore.*
 import com.muhammed.chatapp.Fields
+import com.muhammed.chatapp.Filter
 import com.muhammed.chatapp.data.NetworkDatabase
+import com.muhammed.chatapp.data.NetworkExceptions
 import com.muhammed.chatapp.data.pojo.Interest
 import com.muhammed.chatapp.data.pojo.InterestWithTopics
 import com.muhammed.chatapp.data.pojo.Topic
@@ -19,7 +21,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.tasks.asDeferred
 import kotlinx.coroutines.tasks.await
 import javax.inject.Inject
 
@@ -140,7 +141,11 @@ class FirestoreNetworkDatabaseImp @Inject constructor(private val mFirestore: Fi
         chatDocument.set(groupChat).await()
         messagesDocument.set(Messages()).await()
 
-        updateUserChatsList(newGroupChat.currentUser.email, newGroupChat.currentUser.collection, chatDocument.id)
+        updateUserChatsList(
+            newGroupChat.currentUser.email,
+            newGroupChat.currentUser.collection,
+            chatDocument.id
+        )
 
         return groupChat
     }
@@ -203,23 +208,70 @@ class FirestoreNetworkDatabaseImp @Inject constructor(private val mFirestore: Fi
 
     override fun getUserCommunities(user: User): Flow<List<GroupChat>> {
         return flow {
-            val interestsChunked = user.interests.groupBy { it.title }
+            val interestsChunked = user.interests.chunked(10)
+            for (list in interestsChunked) {
+                val docs = mFirestore.collection(Collections.CHATS)
+                    .whereIn("category", list.map { it.title })
+                    .orderBy("createdSince", Query.Direction.DESCENDING)
+                    .limit(15)
+                    .get()
+                    .await()
+                    .toObjects(GroupChat::class.java)
+
+                emit(docs)
+
+            }
         }
     }
 
-    override suspend fun getRandomCommunitiesBasedOnCategory(category: String): List<GroupChat> {
-        val documents = mFirestore.collection(Collections.CHATS)
-            .whereEqualTo("title", category)
-            .orderBy("createdSince")
-            .startAfter(lastVisibleCommunityDocument ?: 0)
-            .limit(10)
-            .get()
+
+    override fun getRandomCommunitiesBasedOnCategory(
+        category: String,
+        user: User
+    ): Flow<List<GroupChat>> {
+        return flow {
+            // Dividing the chat list to chunks of size 10 beacuase
+            // the WhereNotIn query can have only maximum size of 10 as a list.
+            val userChatListChunks = user.chats_list.chunked(10)
+            userChatListChunks.forEach { chunk ->
+                try {
+                    val documents = if (category != Filter.All().title) {
+                        mFirestore.collection(Collections.CHATS)
+                            .whereEqualTo("category", category)
+                            .orderBy("createdSince", Query.Direction.DESCENDING)
+                            .limit(10)
+                            .get()
+                            .await()
+                    } else {
+                        mFirestore.collection(Collections.CHATS)
+                            .whereNotEqualTo("category", null)
+                            .limit(15)
+                            .get()
+                            .await()
+                    }
+                    lastVisibleCommunityDocument = documents.documents[documents.size() - 1]
+
+                    emit(documents.toObjects(GroupChat::class.java).shuffled())
+
+
+                } catch (e: Exception) {
+                    throw NetworkExceptions.NoCommunitiesFoundException()
+                }
+
+
+                // For Paginating
+
+            }
+        }
+    }
+
+    override suspend fun joinCommunity(groupChat: GroupChat, user: User) {
+        mFirestore.collection(Collections.CHATS)
+            .document(groupChat.cid)
+            .set(groupChat)
             .await()
 
-        // For Paginating
-        lastVisibleCommunityDocument = documents.documents[documents.size() - 1]
-
-        return documents.toObjects(GroupChat::class.java).shuffled()
+        updateUser(user)
     }
 
     override suspend fun sendMessage(

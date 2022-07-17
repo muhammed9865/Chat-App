@@ -22,6 +22,7 @@ class ChatRoomActivity : AppCompatActivity() {
     private val binding by lazy { ActivityChatRoomBinding.inflate(layoutInflater) }
     private val viewModel by viewModels<ChatsRoomViewModel>()
     private lateinit var mAdapter: MessageAdapter
+    private var joinGroupDialog: GroupDetailsBottomDialog? = null
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
@@ -41,7 +42,7 @@ class ChatRoomActivity : AppCompatActivity() {
                         enterMsgEt.text.toString()
                     )
                 )
-               enterMsgEt.text.clear()
+                enterMsgEt.text.clear()
                 root.hideKeyboard()
             }
 
@@ -85,16 +86,23 @@ class ChatRoomActivity : AppCompatActivity() {
     private fun onStateChanged() {
         lifecycleScope.launch {
             viewModel.states.collect { state ->
+
                 when (state) {
                     is MessagingRoomStates.ShowGroupDetails -> {
-                        GroupDetailsBottomDialog(state.group).also {
-                            it.setOnJoinClicked {
-                                //TODO Implement when user clicks on Join
+                        joinGroupDialog = GroupDetailsBottomDialog(state.group).also {
+                            it.setOnJoinClicked { chat ->
+                                viewModel.doOnEvent(MessagingRoomEvents.JoinGroup(chat))
                             }
-                        }.show(supportFragmentManager, null)
+                            it.show(supportFragmentManager, null)
+                        }
+
                     }
                     is MessagingRoomStates.Error -> {
                         binding.root.showError(state.error)
+                    }
+
+                    is MessagingRoomStates.JoinedGroup -> {
+                        joinGroupDialog?.onJoinedSuccessfully()
                     }
                     else -> {}
                 }

@@ -9,6 +9,7 @@ data class User(
     var nickname: String = "",
     val email: String = "",
     val password: String? = "",
+    val token: String? = "",
     var profile_picture: String = Constants.MALE_PATH,
     val collection: String = "",
     var chats_list: List<String> = emptyList(),

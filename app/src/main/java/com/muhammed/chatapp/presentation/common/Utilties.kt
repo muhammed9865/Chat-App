@@ -1,13 +1,11 @@
 package com.muhammed.chatapp.presentation.common
 
-import android.app.Activity
 import android.content.Context
 import android.util.Log
 import android.view.View
 import android.view.inputmethod.InputMethodManager
 import android.widget.Button
 import android.widget.EditText
-import androidx.core.content.ContextCompat.getSystemService
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.FragmentManager
 import com.google.android.material.snackbar.BaseTransientBottomBar.ANIMATION_MODE_SLIDE
@@ -27,7 +25,7 @@ fun View.hideKeyboard() {
 fun View.showKeyboard() {
     val imm: InputMethodManager =
         this.context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-    imm.showSoftInput(this, InputMethodManager.SHOW_IMPLICIT)
+    imm.showSoftInput(this, InputMethodManager.SHOW_FORCED)
 }
 
 fun View.showError(error: String) {

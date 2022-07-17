@@ -6,21 +6,23 @@
     android:layout_height="match_parent">
 
     <androidx.appcompat.widget.AppCompatImageView
-        android:id="@+id/appCompatImageView3"
+        android:id="@+id/top_line"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:layout_constraintTop_toTopOf="parent"
         app:srcCompat="@drawable/ic_line"
         tools:layout_editor_absoluteX="0dp" />
 
-    <androidx.appcompat.widget.AppCompatImageView
+    <com.google.android.material.imageview.ShapeableImageView
         android:id="@+id/group_photo"
         android:layout_width="@dimen/_50sdp"
         android:layout_height="@dimen/_50sdp"
+        android:scaleType="centerCrop"
+        android:theme="@style/CustomCommunityCard"
         android:layout_marginStart="16dp"
         android:layout_marginTop="46dp"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/appCompatImageView3"
+        app:layout_constraintTop_toBottomOf="@+id/top_line"
         app:srcCompat="@drawable/test2" />
 
     <TextView
@@ -55,7 +57,6 @@
         android:focusable="false"
         android:textColor="#686A8A"
         app:chipBackgroundColor="#EFECFE"
-        app:layout_constraintBottom_toBottomOf="@+id/group_title"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="@+id/group_title"
         tools:text="Crypto" />
@@ -80,13 +81,31 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/_10sdp"
+        android:layout_marginBottom="16dp"
         android:fontFamily="@font/sf_bold"
         android:padding="@dimen/_10sdp"
         android:text="@string/join_community"
         android:textAllCaps="false"
         app:cornerRadius="@dimen/bot_nav_corners"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="@+id/group_category"
         app:layout_constraintStart_toStartOf="@+id/group_photo"
-        app:layout_constraintTop_toBottomOf="@+id/group_description" />
+        app:layout_constraintTop_toBottomOf="@+id/group_description"
+        app:layout_constraintVertical_bias="0.0" />
+
+    <com.google.android.material.progressindicator.CircularProgressIndicator
+        android:id="@+id/joining_pb"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:indeterminate="true"
+        android:indeterminateBehavior="cycle"
+        android:progress="50"
+        android:visibility="gone"
+        app:indicatorColor="@color/primaryColor"
+        app:indicatorSize="@dimen/_20sdp"
+        app:layout_constraintBottom_toTopOf="@+id/group_category"
+        app:layout_constraintEnd_toEndOf="@+id/group_category"
+        app:layout_constraintTop_toBottomOf="@+id/top_line"
+        app:trackThickness="@dimen/_1sdp" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

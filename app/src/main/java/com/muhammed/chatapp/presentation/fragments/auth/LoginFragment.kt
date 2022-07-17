@@ -13,7 +13,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
-import com.muhammed.chatapp.*
+import com.muhammed.chatapp.R
 import com.muhammed.chatapp.databinding.FragmentLoginBinding
 import com.muhammed.chatapp.presentation.common.*
 import com.muhammed.chatapp.presentation.dialogs.LoadingDialog
@@ -37,11 +37,11 @@ class LoginFragment : Fragment() {
 
         tryLoggingInstantly()
 
-        binding.loginBtn.setOnTouchListener { _, motionEvent ->
+        binding.loginBtn.setOnTouchListener { view, motionEvent ->
             if (motionEvent.action == MotionEvent.ACTION_UP) {
                 binding.loginMotionLayout.transitionToEnd()
                 viewModel.doOnEvent(AuthenticationEvent.Submit)
-
+                view.hideKeyboard()
             }
             false
         }

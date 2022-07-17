@@ -6,7 +6,6 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import com.muhammed.chatapp.data.pojo.chat.Chat
 import com.muhammed.chatapp.data.pojo.chat.ChatAndRoom
-import com.muhammed.chatapp.data.pojo.chat.PrivateChat
 import com.muhammed.chatapp.data.pojo.user.User
 import com.muhammed.chatapp.databinding.ListItemChatBinding
 import com.muhammed.chatapp.domain.use_cases.CheckIfCurrentUserUseCase
@@ -31,7 +30,14 @@ class ChatsAdapter @AssistedInject constructor(
     }
 
     override fun onBindViewHolder(holder: ChatViewHolder, position: Int) {
+        if (position == currentList.size - 1) {
+            val lastView = holder.itemView
+            val params = (lastView.layoutParams as ViewGroup.MarginLayoutParams)
+            params.bottomMargin = 80
+            lastView.layoutParams = params
+        }
         holder.bind(getItem(position), user, listener)
+
     }
 
 

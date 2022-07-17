@@ -33,10 +33,15 @@
         android:id="@+id/communitiesFragment"
         android:name="com.muhammed.chatapp.presentation.fragments.CommunitiesFragment"
         android:label="fragment_communities"
-        tools:layout="@layout/fragment_communities" >
+        tools:layout="@layout/fragment_communities">
         <action
             android:id="@+id/action_communitiesFragment_to_chatRoomActivity"
             app:destination="@id/chatRoomActivity" />
+        <action
+            android:id="@+id/action_communitiesFragment_to_authActivity"
+            app:destination="@id/authActivity"
+            app:enterAnim="@anim/slide_in_left"
+            app:exitAnim="@anim/slide_out_right" />
     </fragment>
     <activity
         android:id="@+id/authActivity"

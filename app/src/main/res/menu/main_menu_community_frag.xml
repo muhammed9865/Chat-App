@@ -3,21 +3,21 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <group android:menuCategory="container" android:id="@+id/commFrag_menu">
         <item
-            android:id="@+id/menu_options"
-            app:actionLayout="@layout/user_icon"
+            android:id="@+id/menu_options_comm"
             android:orderInCategory="3"
             android:title="@string/options"
             app:showAsAction="always" />
         <item
             android:id="@+id/menu_search"
             android:icon="@drawable/ic_baseline_search_24"
-            android:orderInCategory="2"
+            android:orderInCategory="1"
+            app:actionViewClass="androidx.appcompat.widget.SearchView"
             android:title="@string/search"
             app:showAsAction="ifRoom" />
         <item
             android:id="@+id/menu_new_group"
             android:icon="@drawable/ic_new_group"
-            android:orderInCategory="1"
+            android:orderInCategory="2"
             android:title="@string/camera"
             app:showAsAction="ifRoom" />
     </group>

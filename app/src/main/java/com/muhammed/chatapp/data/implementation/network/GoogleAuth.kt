@@ -21,7 +21,7 @@ class GoogleAuth @Inject constructor(private val client: GoogleSignInClient)
         this.googleAuthCallback = listener
     }
 
-    fun onTaskResult(data: Intent) {
+    suspend fun onTaskResult(data: Intent) {
         val task = GoogleSignIn.getSignedInAccountFromIntent(data)
         try {
             val account = task.getResult(ApiException::class.java)
@@ -35,7 +35,7 @@ class GoogleAuth @Inject constructor(private val client: GoogleSignInClient)
 interface GoogleAuthCallback {
     interface ViewModel {
         fun onSigningStart(client: GoogleSignInClient)
-        fun onSigningSuccess(client: GoogleSignInClient, account: GoogleSignInAccount)
+        suspend fun onSigningSuccess(client: GoogleSignInClient, account: GoogleSignInAccount)
         fun onSigningFailure(error: String?)
     }
 

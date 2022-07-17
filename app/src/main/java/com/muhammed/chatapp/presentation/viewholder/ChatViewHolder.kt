@@ -33,7 +33,7 @@ class ChatViewHolder(
                     if (chat is GroupChat) {
                         val context = itemView.context
                         val membersCount = String.format(context.getString(R.string.members_count), chat.serializeMembersCount())
-                        messagingRoom = messagingRoom.copy(subTitle = membersCount)
+                        messagingRoom = messagingRoom.copy(subTitle = membersCount, isGroup = true)
                     }
                     val chatAndRoom = ChatAndRoom(chat, messagingRoom)
                     listener(chatAndRoom)

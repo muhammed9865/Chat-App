@@ -7,10 +7,21 @@
     android:paddingBottom="@dimen/_10sdp"
     xmlns:tools="http://schemas.android.com/tools">
 
+    <com.google.android.material.imageview.ShapeableImageView
+        android:id="@+id/message_user_icon"
+        android:layout_width="@dimen/_15sdp"
+        android:layout_height="@dimen/_15sdp"
+        android:scaleType="centerCrop"
+        android:theme="@style/CircularImageView"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/ic_baseline_person_24" />
+
 
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
+        android:layout_marginStart="4dp"
         android:background="@drawable/rounded_edittext"
         android:backgroundTint="#F6F5FF"
         android:orientation="vertical"
@@ -19,14 +30,15 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/guideline9"
         app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        app:layout_constraintStart_toEndOf="@+id/message_user_icon"
+        app:layout_constraintTop_toTopOf="@+id/message_user_icon">
 
         <TextView
             android:id="@+id/message_txt"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="top"
+            android:focusable="true"
             android:fontFamily="@font/sf_regular"
             android:textColor="#303030"
             android:textSize="@dimen/_13ssp"

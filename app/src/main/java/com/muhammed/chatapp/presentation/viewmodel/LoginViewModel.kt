@@ -57,7 +57,9 @@ class LoginViewModel @Inject constructor(
             }
 
             is AuthenticationEvent.OnGoogleCredentialsAvailable -> {
-                googleAuth.onTaskResult(event.data)
+                viewModelScope.launch {
+                    googleAuth.onTaskResult(event.data)
+                }
             }
 
             is AuthenticationEvent.LoginWithSavedToken -> {
@@ -142,7 +144,7 @@ class LoginViewModel @Inject constructor(
                 sendState(AuthenticationState.OnGoogleAuthStart(client))
             }
 
-            override fun onSigningSuccess(
+            override suspend fun onSigningSuccess(
                 client: GoogleSignInClient,
                 account: GoogleSignInAccount
             ) {

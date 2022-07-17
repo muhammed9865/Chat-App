@@ -24,5 +24,17 @@ sealed class Filter(open val title: String) {
     data class Sports(override val title: String = "Sports") : Filter(title)
     data class Crypto(override val title: String = "Crypto") : Filter(title)
     data class Finance(override val title: String = "Finance") : Filter(title)
-    data class Health(override val title: String  = "Health"): Filter(title = title)
+    data class Health(override val title: String = "Health") : Filter(title = title)
+    companion object {
+        fun getAllCategoriesTitles(): List<String> {
+            return listOf(
+                Movies().title,
+                Art().title,
+                Sports().title,
+                Crypto().title,
+                Finance().title,
+                Health().title
+            )
+        }
+    }
 }

@@ -3,7 +3,9 @@ package com.muhammed.chatapp.data
 import com.google.firebase.firestore.EventListener
 import com.google.firebase.firestore.ListenerRegistration
 import com.google.firebase.firestore.QuerySnapshot
-import com.muhammed.chatapp.data.pojo.*
+import com.muhammed.chatapp.data.pojo.Interest
+import com.muhammed.chatapp.data.pojo.InterestWithTopics
+import com.muhammed.chatapp.data.pojo.Topic
 import com.muhammed.chatapp.data.pojo.chat.Chat
 import com.muhammed.chatapp.data.pojo.chat.GroupChat
 import com.muhammed.chatapp.data.pojo.chat.NewGroupChat
@@ -12,7 +14,6 @@ import com.muhammed.chatapp.data.pojo.message.Message
 import com.muhammed.chatapp.data.pojo.message.Messages
 import com.muhammed.chatapp.data.pojo.user.User
 import kotlinx.coroutines.flow.Flow
-import java.lang.NullPointerException
 
 interface NetworkDatabase {
     suspend fun saveUser(user: User)
@@ -39,7 +40,8 @@ interface NetworkDatabase {
 
     fun getUserCommunities(user: User): Flow<List<GroupChat>>
 
-    suspend fun getRandomCommunitiesBasedOnCategory(category: String): List<GroupChat>
+    @Throws(NetworkExceptions.NoCommunitiesFoundException::class)
+    fun getRandomCommunitiesBasedOnCategory(category: String, user: User): Flow<List<GroupChat>>
 
     suspend fun createPrivateChat(otherUserEmail: String, currentUser: User): PrivateChat?
 
@@ -55,6 +57,8 @@ interface NetworkDatabase {
     )
 
     fun cancelListeningToMessages()
+
+    suspend fun joinCommunity(groupChat: GroupChat, user: User)
 
     suspend fun getRandomMessages(messagesId: String): List<Message>
 

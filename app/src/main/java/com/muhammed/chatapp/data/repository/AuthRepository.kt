@@ -1,9 +1,11 @@
 package com.muhammed.chatapp.data.repository
 
+import com.google.firebase.messaging.FirebaseMessaging
 import com.muhammed.chatapp.data.implementation.network.EmailAndPasswordAuth
 import com.muhammed.chatapp.data.implementation.network.FirestoreNetworkDatabaseImp
-import com.muhammed.chatapp.domain.Encoder
 import com.muhammed.chatapp.data.pojo.user.User
+import com.muhammed.chatapp.domain.Encoder
+import kotlinx.coroutines.tasks.await
 import java.util.*
 import javax.inject.Inject
 
@@ -27,10 +29,13 @@ class AuthRepository @Inject constructor(
 
         val fUser = mEmailAndPasswordAuth.registerNewUser(email, password).user
         fUser?.let {
+            // Getting the token
+            val token = FirebaseMessaging.getInstance().token.await()
             // Creating the user object to save it into Firestore.
             val user = User(
                 uid = fUser.uid,
                 nickname = nickname,
+                token = token,
                 email = email,
                 password = Encoder.encodePassword(password),
                 collection = FirestoreNetworkDatabaseImp.Collections.USERS

@@ -8,8 +8,9 @@ import javax.inject.Inject
 
 class CommunityRepository @Inject constructor(private val networkDatabase: NetworkDatabase) {
     fun loadCommunitiesForUser(user: User) = networkDatabase.getUserCommunities(user)
-    suspend fun loadCommunitiesByInterest(filter: Filter) =
-       fakeData()
+
+    fun loadCommunitiesByInterest(filter: Filter, user: User) =
+        networkDatabase.getRandomCommunitiesBasedOnCategory(filter.title, user)
 
 
     private fun fakeData(): List<GroupChat> {

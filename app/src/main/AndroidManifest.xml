@@ -33,14 +33,17 @@
         <activity
             android:name=".presentation.activity.MainActivity"
             android:exported="true"
+            android:windowSoftInputMode="adjustNothing"
             android:screenOrientation="portrait"
             tools:ignore="LockedOrientationActivity" />
 
         <service
             android:name=".services.MessagingService"
-            android:exported="false">
+            android:exported="true"
+            android:permission="com.google.android.c2dm.permission.SEND">
             <intent-filter>
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />
+                <action android:name="com.google.android.c2dm.intent.RECEIVE" />
             </intent-filter>
 
             <meta-data

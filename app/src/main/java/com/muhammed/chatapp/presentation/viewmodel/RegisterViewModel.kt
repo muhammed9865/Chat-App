@@ -4,15 +4,16 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
+import com.google.firebase.messaging.FirebaseMessaging
 import com.muhammed.chatapp.data.implementation.network.FirestoreNetworkDatabaseImp
-import com.muhammed.chatapp.data.repository.AuthRepository
 import com.muhammed.chatapp.data.implementation.network.GoogleAuth
 import com.muhammed.chatapp.data.implementation.network.GoogleAuthCallback
+import com.muhammed.chatapp.data.pojo.user.User
+import com.muhammed.chatapp.data.repository.AuthRepository
 import com.muhammed.chatapp.domain.use_cases.ValidateEmail
 import com.muhammed.chatapp.domain.use_cases.ValidateNickname
 import com.muhammed.chatapp.domain.use_cases.ValidatePassword
 import com.muhammed.chatapp.domain.use_cases.ValidateRepeatedPassword
-import com.muhammed.chatapp.data.pojo.user.User
 import com.muhammed.chatapp.presentation.event.AuthenticationEvent
 import com.muhammed.chatapp.presentation.state.AuthenticationState
 import com.muhammed.chatapp.presentation.state.ValidationState
@@ -23,6 +24,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.tasks.await
 import javax.inject.Inject
 
 @HiltViewModel
@@ -45,7 +47,7 @@ class RegisterViewModel @Inject constructor(
     }
 
     fun doOnEvent(event: AuthenticationEvent) {
-        when(event) {
+        when (event) {
             is AuthenticationEvent.OnNicknameChanged -> {
                 _validation.value = _validation.value.copy(nickname = event.name)
             }
@@ -69,7 +71,9 @@ class RegisterViewModel @Inject constructor(
             }
 
             is AuthenticationEvent.OnGoogleCredentialsAvailable -> {
-                googleAuth.onTaskResult(event.data)
+                viewModelScope.launch {
+                    googleAuth.onTaskResult(event.data)
+                }
             }
 
             is AuthenticationEvent.Submit -> {
@@ -86,7 +90,10 @@ class RegisterViewModel @Inject constructor(
             val emailResult = validateEmail.execute(_validation.value.email)
             val passwordResult = validatePassword.execute(_validation.value.password)
             val repeatedPasswordResult =
-                validateRepeatedPassword.execute(_validation.value.password, _validation.value.repeatedPassword)
+                validateRepeatedPassword.execute(
+                    _validation.value.password,
+                    _validation.value.repeatedPassword
+                )
 
             // Result errors if any.
             val hasErrors =
@@ -102,57 +109,72 @@ class RegisterViewModel @Inject constructor(
                     nicknameError = nicknameResult.errorMessage
                 )
                 _authStates.send(AuthenticationState.ValidationFailure(newState))
-            }else {
+            } else {
                 registerUser()
             }
         }
     }
 
     private fun prepareGoogleAuthListener() {
-            googleAuth.registerCallbackListener(object : GoogleAuthCallback.ViewModel {
-                override fun onSigningStart(client: GoogleSignInClient) {
-                    viewModelScope.launch {
-                        _authStates.send(AuthenticationState.OnGoogleAuthStart(client))
-                    }
+        googleAuth.registerCallbackListener(object : GoogleAuthCallback.ViewModel {
+            override fun onSigningStart(client: GoogleSignInClient) {
+                viewModelScope.launch {
+                    _authStates.send(AuthenticationState.OnGoogleAuthStart(client))
                 }
+            }
 
-                override fun onSigningSuccess(client: GoogleSignInClient, account: GoogleSignInAccount) {
-                    account.email?.let { doOnEvent(AuthenticationEvent.OnEmailChanged(it)) }
-                    account.displayName?.let { doOnEvent(AuthenticationEvent.OnNicknameChanged(it)) }
+            override suspend fun onSigningSuccess(
+                client: GoogleSignInClient,
+                account: GoogleSignInAccount
+            ) {
+                account.email?.let { doOnEvent(AuthenticationEvent.OnEmailChanged(it)) }
+                account.displayName?.let { doOnEvent(AuthenticationEvent.OnNicknameChanged(it)) }
+                val token = FirebaseMessaging.getInstance().token.await()
 
-                    val user = User(account.id ?: "", account.displayName ?: "", account.email ?: "", "", collection = FirestoreNetworkDatabaseImp.Collections.GOOGLE_USERS)
+                val user = User(
+                    account.id ?: "",
+                    account.displayName ?: "",
+                    account.email ?: "",
+                    "",
+                    collection = FirestoreNetworkDatabaseImp.Collections.GOOGLE_USERS,
+                    token = token
+                )
 
-                    viewModelScope.launch {
-                        _authStates.send(
-                            try {
-                                authRepository.saveGoogleUser(user)
-                                AuthenticationState.AuthenticationSuccess
-                            }catch (e: Exception) {
-                                AuthenticationState.AuthenticationFailure(e.message!!)
-                            }
+                viewModelScope.launch {
+                    _authStates.send(
+                        try {
+                            authRepository.saveGoogleUser(user)
+                            AuthenticationState.AuthenticationSuccess
+                        } catch (e: Exception) {
+                            AuthenticationState.AuthenticationFailure(e.message!!)
+                        }
+                    )
+                }
+            }
+
+            override fun onSigningFailure(error: String?) {
+                viewModelScope.launch {
+                    _authStates.send(
+                        AuthenticationState.OnGoogleAuthFailure(
+                            error ?: "Google Auth Failed"
                         )
-                    }
+                    )
                 }
-
-                override fun onSigningFailure(error: String?) {
-                    viewModelScope.launch {
-                        _authStates.send(AuthenticationState.OnGoogleAuthFailure(error ?: "Google Auth Failed"))
-                    }
-                }
-            })
+            }
+        })
     }
 
     // Register user, then save user credentials on Firestore.
-    private  fun registerUser() {
+    private fun registerUser() {
         val nickName = _validation.value.nickname
         val email = _validation.value.email
         val password = _validation.value.password
 
         viewModelScope.launch(Dispatchers.IO) {
             try {
-                authRepository.registerUser(nickName,email, password)
+                authRepository.registerUser(nickName, email, password)
                 _authStates.send(AuthenticationState.AuthenticationSuccess)
-            }catch (e: Exception) {
+            } catch (e: Exception) {
                 _authStates.send(AuthenticationState.AuthenticationFailure(e.message.toString()))
             }
         }

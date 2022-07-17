@@ -3,13 +3,10 @@ package com.muhammed.chatapp.presentation.activity
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
-import android.view.Menu
-import android.view.MenuInflater
 import android.view.MenuItem
 import android.view.View
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.MenuProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavController
 import androidx.navigation.NavDestination
@@ -20,7 +17,6 @@ import com.google.android.material.shape.MaterialShapeDrawable
 import com.muhammed.chatapp.Constants
 import com.muhammed.chatapp.R
 import com.muhammed.chatapp.databinding.ActivityMainBinding
-import com.muhammed.chatapp.presentation.common.MenuOptions
 import com.muhammed.chatapp.presentation.common.hideDialog
 import com.muhammed.chatapp.presentation.common.showDialog
 import com.muhammed.chatapp.presentation.common.showError
@@ -36,7 +32,6 @@ import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity(), NavigationBarView.OnItemSelectedListener,
-    MenuProvider,
     NavController.OnDestinationChangedListener {
     private val binding: ActivityMainBinding by lazy { ActivityMainBinding.inflate(layoutInflater) }
     private val navController: NavController by lazy {
@@ -46,19 +41,15 @@ class MainActivity : AppCompatActivity(), NavigationBarView.OnItemSelectedListen
     }
     private val loadingDialog by lazy { LoadingDialog.getInstance() }
     private val viewModel: MainViewModel by viewModels()
-
+    private var signOutFromDestination: Int = -1
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
 
-
         makeBotNavRoundedCorners()
         setSupportActionBar(binding.mainToolbar)
-
         supportActionBar?.title = null
-
-        binding.mainToolbar.addMenuProvider(this)
 
         binding.botNav.setOnItemSelectedListener(this)
         navController.addOnDestinationChangedListener(this)
@@ -68,7 +59,9 @@ class MainActivity : AppCompatActivity(), NavigationBarView.OnItemSelectedListen
         }
 
         onStateChanged()
+
     }
+
 
     private fun makeBotNavRoundedCorners() {
         val radius = resources.getDimension(R.dimen.bot_nav_corners)
@@ -79,6 +72,7 @@ class MainActivity : AppCompatActivity(), NavigationBarView.OnItemSelectedListen
             .setTopLeftCorner(CornerFamily.ROUNDED, radius)
             .build()
     }
+
 
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
@@ -97,12 +91,12 @@ class MainActivity : AppCompatActivity(), NavigationBarView.OnItemSelectedListen
                     is ChatsState.Idle -> {
                     }
                     is ChatsState.SignedOut -> {
-                        navController.navigate(R.id.action_chatsFragment_to_authActivity)
+                        navController.navigate(signOutFromDestination)
                         finish()
                     }
                     is ChatsState.Error -> {
                         loadingDialog.hideDialog()
-                        binding.root.showError(state.errorMessage)
+                        binding.root.showError(state.error.message.toString())
                     }
                     is ChatsState.PrivateRoomCreated -> {
                         loadingDialog.hideDialog()
@@ -111,6 +105,7 @@ class MainActivity : AppCompatActivity(), NavigationBarView.OnItemSelectedListen
                     is ChatsState.EnterChat -> {
                         val intent = Intent(this@MainActivity, ChatRoomActivity::class.java)
                         intent.putExtra(Constants.CHAT, state.chatAndRoom)
+                        intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP)
                         startActivity(intent)
                         viewModel.doOnEvent(ChatsEvent.Idle)
                     }
@@ -158,14 +153,13 @@ class MainActivity : AppCompatActivity(), NavigationBarView.OnItemSelectedListen
             }
 
             R.id.chatsFragment -> {
-                binding.mainToolbar.inflateMenu(R.menu.main_menu_chat_frag)
-                invalidateMenu()
+                signOutFromDestination = R.id.action_chatsFragment_to_authActivity
                 toggleBotBar(show = true)
+
             }
 
             R.id.communitiesFragment -> {
-                binding.mainToolbar.inflateMenu(R.menu.main_menu_community_frag)
-                invalidateMenu()
+                signOutFromDestination = R.id.action_communitiesFragment_to_authActivity
                 toggleBotBar(show = true)
             }
             else -> {
@@ -181,7 +175,7 @@ class MainActivity : AppCompatActivity(), NavigationBarView.OnItemSelectedListen
                 botBar.visibility = View.VISIBLE
                 newChatBtn.visibility = View.VISIBLE
                 botNav.visibility = View.VISIBLE
-                botBarDivider.setGuidelinePercent(0.82f)
+                botBarDivider.setGuidelinePercent(0.92f)
             }
         } else {
             with(binding) {
@@ -193,39 +187,18 @@ class MainActivity : AppCompatActivity(), NavigationBarView.OnItemSelectedListen
         }
     }
 
-    private fun showOptionsMenu(view: View) {
-        val menuOptions = MenuOptions(this, view, R.menu.options_menu)
-        menuOptions.onSignOutSelected {
-            viewModel.doOnEvent(ChatsEvent.SignOut)
-        }
-        menuOptions.showMenu()
-
-
-    }
-
-
-    override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
-        val menuId: Int = R.menu.main_menu_chat_frag
-        menuInflater.inflate(menuId, menu)
-    }
-
-    override fun onMenuItemSelected(menuItem: MenuItem): Boolean {
-        return when (menuItem.itemId) {
-            R.id.menu_options_chat -> {
-                showOptionsMenu(menuItem.actionView.rootView)
-                true
-            }
-
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        return when (item.itemId) {
             R.id.menu_new_group -> {
-                CreateGroupDialog().show(supportFragmentManager, null)
+                CreateGroupDialog().show(this.supportFragmentManager, null)
                 true
             }
-
+            R.id.menu_search_chat -> {
+                true
+            }
             else -> false
         }
     }
-
-
-
-
 }
+
+

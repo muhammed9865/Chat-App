@@ -3,22 +3,24 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
+
     android:layout_height="match_parent"
     tools:context=".presentation.fragments.CommunitiesFragment">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:paddingBottom="@dimen/_50sdp">
 
 
         <com.google.android.material.card.MaterialCardView
             android:id="@+id/materialCardView"
             android:layout_width="match_parent"
             android:layout_height="@dimen/_90sdp"
+            android:layout_margin="@dimen/_10sdp"
             app:cardCornerRadius="@dimen/_10sdp"
             app:cardElevation="@dimen/_5sdp"
             app:cardUseCompatPadding="false"
-            android:layout_margin="@dimen/_10sdp"
             app:layout_constraintTop_toTopOf="parent"
             tools:layout_editor_absoluteX="7dp">
 
@@ -82,7 +84,7 @@
             android:fontFamily="@font/sf_bold"
             android:text="@string/for_you"
             android:textColor="@color/black"
-            android:textSize="@dimen/_15ssp"
+            android:textSize="@dimen/_13ssp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/materialCardView" />
 
@@ -106,7 +108,7 @@
             android:fontFamily="@font/sf_bold"
             android:text="Communities by Interests"
             android:textColor="@color/black"
-            android:textSize="@dimen/_15ssp"
+            android:textSize="@dimen/_13ssp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/for_you_comms_rv" />
 
@@ -187,12 +189,12 @@
             android:id="@+id/loading_pb"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:indeterminate="false"
+            android:indeterminate="true"
             android:indeterminateBehavior="repeat"
             android:indeterminateTint="@color/primaryColor"
             android:max="20"
-            android:visibility="gone"
             android:progress="10"
+            android:visibility="gone"
             app:indicatorSize="@dimen/_50sdp"
             app:layout_constraintBottom_toBottomOf="@+id/all_comms_rv"
             app:layout_constraintEnd_toEndOf="@+id/all_comms_rv"
@@ -205,12 +207,25 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            android:visibility="visible"
+            android:visibility="invisible"
             app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="@+id/textView15"
-            app:layout_constraintTop_toBottomOf="@+id/horizontalScrollView"
-            tools:listitem="@layout/list_item_community" />
+            app:layout_constraintTop_toBottomOf="@+id/horizontalScrollView" />
+
+        <TextView
+            android:id="@+id/no_comms_found"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/sf_medium"
+            android:text="No groups were found"
+            android:textSize="@dimen/_12ssp"
+            android:visibility="visible"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/all_comms_rv"
+            app:layout_constraintVertical_bias="0.151" />
 
 
     </androidx.constraintlayout.widget.ConstraintLayout>

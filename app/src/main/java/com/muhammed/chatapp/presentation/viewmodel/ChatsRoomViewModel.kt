@@ -4,12 +4,8 @@ import android.content.Intent
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.google.firebase.firestore.ListenerRegistration
 import com.muhammed.chatapp.Constants
-import com.muhammed.chatapp.data.pojo.chat.Chat
-import com.muhammed.chatapp.data.pojo.chat.ChatAndRoom
-import com.muhammed.chatapp.data.pojo.chat.GroupChat
-import com.muhammed.chatapp.data.pojo.chat.MessagingRoom
+import com.muhammed.chatapp.data.pojo.chat.*
 import com.muhammed.chatapp.data.pojo.message.Message
 import com.muhammed.chatapp.data.pojo.user.User
 import com.muhammed.chatapp.data.repository.ChatsRepository
@@ -43,6 +39,12 @@ class ChatsRoomViewModel @Inject constructor(
     val states = _states.asStateFlow()
     var currentUser = MutableStateFlow(User())
 
+    private var secondUser: User? = null
+
+    private var group: GroupChat? = null
+    private var private: PrivateChat? = null
+
+
     init {
         tryAsync {
             userRepository.currentUser.filterNotNull().collect {
@@ -55,6 +57,7 @@ class ChatsRoomViewModel @Inject constructor(
         when (event) {
             is MessagingRoomEvents.SendUserDetails -> getUserDetailsFromIntent(event.intent)
             is MessagingRoomEvents.SendMessage -> sendMessage(event.message)
+            is MessagingRoomEvents.JoinGroup -> joinGroup(event.group)
         }
     }
 
@@ -64,20 +67,32 @@ class ChatsRoomViewModel @Inject constructor(
     private fun getUserDetailsFromIntent(intent: Intent?) {
         val roomAsString = intent?.getStringExtra(Constants.CHAT)
         roomAsString?.let {
-            Log.d(TAG, "getUserDetailsFromIntent: $it")
 
             val chatAndRoom = serializeEntityUseCase.fromString<ChatAndRoom<Chat>>(it)
             val room = chatAndRoom.room
-
             _room.value = room
+
+            val isGroup = room.isGroup
+            val chatAsString = serializeEntityUseCase.toString(chatAndRoom.chat)
+
+            if (isGroup) {
+                group = serializeEntityUseCase.fromString<GroupChat>(chatAsString)
+            } else {
+                private = serializeEntityUseCase.fromString<PrivateChat>(chatAsString)
+            }
+
+
+            secondUser =
+                if (private?.secondUser?.email != currentUser.value.email) private?.secondUser else private?.firstUser
 
             if (room.isJoined) {
                 listenToMessages()
-            }else {
+            } else {
                 showGroupDetails(room)
             }
         }
 
+        // NOTE
         // Used listenToMessages  here instead of init because I'm not sure if it will be executed first and would lead to NullPointerException
         // And since getUserDetailsFromIntent is called once entering the activity, so it's like init.
 
@@ -104,6 +119,14 @@ class ChatsRoomViewModel @Inject constructor(
         }
     }
 
+    private fun joinGroup(groupChat: GroupChat) {
+        tryAsync {
+            chatsRepository.joinGroup(groupChat, currentUser.value)
+            _states.value = MessagingRoomStates.JoinedGroup
+            listenToMessages()
+        }
+    }
+
     private fun setRandomMessages(messagesId: String) {
         tryAsync {
             messagesRepository.getRandomMessages(messagesId).also {
@@ -119,11 +142,18 @@ class ChatsRoomViewModel @Inject constructor(
                 sender = currentUser.value,
                 text = message
             )
+            Log.d(TAG, "sendMessage: sec=${secondUser?.token}")
+            Log.d(TAG, "sendMessage: curr=${currentUser.value.token}")
+
             messagesRepository.sendMessage(
+                token = secondUser?.token ?: group?.category ?: "",
                 chatId = _room.value.chatId,
                 messagesId = _room.value.messagesId,
-                message = msg
+                message = msg,
+                group = group
+
             )
+
         }
 
     }

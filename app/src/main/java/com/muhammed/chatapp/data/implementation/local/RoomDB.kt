@@ -2,13 +2,13 @@ package com.muhammed.chatapp.data.implementation.local
 
 import androidx.room.*
 import com.muhammed.chatapp.data.pojo.Interest
-import com.muhammed.chatapp.data.pojo.message.Message
 import com.muhammed.chatapp.data.pojo.Topic
+import com.muhammed.chatapp.data.pojo.message.Message
 import com.muhammed.chatapp.domain.use_cases.SerializeEntityUseCase
 import javax.inject.Inject
 
 @Database(
-    version = 3,
+    version = 4,
     entities = [Message::class],
     exportSchema = true
 )

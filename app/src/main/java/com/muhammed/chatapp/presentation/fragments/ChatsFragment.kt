@@ -3,11 +3,13 @@ package com.muhammed.chatapp.presentation.fragments
 import android.os.Bundle
 import android.util.Log
 import android.view.*
-import androidx.core.view.MenuProvider
+import android.widget.ImageView
+import androidx.appcompat.widget.SearchView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
+import coil.load
 import com.muhammed.chatapp.R
 import com.muhammed.chatapp.databinding.FragmentChatsBinding
 import com.muhammed.chatapp.domain.use_cases.CheckIfCurrentUserUseCase
@@ -30,9 +32,13 @@ class ChatsFragment : Fragment() {
     ): View {
 
         mAdapter = ChatsAdapter(CheckIfCurrentUserUseCase())
+
         mAdapter.registerClickListener {
             viewModel.doOnEvent(ChatsEvent.JoinPrivateChat(it))
         }
+
+
+
 
         setHasOptionsMenu(true)
         return binding.root
@@ -41,12 +47,22 @@ class ChatsFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         lifecycleScope.launch {
+
             launch {
                 viewModel.userChats.collect {
                     it.forEach { chat ->
-                        Log.d("ChatsFragment", "listenToUserChats: ${chat.lastMessage.text}")
+                        Log.d(
+                            "ChatsFragment",
+                            "listenToUserChatsCollected: ${chat.lastMessage.text}"
+                        )
                     }
                     mAdapter.submitList(it)
+                    mAdapter.notifyDataSetChanged()
+
+
+                    mAdapter.currentList.forEach { chat ->
+                        Log.d("ChatsFragment", "listenToUserChatsAdapter: ${chat.lastMessage.text}")
+                    }
                 }
             }
 
@@ -65,21 +81,31 @@ class ChatsFragment : Fragment() {
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
-        super.onCreateOptionsMenu(menu, inflater)
         inflater.inflate(R.menu.main_menu_chat_frag, menu)
-    }
-
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        return when (item.itemId) {
-            R.id.menu_options_chat -> {
-                showOptionsMenu(item.actionView)
-                true
-            }
-
-
-            else -> false
+        val userIcon = menu.findItem(R.id.menu_options_chat)
+        userIcon.setActionView(R.layout.user_icon)
+        (userIcon.actionView as ImageView).load(viewModel.currentUser.value.profile_picture)
+        userIcon.actionView.setOnClickListener {
+            showOptionsMenu(it)
         }
+
+        Log.d("MainActivity", "SearchingChats: OPENED SEARCH")
+        val searchView = menu.findItem(R.id.menu_search_chat).actionView as SearchView
+        searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+            override fun onQueryTextSubmit(query: String?): Boolean = false
+
+            override fun onQueryTextChange(newText: String?): Boolean {
+                Log.d("MainActivity", "SearchingChats: $newText")
+
+                viewModel.doOnEvent(ChatsEvent.SearchChats(newText))
+                return true
+            }
+        })
+
+        super.onCreateOptionsMenu(menu, inflater)
+
     }
+
 
     private fun showOptionsMenu(view: View) {
         val menuOptions = MenuOptions(requireActivity(), view, R.menu.options_menu)
@@ -90,14 +116,10 @@ class ChatsFragment : Fragment() {
     }
 
 
-
-
-
     companion object {
         @Suppress("unused")
         private const val TAG = "ChatsFragment"
     }
-
 
 
 }

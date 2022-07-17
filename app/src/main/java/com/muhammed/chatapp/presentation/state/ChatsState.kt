@@ -18,12 +18,13 @@ sealed class ChatsState {
     // Serialized to String to be sent as Intent Extra, Deserialize to MessagingRoom
     data class EnterChat(val chatAndRoom: String) : ChatsState()
     object SignedOut : ChatsState()
-    data class Error(val errorMessage: String): ChatsState() {
+    data class Error(val error: Throwable) : ChatsState() {
         init {
-            Log.e(TAG, errorMessage)
+            Log.e(TAG, error.message.toString())
         }
+
         companion object {
-            private const val TAG = "AuthenticationState"
+            private const val TAG = "ChatsState"
         }
     }
 }

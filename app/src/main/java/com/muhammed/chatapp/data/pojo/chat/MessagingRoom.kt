@@ -7,7 +7,8 @@ data class MessagingRoom(
     val messagesId: String = "",
     val title: String = "",
     val subTitle: String = "",
-    val isJoined: Boolean = true
+    val isJoined: Boolean = true,
+    val isGroup: Boolean = false
 ) {
     override fun toString(): String {
         return Gson().toJson(this).toString()
