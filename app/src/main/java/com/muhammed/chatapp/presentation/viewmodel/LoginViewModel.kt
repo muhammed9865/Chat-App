@@ -12,7 +12,7 @@ import com.muhammed.chatapp.data.repository.UserRepository
 import com.muhammed.chatapp.domain.use_cases.ValidateEmail
 import com.muhammed.chatapp.domain.use_cases.ValidatePassword
 import com.muhammed.chatapp.presentation.event.AuthenticationEvent
-import com.muhammed.chatapp.presentation.state.AuthenticationState
+import com.muhammed.chatapp.presentation.state.AuthActivityState
 import com.muhammed.chatapp.presentation.state.ValidationState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
@@ -33,7 +33,7 @@ class LoginViewModel @Inject constructor(
 ) : ViewModel() {
     private val _validation = MutableStateFlow(ValidationState())
 
-    private val _authStates = Channel<AuthenticationState>()
+    private val _authStates = Channel<AuthActivityState>()
     val authStates = _authStates.receiveAsFlow()
 
 
@@ -94,7 +94,7 @@ class LoginViewModel @Inject constructor(
                     passwordError = passwordResult.errorMessage,
                 )
 
-                sendState(AuthenticationState.ValidationFailure(newState))
+                sendState(AuthActivityState.ValidationFailure(newState))
             } else {
                 loginUser()
             }
@@ -104,14 +104,14 @@ class LoginViewModel @Inject constructor(
     private fun loginInInstantly() {
         viewModelScope.launch(Dispatchers.IO) {
             userRepository.currentUser.filterNotNull().collect {
-                sendState(AuthenticationState.AuthenticationSuccess)
+                sendState(AuthActivityState.AuthActivitySuccess)
             }
         }
 
     }
 
 
-    private fun sendState(state: AuthenticationState) {
+    private fun sendState(state: AuthActivityState) {
         viewModelScope.launch {
             _authStates.send(state)
         }
@@ -123,9 +123,9 @@ class LoginViewModel @Inject constructor(
         viewModelScope.launch(Dispatchers.IO) {
             try {
                 authRepository.loginUser(email, password)
-                _authStates.send(AuthenticationState.AuthenticationSuccess)
+                _authStates.send(AuthActivityState.AuthActivitySuccess)
             } catch (e: Exception) {
-                _authStates.send(AuthenticationState.AuthenticationFailure(e.message.toString()))
+                _authStates.send(AuthActivityState.AuthActivityFailure(e.message.toString()))
             }
 
         }
@@ -135,7 +135,7 @@ class LoginViewModel @Inject constructor(
     private fun initGoogleAuthListener() {
         googleAuth.registerCallbackListener(object : GoogleAuthCallback.ViewModel {
             override fun onSigningStart(client: GoogleSignInClient) {
-                sendState(AuthenticationState.OnGoogleAuthStart(client))
+                sendState(AuthActivityState.OnGoogleAuthStart(client))
             }
 
             override suspend fun onSigningSuccess(
@@ -150,22 +150,22 @@ class LoginViewModel @Inject constructor(
                             user?.let {
                                 // Saving the User Details to later usage.
                                 userRepository.saveUserDetails(user)
-                                sendState(AuthenticationState.AuthenticationSuccess)
+                                sendState(AuthActivityState.AuthActivitySuccess)
                             } ?: throw Exception("User not found")
                         } catch (e: Exception) {
                             Log.d("LoginViewModel", "onSigningSuccess: ${e.message.toString()}")
-                            sendState(AuthenticationState.AuthenticationFailure(e.message!!))
+                            sendState(AuthActivityState.AuthActivityFailure(e.message!!))
                         }
 
 
                     }
                 }
-                sendState(AuthenticationState.OnGoogleAuthSuccess(client))
+                sendState(AuthActivityState.OnGoogleAuthSuccess(client))
             }
 
             override fun onSigningFailure(error: String?) {
                 sendState(
-                    AuthenticationState.OnGoogleAuthFailure(
+                    AuthActivityState.OnGoogleAuthFailure(
                         error ?: "Google Auth Failed"
                     )
                 )

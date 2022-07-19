@@ -26,8 +26,8 @@ import com.muhammed.chatapp.presentation.dialogs.JoinGroupDialog
 import com.muhammed.chatapp.presentation.dialogs.LoadingDialog
 import com.muhammed.chatapp.presentation.dialogs.NewPrivateChatDialog
 import com.muhammed.chatapp.presentation.event.ChatsEvent
-import com.muhammed.chatapp.presentation.state.ChatsState
-import com.muhammed.chatapp.presentation.viewmodel.MainViewModel
+import com.muhammed.chatapp.presentation.state.ChatsActivityState
+import com.muhammed.chatapp.presentation.viewmodel.ChatsViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 
@@ -41,7 +41,7 @@ class MainActivity : AppCompatActivity(), NavigationBarView.OnItemSelectedListen
         host.navController
     }
     private val loadingDialog by lazy { LoadingDialog.getInstance() }
-    private val viewModel: MainViewModel by viewModels()
+    private val viewModel: ChatsViewModel by viewModels()
     private var signOutFromDestination: Int = -1
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -96,21 +96,21 @@ class MainActivity : AppCompatActivity(), NavigationBarView.OnItemSelectedListen
             viewModel.states.collect { state ->
                 Log.d("Chat State", "onStateChanged from activity: ${state.javaClass}")
                 when (state) {
-                    is ChatsState.Idle -> {
+                    is ChatsActivityState.Idle -> {
                     }
-                    is ChatsState.SignedOut -> {
+                    is ChatsActivityState.SignedOut -> {
                         navController.navigate(signOutFromDestination)
                         finish()
                     }
-                    is ChatsState.Error -> {
+                    is ChatsActivityState.Error -> {
                         loadingDialog.hideDialog()
                         binding.root.showError(state.error.message.toString())
                     }
-                    is ChatsState.PrivateRoomCreated -> {
+                    is ChatsActivityState.PrivateRoomCreated -> {
                         loadingDialog.hideDialog()
                     }
 
-                    is ChatsState.EnterChat -> {
+                    is ChatsActivityState.EnterChat -> {
                         val intent = Intent(this@MainActivity, ChatRoomActivity::class.java)
                         intent.putExtra(Constants.CHAT, state.chatAndRoom)
                         intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP)
@@ -118,7 +118,7 @@ class MainActivity : AppCompatActivity(), NavigationBarView.OnItemSelectedListen
                         viewModel.doOnEvent(ChatsEvent.Idle)
                     }
 
-                    is ChatsState.FirstTime -> {
+                    is ChatsActivityState.FirstTime -> {
                         // Show Join Group Dialog here
                         // On any action on this dialog, send event SetFirstTimeToFalse
                         JoinGroupDialog { joinPressed ->
@@ -131,7 +131,7 @@ class MainActivity : AppCompatActivity(), NavigationBarView.OnItemSelectedListen
                         }.showDialog(supportFragmentManager, null)
                     }
 
-                    is ChatsState.Loading -> {
+                    is ChatsActivityState.Loading -> {
                         loadingDialog.showDialog(supportFragmentManager, null)
                     }
 

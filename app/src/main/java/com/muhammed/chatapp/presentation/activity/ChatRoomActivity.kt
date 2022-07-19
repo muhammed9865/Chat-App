@@ -12,15 +12,15 @@ import com.muhammed.chatapp.presentation.common.hideKeyboard
 import com.muhammed.chatapp.presentation.common.showError
 import com.muhammed.chatapp.presentation.dialogs.GroupDetailsBottomDialog
 import com.muhammed.chatapp.presentation.event.MessagingRoomEvents
-import com.muhammed.chatapp.presentation.state.MessagingRoomStates
-import com.muhammed.chatapp.presentation.viewmodel.ChatsRoomViewModel
+import com.muhammed.chatapp.presentation.state.MessagingRoomActivityStates
+import com.muhammed.chatapp.presentation.viewmodel.MessagingRoomViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class ChatRoomActivity : AppCompatActivity() {
     private val binding by lazy { ActivityChatRoomBinding.inflate(layoutInflater) }
-    private val viewModel by viewModels<ChatsRoomViewModel>()
+    private val viewModel by viewModels<MessagingRoomViewModel>()
     private lateinit var mAdapter: MessageAdapter
     private var joinGroupDialog: GroupDetailsBottomDialog? = null
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -88,7 +88,7 @@ class ChatRoomActivity : AppCompatActivity() {
             viewModel.states.collect { state ->
 
                 when (state) {
-                    is MessagingRoomStates.ShowGroupDetails -> {
+                    is MessagingRoomActivityStates.ShowGroupDetails -> {
                         joinGroupDialog = GroupDetailsBottomDialog(state.group).also {
                             it.setOnJoinClicked { chat ->
                                 viewModel.doOnEvent(MessagingRoomEvents.JoinGroup(chat))
@@ -97,11 +97,11 @@ class ChatRoomActivity : AppCompatActivity() {
                         }
 
                     }
-                    is MessagingRoomStates.Error -> {
+                    is MessagingRoomActivityStates.Error -> {
                         binding.root.showError(state.error)
                     }
 
-                    is MessagingRoomStates.JoinedGroup -> {
+                    is MessagingRoomActivityStates.JoinedGroup -> {
                         joinGroupDialog?.onJoinedSuccessfully()
                     }
                     else -> {}

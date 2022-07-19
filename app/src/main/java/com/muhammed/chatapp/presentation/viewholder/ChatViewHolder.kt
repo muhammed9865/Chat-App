@@ -2,7 +2,6 @@ package com.muhammed.chatapp.presentation.viewholder
 
 import android.view.View
 import androidx.recyclerview.widget.RecyclerView
-import coil.load
 import com.muhammed.chatapp.R
 import com.muhammed.chatapp.data.pojo.chat.*
 import com.muhammed.chatapp.data.pojo.user.User
@@ -61,7 +60,7 @@ class ChatViewHolder(
                     ).isSuccessful
                 ) {
                     chatName.text = chat.secondUser.nickname
-                    chatProfilePic.load(chat.secondUser.profile_picture)
+                    chatProfilePic.loadImage(chat.secondUser.profile_picture)
                 } else {
                     chatName.text = chat.firstUser.nickname
                     chatProfilePic.loadImage(chat.firstUser.profile_picture)

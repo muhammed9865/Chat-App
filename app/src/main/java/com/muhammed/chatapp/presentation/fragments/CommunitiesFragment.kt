@@ -17,7 +17,7 @@ import com.muhammed.chatapp.presentation.adapter.OnItemClickListener
 import com.muhammed.chatapp.presentation.common.MenuOptions
 import com.muhammed.chatapp.presentation.common.loadImage
 import com.muhammed.chatapp.presentation.event.ChatsEvent
-import com.muhammed.chatapp.presentation.viewmodel.MainViewModel
+import com.muhammed.chatapp.presentation.viewmodel.ChatsViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
@@ -33,7 +33,7 @@ class CommunitiesFragment : Fragment(), OnItemClickListener<GroupChat>,
     }
     private val mForYouAdapter by lazy { CommunityAdapter().also { it.setOnItemClickListener(this) } }
     private val mAllAdapter by lazy { CommunityAdapter().also { it.setOnItemClickListener(this) } }
-    private val viewModel by activityViewModels<MainViewModel>()
+    private val viewModel by activityViewModels<ChatsViewModel>()
 
 
     override fun onCreateView(
@@ -126,6 +126,7 @@ class CommunitiesFragment : Fragment(), OnItemClickListener<GroupChat>,
         with(binding) {
             loadingPb.visibility = View.VISIBLE
             allCommsRv.visibility = View.INVISIBLE
+            noCommsByInterestFound.visibility = View.GONE
         }
         viewModel.doOnEvent(ChatsEvent.LoadRandomCommunitiesBasedOnFilter(filter))
     }

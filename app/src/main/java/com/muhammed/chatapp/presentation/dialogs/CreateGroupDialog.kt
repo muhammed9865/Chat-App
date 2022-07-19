@@ -27,7 +27,7 @@ import com.muhammed.chatapp.databinding.DialogCreateNewGroupBinding
 import com.muhammed.chatapp.presentation.common.hideKeyboard
 import com.muhammed.chatapp.presentation.common.showError
 import com.muhammed.chatapp.presentation.common.showKeyboard
-import com.muhammed.chatapp.presentation.state.CreateGroupStates
+import com.muhammed.chatapp.presentation.state.CreateGroupDialogStates
 import com.muhammed.chatapp.presentation.viewmodel.CreateGroupViewModel
 import com.muhammed.chatapp.services.ConnectionState
 import dagger.hilt.android.AndroidEntryPoint
@@ -193,12 +193,12 @@ class CreateGroupDialog : BottomSheetDialogFragment(), ChipGroup.OnCheckedStateC
         lifecycleScope.launch {
             viewModel.states.collect { state ->
                 when (state) {
-                    is CreateGroupStates.Failed -> {
+                    is CreateGroupDialogStates.Failed -> {
                         binding.creatingPb.visibility = View.GONE
                         dialog?.window?.decorView?.showError(state.error)
                         Log.e("CreateGroup", state.error)
                     }
-                    is CreateGroupStates.Creating -> {
+                    is CreateGroupDialogStates.Creating -> {
                         with(binding) {
                             creatingPb.visibility = View.VISIBLE
                             groupPhoto.isEnabled = false
@@ -211,7 +211,7 @@ class CreateGroupDialog : BottomSheetDialogFragment(), ChipGroup.OnCheckedStateC
                             isCancelable = false
                         }
                     }
-                    is CreateGroupStates.CreatedSuccessfully -> {
+                    is CreateGroupDialogStates.CreatedSuccessfully -> {
                         binding.creatingPb.visibility = View.GONE
                         dismiss()
                     }

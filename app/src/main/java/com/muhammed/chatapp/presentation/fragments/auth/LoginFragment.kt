@@ -18,7 +18,7 @@ import com.muhammed.chatapp.databinding.FragmentLoginBinding
 import com.muhammed.chatapp.presentation.common.*
 import com.muhammed.chatapp.presentation.dialogs.LoadingDialog
 import com.muhammed.chatapp.presentation.event.AuthenticationEvent
-import com.muhammed.chatapp.presentation.state.AuthenticationState
+import com.muhammed.chatapp.presentation.state.AuthActivityState
 import com.muhammed.chatapp.presentation.viewmodel.LoginViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.delay
@@ -88,9 +88,9 @@ class LoginFragment : Fragment() {
         lifecycleScope.launch {
             viewModel.authStates.collect {
                 when (it) {
-                    is AuthenticationState.Idle -> {}
+                    is AuthActivityState.Idle -> {}
 
-                    is AuthenticationState.AuthenticationSuccess -> {
+                    is AuthActivityState.AuthActivitySuccess -> {
                         binding.loginMotionLayout.transitionToStart()
                         loadingDialog.hideDialog()
                         findNavController().navigate(R.id.action_loginFragment_to_mainActivity)
@@ -98,16 +98,16 @@ class LoginFragment : Fragment() {
 
                     }
 
-                    is AuthenticationState.AuthenticationFailure -> {
+                    is AuthActivityState.AuthActivityFailure -> {
                         binding.root.showError(it.error)
                         binding.loginMotionLayout.transitionToStart()
                         loadingDialog.hideDialog()
                     }
 
-                    is AuthenticationState.ValidationSuccess -> {}
+                    is AuthActivityState.ValidationSuccess -> {}
 
 
-                    is AuthenticationState.ValidationFailure -> {
+                    is AuthActivityState.ValidationFailure -> {
                         lifecycleScope.launch {
                             with(binding) {
                                 toggleAuthError(
@@ -122,15 +122,15 @@ class LoginFragment : Fragment() {
 
                     }
 
-                    is AuthenticationState.OnGoogleAuthStart -> {
+                    is AuthActivityState.OnGoogleAuthStart -> {
                         googleSignInActivity.launch(it.client.signInIntent)
                     }
 
-                    is AuthenticationState.OnGoogleAuthSuccess -> {
+                    is AuthActivityState.OnGoogleAuthSuccess -> {
                         it.client.signOut()
                     }
 
-                    is AuthenticationState.OnGoogleAuthFailure -> {
+                    is AuthActivityState.OnGoogleAuthFailure -> {
                         binding.root.showError(it.error)
                     }
                 }

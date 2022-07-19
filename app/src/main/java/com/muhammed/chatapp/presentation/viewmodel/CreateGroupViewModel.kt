@@ -10,7 +10,7 @@ import com.muhammed.chatapp.data.pojo.chat.NewGroupChat
 import com.muhammed.chatapp.data.pojo.user.User
 import com.muhammed.chatapp.data.repository.ChatsRepository
 import com.muhammed.chatapp.data.repository.UserRepository
-import com.muhammed.chatapp.presentation.state.CreateGroupStates
+import com.muhammed.chatapp.presentation.state.CreateGroupDialogStates
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -25,7 +25,7 @@ class CreateGroupViewModel @Inject constructor(
     private val userRepository: UserRepository,
     private val storage: StorageNetworkImp,
 ): AndroidViewModel(Application()) {
-    private val _states = MutableStateFlow<CreateGroupStates>(CreateGroupStates.Idle)
+    private val _states = MutableStateFlow<CreateGroupDialogStates>(CreateGroupDialogStates.Idle)
 
     val states = _states.asStateFlow()
     private var _currentUser: User? = null
@@ -45,10 +45,10 @@ class CreateGroupViewModel @Inject constructor(
 
         if (hasInternetConnection) {
             if (title.isEmpty() || description.isEmpty() || category.isEmpty() || image == null || _currentUser == null) {
-                _states.value = CreateGroupStates.Failed("Something went wrong")
+                _states.value = CreateGroupDialogStates.Failed("Something went wrong")
             } else {
                 tryAsync {
-                    _states.value = CreateGroupStates.Creating
+                    _states.value = CreateGroupDialogStates.Creating
                     val photoPath = storage.saveImage(image!!)
                     val newChat = NewGroupChat(
                         title = title,
@@ -65,11 +65,11 @@ class CreateGroupViewModel @Inject constructor(
                         _currentUser = _currentUser!!.copy(chats_list = userChatsList)
                         userRepository.saveUserDetails(_currentUser!!)
                     }
-                    _states.value = CreateGroupStates.CreatedSuccessfully
+                    _states.value = CreateGroupDialogStates.CreatedSuccessfully
                 }
             }
         }else {
-            _states.value = CreateGroupStates.Failed("Check your internet connection")
+            _states.value = CreateGroupDialogStates.Failed("Check your internet connection")
         }
     }
 
@@ -78,7 +78,7 @@ class CreateGroupViewModel @Inject constructor(
             try {
                 function()
             }catch (e: Exception) {
-                _states.value = CreateGroupStates.Failed(e.message.toString())
+                _states.value = CreateGroupDialogStates.Failed(e.message.toString())
             }
         }
     }

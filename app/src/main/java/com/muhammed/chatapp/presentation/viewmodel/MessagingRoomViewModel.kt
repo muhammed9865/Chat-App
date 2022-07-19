@@ -13,7 +13,7 @@ import com.muhammed.chatapp.data.repository.MessagesRepository
 import com.muhammed.chatapp.data.repository.UserRepository
 import com.muhammed.chatapp.domain.use_cases.SerializeEntityUseCase
 import com.muhammed.chatapp.presentation.event.MessagingRoomEvents
-import com.muhammed.chatapp.presentation.state.MessagingRoomStates
+import com.muhammed.chatapp.presentation.state.MessagingRoomActivityStates
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -23,7 +23,7 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class ChatsRoomViewModel @Inject constructor(
+class MessagingRoomViewModel @Inject constructor(
     private val serializeEntityUseCase: SerializeEntityUseCase,
     private val messagesRepository: MessagesRepository,
     private val userRepository: UserRepository,
@@ -35,7 +35,8 @@ class ChatsRoomViewModel @Inject constructor(
     private val _messages = MutableStateFlow(emptyList<Message>())
     val messages = _messages.asStateFlow()
 
-    private val _states = MutableStateFlow<MessagingRoomStates>(MessagingRoomStates.Idle)
+    private val _states =
+        MutableStateFlow<MessagingRoomActivityStates>(MessagingRoomActivityStates.Idle)
     val states = _states.asStateFlow()
     var currentUser = MutableStateFlow(User())
 
@@ -113,7 +114,7 @@ class ChatsRoomViewModel @Inject constructor(
     private fun showGroupDetails(room: MessagingRoom) {
         tryAsync {
             val chat = chatsRepository.getChat(room.chatId, Chat.TYPE.GROUP) as GroupChat
-            setState(MessagingRoomStates.ShowGroupDetails(chat))
+            setState(MessagingRoomActivityStates.ShowGroupDetails(chat))
             _room.value = room
             setRandomMessages(room.messagesId)
         }
@@ -122,7 +123,7 @@ class ChatsRoomViewModel @Inject constructor(
     private fun joinGroup(groupChat: GroupChat) {
         tryAsync {
             chatsRepository.joinGroup(groupChat, currentUser.value)
-            _states.value = MessagingRoomStates.JoinedGroup
+            _states.value = MessagingRoomActivityStates.JoinedGroup
             listenToMessages()
         }
     }
@@ -164,12 +165,12 @@ class ChatsRoomViewModel @Inject constructor(
                 asyncFunction()
             } catch (e: Exception) {
                 Log.e(TAG, "tryAsync: ${e.printStackTrace()}")
-                setState(MessagingRoomStates.Error(e.message.toString()))
+                setState(MessagingRoomActivityStates.Error(e.message.toString()))
             }
         }
     }
 
-    private fun setState(state: MessagingRoomStates) {
+    private fun setState(state: MessagingRoomActivityStates) {
         _states.value = state
     }
 

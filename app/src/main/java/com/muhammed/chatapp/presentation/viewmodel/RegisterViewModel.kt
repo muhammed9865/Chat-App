@@ -15,7 +15,7 @@ import com.muhammed.chatapp.domain.use_cases.ValidateNickname
 import com.muhammed.chatapp.domain.use_cases.ValidatePassword
 import com.muhammed.chatapp.domain.use_cases.ValidateRepeatedPassword
 import com.muhammed.chatapp.presentation.event.AuthenticationEvent
-import com.muhammed.chatapp.presentation.state.AuthenticationState
+import com.muhammed.chatapp.presentation.state.AuthActivityState
 import com.muhammed.chatapp.presentation.state.ValidationState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
@@ -37,7 +37,7 @@ class RegisterViewModel @Inject constructor(
     private val googleAuth: GoogleAuth
 ) : ViewModel() {
 
-    private val _authStates = Channel<AuthenticationState>()
+    private val _authStates = Channel<AuthActivityState>()
     val authStates = _authStates.receiveAsFlow()
     private val _validation = MutableStateFlow(ValidationState())
     val validation = _validation.asStateFlow()
@@ -109,7 +109,7 @@ class RegisterViewModel @Inject constructor(
                     repeatedPasswordError = repeatedPasswordResult.errorMessage,
                     nicknameError = nicknameResult.errorMessage
                 )
-                _authStates.send(AuthenticationState.ValidationFailure(newState))
+                _authStates.send(AuthActivityState.ValidationFailure(newState))
             } else {
                 registerUser()
             }
@@ -120,7 +120,7 @@ class RegisterViewModel @Inject constructor(
         googleAuth.registerCallbackListener(object : GoogleAuthCallback.ViewModel {
             override fun onSigningStart(client: GoogleSignInClient) {
                 viewModelScope.launch {
-                    _authStates.send(AuthenticationState.OnGoogleAuthStart(client))
+                    _authStates.send(AuthActivityState.OnGoogleAuthStart(client))
                 }
             }
 
@@ -147,9 +147,9 @@ class RegisterViewModel @Inject constructor(
                     _authStates.send(
                         try {
                             authRepository.saveGoogleUser(user)
-                            AuthenticationState.AuthenticationSuccess
+                            AuthActivityState.AuthActivitySuccess
                         } catch (e: Exception) {
-                            AuthenticationState.AuthenticationFailure(e.message!!)
+                            AuthActivityState.AuthActivityFailure(e.message!!)
                         }
                     )
                 }
@@ -158,7 +158,7 @@ class RegisterViewModel @Inject constructor(
             override fun onSigningFailure(error: String?) {
                 viewModelScope.launch {
                     _authStates.send(
-                        AuthenticationState.OnGoogleAuthFailure(
+                        AuthActivityState.OnGoogleAuthFailure(
                             error ?: "Google Auth Failed"
                         )
                     )
@@ -176,9 +176,9 @@ class RegisterViewModel @Inject constructor(
         viewModelScope.launch(Dispatchers.IO) {
             try {
                 authRepository.registerUser(nickName, email, password)
-                _authStates.send(AuthenticationState.AuthenticationSuccess)
+                _authStates.send(AuthActivityState.AuthActivitySuccess)
             } catch (e: Exception) {
-                _authStates.send(AuthenticationState.AuthenticationFailure(e.message.toString()))
+                _authStates.send(AuthActivityState.AuthActivityFailure(e.message.toString()))
             }
         }
 

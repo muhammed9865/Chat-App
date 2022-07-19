@@ -21,7 +21,7 @@ import com.muhammed.chatapp.presentation.common.showError
 import com.muhammed.chatapp.presentation.common.toggleAuthError
 import com.muhammed.chatapp.presentation.common.toggleButtonAvailabilityOnAuth
 import com.muhammed.chatapp.presentation.event.AuthenticationEvent
-import com.muhammed.chatapp.presentation.state.AuthenticationState
+import com.muhammed.chatapp.presentation.state.AuthActivityState
 import com.muhammed.chatapp.presentation.viewmodel.RegisterViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.delay
@@ -88,22 +88,22 @@ class RegisterFragment : Fragment() {
         lifecycleScope.launch {
             viewModel.authStates.collect {
                 when (it) {
-                    is AuthenticationState.Idle -> {}
+                    is AuthActivityState.Idle -> {}
 
-                    is AuthenticationState.AuthenticationSuccess -> {
+                    is AuthActivityState.AuthActivitySuccess -> {
                         findNavController().navigate(R.id.action_registerFragment_to_registerCompleteFragment)
                     }
 
-                    is AuthenticationState.AuthenticationFailure -> {
+                    is AuthActivityState.AuthActivityFailure -> {
                         Log.e("RegisterFragment", "onStateChanged: ${it.error}")
                         binding.root.showError(it.error)
                         binding.registerMotionLayout.transitionToStart()
                     }
 
-                    is AuthenticationState.ValidationSuccess -> {}
+                    is AuthActivityState.ValidationSuccess -> {}
 
 
-                    is AuthenticationState.ValidationFailure -> {
+                    is AuthActivityState.ValidationFailure -> {
                         lifecycleScope.launch {
                             with(binding) {
                                 toggleAuthError(
@@ -120,16 +120,16 @@ class RegisterFragment : Fragment() {
 
                     }
 
-                    is AuthenticationState.OnGoogleAuthStart -> {
+                    is AuthActivityState.OnGoogleAuthStart -> {
                         googleSignInActivity.launch(it.client.signInIntent)
                     }
 
-                    is AuthenticationState.OnGoogleAuthSuccess -> {
+                    is AuthActivityState.OnGoogleAuthSuccess -> {
                         it.client.signOut()
                         updateUI()
                     }
 
-                    is AuthenticationState.OnGoogleAuthFailure -> {
+                    is AuthActivityState.OnGoogleAuthFailure -> {
                         binding.root.showError(it.error)
                     }
                 }

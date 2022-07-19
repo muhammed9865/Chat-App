@@ -16,14 +16,14 @@ import com.muhammed.chatapp.presentation.adapter.ChatsAdapter
 import com.muhammed.chatapp.presentation.common.MenuOptions
 import com.muhammed.chatapp.presentation.common.loadImage
 import com.muhammed.chatapp.presentation.event.ChatsEvent
-import com.muhammed.chatapp.presentation.viewmodel.MainViewModel
+import com.muhammed.chatapp.presentation.viewmodel.ChatsViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class ChatsFragment : Fragment() {
     private val binding: FragmentChatsBinding by lazy { FragmentChatsBinding.inflate(layoutInflater) }
-    private val viewModel by activityViewModels<MainViewModel>()
+    private val viewModel by activityViewModels<ChatsViewModel>()
     private lateinit var mAdapter: ChatsAdapter
 
     override fun onCreateView(

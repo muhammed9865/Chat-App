@@ -5,12 +5,12 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import coil.load
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.muhammed.chatapp.R
 import com.muhammed.chatapp.data.pojo.chat.GroupChat
 import com.muhammed.chatapp.databinding.DialogGroupDetailsBinding
 import com.muhammed.chatapp.presentation.adapter.OnItemClickListener
+import com.muhammed.chatapp.presentation.common.loadImage
 
 class GroupDetailsBottomDialog (private val chat: GroupChat) : BottomSheetDialogFragment() {
     private val binding by lazy { DialogGroupDetailsBinding.inflate(layoutInflater) }
@@ -33,7 +33,7 @@ class GroupDetailsBottomDialog (private val chat: GroupChat) : BottomSheetDialog
             groupTitle.text = chat.title
             groupDescription.text = chat.description
             if (chat.hasImage()) {
-                groupPhoto.load(chat.photo)
+                groupPhoto.loadImage(chat.photo)
             }
             val membersCountString = getString(R.string.members_count)
             val membersCount = String.format(membersCountString, chat.serializeMembersCount())

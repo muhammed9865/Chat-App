@@ -193,14 +193,15 @@
             android:indeterminate="true"
             android:indeterminateBehavior="repeat"
             android:indeterminateTint="@color/primaryColor"
+            android:layout_marginTop="@dimen/_20sdp"
             android:max="20"
             android:progress="10"
-            android:visibility="gone"
+            android:visibility="visible"
             app:indicatorSize="@dimen/_50sdp"
-            app:layout_constraintBottom_toBottomOf="@+id/all_comms_rv"
-            app:layout_constraintEnd_toEndOf="@+id/all_comms_rv"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="@+id/horizontalScrollView"
+            app:layout_constraintTop_toBottomOf="@+id/all_comms_rv"
             app:trackThickness="@dimen/_2sdp" />
 
         <androidx.recyclerview.widget.RecyclerView

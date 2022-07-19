@@ -17,7 +17,7 @@ import com.muhammed.chatapp.data.repository.UserRepository
 import com.muhammed.chatapp.domain.use_cases.CreateRoomUseCase
 import com.muhammed.chatapp.domain.use_cases.SerializeEntityUseCase
 import com.muhammed.chatapp.presentation.event.ChatsEvent
-import com.muhammed.chatapp.presentation.state.ChatsState
+import com.muhammed.chatapp.presentation.state.ChatsActivityState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
@@ -29,7 +29,7 @@ import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 @HiltViewModel
-class MainViewModel @Inject constructor(
+class ChatsViewModel @Inject constructor(
     private val authRepository: AuthRepository,
     private val chatsRepository: ChatsRepository,
     private val userRepository: UserRepository,
@@ -38,7 +38,7 @@ class MainViewModel @Inject constructor(
     private val serializeEntityUseCase: SerializeEntityUseCase
 ) : ViewModel() {
 
-    private val _states = MutableStateFlow<ChatsState>(ChatsState.Idle)
+    private val _states = MutableStateFlow<ChatsActivityState>(ChatsActivityState.Idle)
     val states = _states.asStateFlow()
     private var _userChats = MutableStateFlow(emptyList<Chat>())
     val userChats = _userChats.asStateFlow()
@@ -76,7 +76,7 @@ class MainViewModel @Inject constructor(
                     // Delaying just to make it not too quick
                     delay(2000)
                     // First time entering the app with this account
-                    setState(ChatsState.FirstTime)
+                    setState(ChatsActivityState.FirstTime)
                 }
             }
         }
@@ -86,7 +86,7 @@ class MainViewModel @Inject constructor(
 
     fun doOnEvent(event: ChatsEvent) {
         when (event) {
-            is ChatsEvent.Idle -> _states.value = ChatsState.Idle
+            is ChatsEvent.Idle -> _states.value = ChatsActivityState.Idle
 
             is ChatsEvent.SignOut -> signOut()
 
@@ -94,7 +94,7 @@ class MainViewModel @Inject constructor(
 
             is ChatsEvent.JoinPrivateChat -> {
                 val room = serializeEntityUseCase.toString(event.chatAndRoom)
-                setState(ChatsState.EnterChat(room))
+                setState(ChatsActivityState.EnterChat(room))
             }
 
             is ChatsEvent.SearchChats -> searchList(query = event.query)
@@ -129,7 +129,7 @@ class MainViewModel @Inject constructor(
                 )
                 val chatAndRoom = ChatAndRoom<GroupChat>(group, room)
                 val chatAndRoomSerialized = serializeEntityUseCase.toString(chatAndRoom)
-                setState(ChatsState.EnterChat(chatAndRoomSerialized))
+                setState(ChatsActivityState.EnterChat(chatAndRoomSerialized))
             }
 
         }
@@ -137,7 +137,7 @@ class MainViewModel @Inject constructor(
 
     private fun createPrivateChat(otherUserEmail: String) {
         tryAsync {
-            setState(ChatsState.Loading)
+            setState(ChatsActivityState.Loading)
             // if current user is not null, start creating the chat,
             // and then update the current chat list on fireStore.
             userRepository.currentUser.filterNotNull().collect { user ->
@@ -149,7 +149,7 @@ class MainViewModel @Inject constructor(
                         user.collection,
                         room.cid
                     )
-                    setState(ChatsState.PrivateRoomCreated(it))
+                    setState(ChatsActivityState.PrivateRoomCreated(it))
                     updateCurrentUserChatsListState(room.cid)
                 }
             }
@@ -221,8 +221,12 @@ class MainViewModel @Inject constructor(
             communityRepository.loadCommunitiesByInterest(filter, _currentUser.value)
                 .collect { groups ->
                     withContext(Dispatchers.Main) {
-                        _randomCommunitiesBasedOnInterest.value =
-                            (groups.filterNot { groupChat -> groupChat.cid in _currentUser.value.chats_list })
+
+                        val emitGroups =
+                            groups.filterNot { groupChat -> _currentUser.value.email in groupChat.membersIds }
+
+                        _randomCommunitiesBasedOnInterest.value = emitGroups
+
                     }
                 }
 
@@ -232,8 +236,9 @@ class MainViewModel @Inject constructor(
     private fun loadForUserCommunities() {
         tryAsync {
             communityRepository.loadCommunitiesForUser(_currentUser.value).collect { groups ->
-                _userCommunities.value =
-                    groups.filterNot { groupChat -> groupChat.cid in _currentUser.value.chats_list }
+                val emitGroups =
+                    groups.filterNot { groupChat -> _currentUser.value.email in groupChat.membersIds }
+                _userCommunities.value = emitGroups
             }
         }
     }
@@ -248,15 +253,16 @@ class MainViewModel @Inject constructor(
                     withContext(Dispatchers.Main) {
                         _randomCommunitiesBasedOnInterest.value = (emptyList())
                     }
+                } else {
+                    setState(ChatsActivityState.Error(e))
                 }
-                setState(ChatsState.Error(e))
             }
         }
     }
 
 
-    private fun setState(state: ChatsState) {
-        _states.value = state
+    private fun setState(activityState: ChatsActivityState) {
+        _states.value = activityState
     }
 
 
@@ -265,9 +271,9 @@ class MainViewModel @Inject constructor(
             setState(
                 try {
                     authRepository.signOut()
-                    ChatsState.SignedOut
+                    ChatsActivityState.SignedOut
                 } catch (e: Exception) {
-                    ChatsState.Error(e)
+                    ChatsActivityState.Error(e)
                 }
             )
         }

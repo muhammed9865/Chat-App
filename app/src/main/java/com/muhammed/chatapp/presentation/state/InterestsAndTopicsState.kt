@@ -3,7 +3,6 @@ package com.muhammed.chatapp.presentation.state
 import android.util.Log
 import com.muhammed.chatapp.data.pojo.Interest
 import com.muhammed.chatapp.data.pojo.InterestWithTopics
-import com.muhammed.chatapp.data.pojo.Topic
 
 sealed class InterestsAndTopicsState {
     object Idle: InterestsAndTopicsState()
@@ -19,7 +18,7 @@ sealed class InterestsAndTopicsState {
                 Log.e(TAG, message)
             }
             companion object {
-            private const val TAG = "AuthenticationState"
+            private const val TAG = "AuthActivityState"
         }
 
     }
