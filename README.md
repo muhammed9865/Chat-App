@@ -36,6 +36,10 @@ and States which the UI follows on a ScreenNameState.kt file
 - Shimmer (Image preloading effect)
 - Design with XML
 
+## Gallery
+![image](https://user-images.githubusercontent.com/84887514/179814115-5a0b3545-0e5f-478b-a847-f13214227d5e.png)
+
+
 
 
 
