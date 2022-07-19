@@ -37,7 +37,10 @@ and States which the UI follows on a ScreenNameState.kt file
 - Design with XML
 
 ## Gallery
-![image](https://user-images.githubusercontent.com/84887514/179814115-5a0b3545-0e5f-478b-a847-f13214227d5e.png)
+Video: https://drive.google.com/file/d/1-0gGj1pxl0PI76H1n2rZhepMKuR62qCN/view?usp=sharing
+
+Images will be uploaded later..
+
 
 
 
