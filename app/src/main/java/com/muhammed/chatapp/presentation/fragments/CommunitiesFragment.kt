@@ -1,6 +1,7 @@
 package com.muhammed.chatapp.presentation.fragments
 
 import android.os.Bundle
+import android.util.Log
 import android.view.*
 import android.widget.ImageView
 import androidx.fragment.app.Fragment
@@ -19,7 +20,6 @@ import com.muhammed.chatapp.presentation.event.ChatsEvent
 import com.muhammed.chatapp.presentation.viewmodel.MainViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Job
-import kotlinx.coroutines.channels.consumeEach
 import kotlinx.coroutines.launch
 
 
@@ -57,23 +57,27 @@ class CommunitiesFragment : Fragment(), OnItemClickListener<GroupChat>,
                 mForYouAdapter.submitList(groups)
 
                 with(binding) {
-                    noCommsForYouFound.visibility = if (groups.isEmpty()) View.VISIBLE else View.GONE
+                    noCommsForYouFound.visibility =
+                        if (groups.isEmpty()) View.VISIBLE else View.GONE
                 }
             }
         }
 
-        tryAsync {
-            viewModel.randomCommunitiesBasedOnInterest.consumeEach { groups ->
-                with(binding) {
-                    loadingPb.visibility = View.GONE
-                    allCommsRv.visibility = View.VISIBLE
-                    mAllAdapter.submitList(groups)
-                    root.smoothScrollBy(0, 500)
-                    noCommsByInterestFound.visibility = if (groups.isEmpty()) View.VISIBLE else View.GONE
-                }
 
+
+        viewModel.randomCommunitiesBasedOnInterest.observe(viewLifecycleOwner) { groups ->
+            Log.d("CommunitiesFragment", "onCreateView: $groups")
+            with(binding) {
+                loadingPb.visibility = View.GONE
+                allCommsRv.visibility = View.VISIBLE
+                mAllAdapter.submitList(groups)
+                root.smoothScrollBy(0, 500)
+                noCommsByInterestFound.visibility =
+                    if (groups.isEmpty()) View.VISIBLE else View.GONE
             }
+
         }
+
 
         return binding.root
     }

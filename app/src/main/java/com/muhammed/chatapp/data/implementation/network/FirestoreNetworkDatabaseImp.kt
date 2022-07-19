@@ -38,7 +38,8 @@ class FirestoreNetworkDatabaseImp @Inject constructor(private val mFirestore: Fi
     }
 
     override suspend fun saveGoogleUser(user: User) {
-        val fUser = getGoogleUser(user.uid)
+        val fUser = getGoogleUser(user.email)
+
         if (fUser != null) {
             throw Exception("Email address is already in use, try logging in")
         }
@@ -60,6 +61,7 @@ class FirestoreNetworkDatabaseImp @Inject constructor(private val mFirestore: Fi
             return normalUser
         }
         val googleUser = getGoogleUser(email)
+
         // Check if user in Collections.GOOGLE_USERS if first check failed.
         if (googleUser != null) {
             return googleUser
@@ -233,35 +235,35 @@ class FirestoreNetworkDatabaseImp @Inject constructor(private val mFirestore: Fi
             // Dividing the chat list to chunks of size 10 beacuase
             // the WhereNotIn query can have only maximum size of 10 as a list.
             val userChatListChunks = user.chats_list.chunked(10)
-            userChatListChunks.forEach { chunk ->
-                try {
-                    val documents = if (category != Filter.All().title) {
-                        mFirestore.collection(Collections.CHATS)
-                            .whereEqualTo("category", category)
-                            .orderBy("createdSince", Query.Direction.DESCENDING)
-                            .limit(10)
-                            .get()
-                            .await()
-                    } else {
-                        mFirestore.collection(Collections.CHATS)
-                            .whereNotEqualTo("category", null)
-                            .limit(15)
-                            .get()
-                            .await()
-                    }
-                    lastVisibleCommunityDocument = documents.documents[documents.size() - 1]
-
-                    emit(documents.toObjects(GroupChat::class.java).shuffled())
-
-
-                } catch (e: Exception) {
-                    throw NetworkExceptions.NoCommunitiesFoundException()
+            Log.d(
+                "Firestore",
+                "getRandomCommunitiesBasedOnCategory: ${userChatListChunks.isEmpty()}"
+            )
+            try {
+                val documents = if (category != Filter.All().title) {
+                    mFirestore.collection(Collections.CHATS)
+                        .whereEqualTo("category", category)
+                        .orderBy("createdSince", Query.Direction.DESCENDING)
+                        .limit(10)
+                        .get()
+                        .await()
+                } else {
+                    mFirestore.collection(Collections.CHATS)
+                        .whereNotEqualTo("category", null)
+                        .limit(15)
+                        .get()
+                        .await()
                 }
+                lastVisibleCommunityDocument = documents.documents[documents.size() - 1]
+
+                emit(documents.toObjects(GroupChat::class.java).shuffled())
 
 
-                // For Paginating
-
+            } catch (e: Exception) {
+                throw NetworkExceptions.NoCommunitiesFoundException()
             }
+
+
         }
     }
 
@@ -271,7 +273,6 @@ class FirestoreNetworkDatabaseImp @Inject constructor(private val mFirestore: Fi
             .set(groupChat)
             .await()
 
-        updateUser(user)
     }
 
     override suspend fun sendMessage(

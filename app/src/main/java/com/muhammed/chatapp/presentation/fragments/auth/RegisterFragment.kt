@@ -3,6 +3,7 @@ package com.muhammed.chatapp.presentation.fragments.auth
 import android.annotation.SuppressLint
 import android.app.Activity.RESULT_OK
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.MotionEvent
 import android.view.View
@@ -13,9 +14,12 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
-import com.muhammed.chatapp.*
+import com.muhammed.chatapp.R
 import com.muhammed.chatapp.databinding.FragmentRegisterBinding
-import com.muhammed.chatapp.presentation.common.*
+import com.muhammed.chatapp.presentation.common.hideKeyboard
+import com.muhammed.chatapp.presentation.common.showError
+import com.muhammed.chatapp.presentation.common.toggleAuthError
+import com.muhammed.chatapp.presentation.common.toggleButtonAvailabilityOnAuth
 import com.muhammed.chatapp.presentation.event.AuthenticationEvent
 import com.muhammed.chatapp.presentation.state.AuthenticationState
 import com.muhammed.chatapp.presentation.viewmodel.RegisterViewModel
@@ -91,6 +95,7 @@ class RegisterFragment : Fragment() {
                     }
 
                     is AuthenticationState.AuthenticationFailure -> {
+                        Log.e("RegisterFragment", "onStateChanged: ${it.error}")
                         binding.root.showError(it.error)
                         binding.registerMotionLayout.transitionToStart()
                     }

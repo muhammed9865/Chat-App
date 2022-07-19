@@ -28,6 +28,9 @@
             app:enterAnim="@anim/slide_in_left"
             app:exitAnim="@anim/slide_out_right"
             app:popUpTo="@id/chatsFragment" />
+        <action
+            android:id="@+id/action_chatsFragment_to_profileActivity"
+            app:destination="@id/profileActivity" />
     </fragment>
     <fragment
         android:id="@+id/communitiesFragment"
@@ -42,6 +45,9 @@
             app:destination="@id/authActivity"
             app:enterAnim="@anim/slide_in_left"
             app:exitAnim="@anim/slide_out_right" />
+        <action
+            android:id="@+id/action_communitiesFragment_to_profileActivity"
+            app:destination="@id/profileActivity" />
     </fragment>
     <activity
         android:id="@+id/authActivity"
@@ -81,4 +87,9 @@
             app:launchSingleTop="true"
             app:popUpTo="@id/chatsFragment" />
     </fragment>
+    <activity
+        android:id="@+id/profileActivity"
+        android:name="com.muhammed.chatapp.presentation.activity.ProfileActivity"
+        android:label="ProfileActivity"
+        tools:layout="@layout/activity_profile" />
 </navigation>

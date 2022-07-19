@@ -81,6 +81,7 @@ class ChatsFragment : Fragment() {
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         inflater.inflate(R.menu.main_menu_chat_frag, menu)
         val userIcon = menu.findItem(R.id.menu_options_chat)
+
         userIcon.setActionView(R.layout.user_icon)
         (userIcon.actionView as ImageView).loadImage(viewModel.currentUser.value.profile_picture)
 
@@ -88,7 +89,8 @@ class ChatsFragment : Fragment() {
             showOptionsMenu(it)
         }
 
-        Log.d("MainActivity", "SearchingChats: OPENED SEARCH")
+
+        // Handling Search Item
         val searchView = menu.findItem(R.id.menu_search_chat).actionView as SearchView
         searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String?): Boolean = false

@@ -100,6 +100,7 @@ class RegisterViewModel @Inject constructor(
                 listOf(emailResult, passwordResult, repeatedPasswordResult, nicknameResult).any {
                     !it.isSuccessful
                 }
+
             // If there are no errors, register user.
             if (hasErrors) {
                 val newState = _validation.value.copy(
@@ -129,6 +130,8 @@ class RegisterViewModel @Inject constructor(
             ) {
                 account.email?.let { doOnEvent(AuthenticationEvent.OnEmailChanged(it)) }
                 account.displayName?.let { doOnEvent(AuthenticationEvent.OnNicknameChanged(it)) }
+
+
                 val token = FirebaseMessaging.getInstance().token.await()
 
                 val user = User(
@@ -140,7 +143,7 @@ class RegisterViewModel @Inject constructor(
                     token = token
                 )
 
-                viewModelScope.launch {
+                viewModelScope.launch(Dispatchers.IO) {
                     _authStates.send(
                         try {
                             authRepository.saveGoogleUser(user)

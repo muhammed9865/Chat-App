@@ -6,7 +6,6 @@ import com.muhammed.chatapp.data.implementation.network.FirestoreNetworkDatabase
 import com.muhammed.chatapp.data.pojo.user.User
 import com.muhammed.chatapp.domain.Encoder
 import kotlinx.coroutines.tasks.await
-import java.util.*
 import javax.inject.Inject
 
 class AuthRepository @Inject constructor(
@@ -64,17 +63,10 @@ class AuthRepository @Inject constructor(
         }
     }
 
-    suspend fun loginUserDummyData(email: String, password: String) {
-        val user = User(UUID.randomUUID().toString(), "Ahlam Karara", email, password)
-        userRepository.saveUserDetails(user)
-    }
-
-
-    fun getCurrentUser() = mEmailAndPasswordAuth.currentUser
 
     suspend fun signOut() {
         mEmailAndPasswordAuth.signOut()
-        userRepository.saveUserDetails(null)
+        userRepository.removeUser()
     }
 
     private suspend fun saveUserOnFirestore(user: User) =

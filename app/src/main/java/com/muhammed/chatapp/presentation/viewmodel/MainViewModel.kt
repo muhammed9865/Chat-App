@@ -1,6 +1,8 @@
 package com.muhammed.chatapp.presentation.viewmodel
 
 import android.util.Log
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.firebase.firestore.ListenerRegistration
@@ -18,12 +20,12 @@ import com.muhammed.chatapp.presentation.event.ChatsEvent
 import com.muhammed.chatapp.presentation.state.ChatsState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 @HiltViewModel
@@ -46,9 +48,11 @@ class MainViewModel @Inject constructor(
     val userCommunities = _userCommunities.asStateFlow()
 
     // Used to display groups in Communities by Interest Section in Community Fragment
-    private val _randomCommunitiesBasedOnInterest = Channel<List<GroupChat>>()
-    val randomCommunitiesBasedOnInterest = _randomCommunitiesBasedOnInterest
+    private val _randomCommunitiesBasedOnInterest = MutableLiveData<List<GroupChat>>()
+    val randomCommunitiesBasedOnInterest: LiveData<List<GroupChat>> =
+        _randomCommunitiesBasedOnInterest
 
+    // Last filter checked in CommunitiesFragment Filters
     var lastFilterChecked = -1
     private var hasEnteredCommunityFragment = false
 
@@ -166,15 +170,18 @@ class MainViewModel @Inject constructor(
                 val currPrivateChats = _userChats.value.filterIsInstance(PrivateChat::class.java)
                 val matchedPrivateChats =
                     currPrivateChats.filter {
-                        it.firstUser.nickname.lowercase().contains(query) || it.secondUser.nickname.lowercase().contains(
-                            query
-                        )
-                    }
-                        .sortedByDescending { it.lastMessage.messageDate }
+                        it.firstUser.nickname.lowercase()
+                            .contains(loweredCaseQuery) || it.secondUser.nickname.lowercase()
+                            .contains(
+                                loweredCaseQuery
+                            )
+                    }.sortedByDescending { it.lastMessage.messageDate }
+
 
                 val currGroupChats = _userChats.value.filterIsInstance(GroupChat::class.java)
-                val matchedGroupChats = currGroupChats.filter { it.title.lowercase().contains(query) }
-                    .sortedByDescending { it.lastMessage.messageDate }
+                val matchedGroupChats =
+                    currGroupChats.filter { it.title.lowercase().contains(loweredCaseQuery) }
+                        .sortedByDescending { it.lastMessage.messageDate }
 
                 searchList.addAll(matchedPrivateChats)
                 searchList.addAll(matchedGroupChats)
@@ -213,7 +220,10 @@ class MainViewModel @Inject constructor(
         tryAsync {
             communityRepository.loadCommunitiesByInterest(filter, _currentUser.value)
                 .collect { groups ->
-                    _randomCommunitiesBasedOnInterest.send(groups.filterNot { groupChat -> groupChat.cid in _currentUser.value.chats_list })
+                    withContext(Dispatchers.Main) {
+                        _randomCommunitiesBasedOnInterest.value =
+                            (groups.filterNot { groupChat -> groupChat.cid in _currentUser.value.chats_list })
+                    }
                 }
 
         }
@@ -235,7 +245,9 @@ class MainViewModel @Inject constructor(
             } catch (e: Exception) {
                 Log.e(TAG, "Error: ${e.message}")
                 if (e is NetworkExceptions.NoCommunitiesFoundException) {
-                    _randomCommunitiesBasedOnInterest.send(emptyList())
+                    withContext(Dispatchers.Main) {
+                        _randomCommunitiesBasedOnInterest.value = (emptyList())
+                    }
                 }
                 setState(ChatsState.Error(e))
             }

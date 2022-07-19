@@ -3,6 +3,7 @@ package com.muhammed.chatapp.data.repository
 import com.muhammed.chatapp.data.NetworkDatabase
 import com.muhammed.chatapp.data.implementation.local.DataStoreManager
 import com.muhammed.chatapp.data.pojo.user.User
+import kotlinx.coroutines.flow.first
 import javax.inject.Inject
 
 class UserRepository @Inject constructor(
@@ -24,6 +25,12 @@ class UserRepository @Inject constructor(
         networkDatabase.updateUserChatsList(email, userCollection, chatId)
 
     val currentUser = dataStoreManager.currentUserDetails
+
+    suspend fun removeUser() {
+        val user = currentUser.first().copy(token = "")
+        updateUser(user)
+        saveUserDetails(null)
+    }
 
     suspend fun saveUserDetails(user: User?) = dataStoreManager.saveCurrentUserDetails(user = user)
 

@@ -14,6 +14,7 @@ import javax.inject.Inject
 
 class ChatsRepository @Inject constructor(
     private val networkDatabase: NetworkDatabase,
+    private val userRepository: UserRepository,
     private val filterUserChatRooms: FilterUserChatRooms,
 ) {
 
@@ -64,7 +65,9 @@ class ChatsRepository @Inject constructor(
         groupMembersIds.add(user.email)
         groupChat.membersIds = groupMembersIds
         groupChat.membersCount++
+
         networkDatabase.joinCommunity(groupChat, editedUser)
+        userRepository.updateUser(editedUser)
 
         FirebaseMessaging.getInstance().subscribeToTopic(groupChat.category).await()
     }

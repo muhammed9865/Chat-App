@@ -36,6 +36,9 @@
             android:windowSoftInputMode="adjustNothing"
             android:screenOrientation="portrait"
             tools:ignore="LockedOrientationActivity" />
+        <activity
+            android:name=".presentation.activity.ProfileActivity"
+            android:exported="false" />
 
         <service
             android:name=".services.MessagingService"

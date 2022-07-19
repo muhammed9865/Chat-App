@@ -104,12 +104,14 @@
             android:id="@+id/textView16"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
             android:fontFamily="@font/sf_bold"
             android:text="@string/communities_by_interests"
             android:textColor="@color/black"
             android:textSize="@dimen/_13ssp"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/for_you_comms_rv" />
+            app:layout_constraintTop_toBottomOf="@id/guideline14"
+            app:layout_constraintTop_toTopOf="@+id/guideline14" />
 
         <HorizontalScrollView
             android:id="@+id/horizontalScrollView"
@@ -207,6 +209,7 @@
             android:layout_height="wrap_content"
             android:orientation="horizontal"
             android:visibility="visible"
+            tools:listitem="@layout/list_item_community"
             app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="@+id/textView15"
@@ -233,18 +236,26 @@
             android:id="@+id/no_comms_for_you_found"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:background="@drawable/rounded_tv"
             android:clickable="false"
             android:focusable="false"
-            android:gravity="center"
-            android:background="@drawable/rounded_tv"
-            android:padding="@dimen/_10sdp"
             android:fontFamily="@font/sf_medium"
+            android:gravity="center"
+            android:padding="@dimen/_10sdp"
             android:text="@string/no_groups_were_found"
             android:textSize="@dimen/_12ssp"
-            android:visibility="gone"
+            android:visibility="visible"
+            app:layout_constraintBottom_toTopOf="@+id/textView16"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/textView15" />
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/guideline14"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            app:layout_constraintGuide_begin="@dimen/_290sdp" />
 
 
     </androidx.constraintlayout.widget.ConstraintLayout>
