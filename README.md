@@ -37,7 +37,6 @@ and States which the UI follows on a ScreenNameState.kt file
 - Design with XML
 
 ## Gallery
-Video: https://drive.google.com/file/d/1-0gGj1pxl0PI76H1n2rZhepMKuR62qCN/view?usp=sharing
 
 <span>
  <image src="https://user-images.githubusercontent.com/84887514/179837326-87a1ff6c-597c-4517-b86e-0786b42a775b.png "width=20% height=15%/>
@@ -58,6 +57,9 @@ Video: https://drive.google.com/file/d/1-0gGj1pxl0PI76H1n2rZhepMKuR62qCN/view?us
  <image src="https://user-images.githubusercontent.com/84887514/179837102-0757f4d2-fc80-4b07-9f46-0bdbcccdab1a.png" width=20% height=15%/>
  
 </span>
+
+Video: https://drive.google.com/file/d/1-0gGj1pxl0PI76H1n2rZhepMKuR62qCN/view?usp=sharing
+
 
 
 
