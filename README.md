@@ -60,7 +60,6 @@ Video: https://drive.google.com/file/d/1-0gGj1pxl0PI76H1n2rZhepMKuR62qCN/view?us
 </span>
 
 
-Images will be uploaded later..
 
 
 
