@@ -118,6 +118,8 @@ class ChatsViewModel @Inject constructor(
                 event.filter
             )
 
+            is ChatsEvent.LoadUserCommunities -> loadForUserCommunities()
+
             is ChatsEvent.ShowGroupDetails -> {
                 val group = event.group
                 val room = MessagingRoom(

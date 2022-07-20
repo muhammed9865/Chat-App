@@ -55,8 +55,8 @@ class CommunitiesFragment : Fragment(), OnItemClickListener<GroupChat>,
         tryAsync {
             viewModel.userCommunities.collect { groups ->
                 mForYouAdapter.submitList(groups)
-
                 with(binding) {
+                    loadingForUserPb.visibility = View.GONE
                     noCommsForYouFound.visibility =
                         if (groups.isEmpty()) View.VISIBLE else View.GONE
                 }

@@ -20,5 +20,6 @@ sealed class ChatsEvent {
 
     // Concerned with CommunityFragment
     object EnteredCommunityFragment : ChatsEvent()
+    object LoadUserCommunities : ChatsEvent()
     data class LoadRandomCommunitiesBasedOnFilter(val filter: Filter): ChatsEvent()
 }

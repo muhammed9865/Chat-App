@@ -56,7 +56,7 @@
         tools:layout="@layout/activity_auth" />
     <activity
         android:id="@+id/chatRoomActivity"
-        android:name="com.muhammed.chatapp.presentation.activity.ChatRoomActivity"
+        android:name="com.muhammed.chatapp.presentation.activity.MessagingRoomActivity"
         android:label="activity_chat_room"
         tools:layout="@layout/activity_chat_room" />
     <fragment

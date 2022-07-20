@@ -1,10 +1,11 @@
 package com.muhammed.chatapp.presentation.fragments
 
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
@@ -14,8 +15,10 @@ import com.muhammed.chatapp.databinding.InterestsTopicsBottomBinding
 import com.muhammed.chatapp.databinding.InterestsTopicsTopbarBinding
 import com.muhammed.chatapp.presentation.adapter.InterestsAndTopicsAdapter
 import com.muhammed.chatapp.presentation.common.showError
+import com.muhammed.chatapp.presentation.event.ChatsEvent
 import com.muhammed.chatapp.presentation.event.InterestsAndTopicsEvent
 import com.muhammed.chatapp.presentation.state.InterestsAndTopicsState
+import com.muhammed.chatapp.presentation.viewmodel.ChatsViewModel
 import com.muhammed.chatapp.presentation.viewmodel.InterestAndTopicViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
@@ -27,6 +30,7 @@ class TopicsSelectionFragment : Fragment() {
     private val bottomBinding by lazy { InterestsTopicsBottomBinding.bind(binding.root) }
     private val mAdapter by lazy { InterestsAndTopicsAdapter(InterestsAndTopicsAdapter.INTEREST_WITH_TOPICS_TYPE) }
     private val viewModel by viewModels<InterestAndTopicViewModel>()
+    private val mainViewModel by activityViewModels<ChatsViewModel>()
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -61,6 +65,7 @@ class TopicsSelectionFragment : Fragment() {
                         bottomBinding.continueBtn.isEnabled = false
                     }
                     is InterestsAndTopicsState.TopicsConfirmed, InterestsAndTopicsState.DoItLater -> {
+                        mainViewModel.doOnEvent(ChatsEvent.LoadUserCommunities)
                         findNavController().navigate(R.id.action_topicsSelectionFragment_to_communitiesFragment)
                     }
 

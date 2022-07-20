@@ -19,7 +19,7 @@
             android:resource="@xml/automotive_app_desc" />
 
         <activity
-            android:name=".presentation.activity.ChatRoomActivity"
+            android:name=".presentation.activity.MessagingRoomActivity"
             android:exported="false" />
         <activity
             android:name=".presentation.activity.AuthActivity"

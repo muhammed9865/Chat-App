@@ -18,7 +18,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
-class ChatRoomActivity : AppCompatActivity() {
+class MessagingRoomActivity : AppCompatActivity() {
     private val binding by lazy { ActivityChatRoomBinding.inflate(layoutInflater) }
     private val viewModel by viewModels<MessagingRoomViewModel>()
     private lateinit var mAdapter: MessageAdapter

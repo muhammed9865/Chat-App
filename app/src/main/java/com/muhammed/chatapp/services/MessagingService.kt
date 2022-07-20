@@ -97,6 +97,7 @@ class MessagingService : FirebaseMessagingService() {
                         .setSmallIcon(R.drawable.ic_chat_logo)
                         .setColor(getColor(R.color.primaryColor))
                         .setPriority(NotificationCompat.PRIORITY_HIGH)
+                        .setOnlyAlertOnce(false)
                         .build()
 
 

@@ -74,6 +74,7 @@ class MessagingRoomViewModel @Inject constructor(
             _room.value = room
 
             val isGroup = room.isGroup
+
             val chatAsString = serializeEntityUseCase.toString(chatAndRoom.chat)
 
             if (isGroup) {
@@ -115,7 +116,8 @@ class MessagingRoomViewModel @Inject constructor(
         tryAsync {
             val chat = chatsRepository.getChat(room.chatId, Chat.TYPE.GROUP) as GroupChat
             setState(MessagingRoomActivityStates.ShowGroupDetails(chat))
-            _room.value = room
+
+            _room.value = room.copy(subTitle = chat.serializeMembersCount() + " Members")
             setRandomMessages(room.messagesId)
         }
     }

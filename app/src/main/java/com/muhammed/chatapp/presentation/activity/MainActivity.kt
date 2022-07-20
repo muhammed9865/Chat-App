@@ -111,7 +111,7 @@ class MainActivity : AppCompatActivity(), NavigationBarView.OnItemSelectedListen
                     }
 
                     is ChatsActivityState.EnterChat -> {
-                        val intent = Intent(this@MainActivity, ChatRoomActivity::class.java)
+                        val intent = Intent(this@MainActivity, MessagingRoomActivity::class.java)
                         intent.putExtra(Constants.CHAT, state.chatAndRoom)
                         intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP)
                         startActivity(intent)

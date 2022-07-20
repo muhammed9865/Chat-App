@@ -77,4 +77,12 @@
         <item name="cornerSizeBottomLeft">50%</item>
     </style>
 
+    <style name="MaterialCardStyle">
+        <item name="cardElevation">@dimen/_5sdp</item>
+        <item name="cardCornerRadius">@dimen/_10sdp</item>
+        <item name="android:paddingStart">@dimen/_10sdp</item>
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">@dimen/_50sdp</item>
+    </style>
+
 </resources>
