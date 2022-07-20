@@ -164,10 +164,10 @@
         android:enabled="false"
         android:focusable="false"
         android:fontFamily="@font/sf_medium"
-        android:padding="@dimen/_10sdp"
+        android:padding="@dimen/_15sdp"
         android:text="@string/register"
         android:textAllCaps="false"
-        app:cornerRadius="@dimen/_10sdp"
+        app:cornerRadius="@dimen/_7sdp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/guideline5"
         app:layout_constraintStart_toStartOf="@+id/guideline4"
@@ -194,6 +194,8 @@
         android:fontFamily="@font/sf_regular"
         android:text="@string/have_an_account_already"
         android:textSize="@dimen/_10ssp"
+        android:alpha="0.5"
+        android:textColor="#171930"
         app:layout_constraintEnd_toStartOf="@+id/register_to_login_btn"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintHorizontal_chainStyle="packed"
@@ -206,7 +208,7 @@
         android:layout_width="@dimen/_50sdp"
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/_5sdp"
-        android:fontFamily="@font/sf_medium"
+        android:fontFamily="@font/sf_regular"
         android:gravity="start|center_vertical"
         android:padding="0dp"
         android:text="@string/login"
@@ -255,7 +257,7 @@
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/google_signup"
-        android:layout_width="@dimen/_80sdp"
+        android:layout_width="@dimen/_85sdp"
         android:layout_height="@dimen/_45sdp"
         android:layout_marginTop="@dimen/_18sdp"
         android:padding="@dimen/_8sdp"
@@ -263,9 +265,25 @@
         app:cornerRadius="@dimen/_8sdp"
         app:icon="@drawable/googleg_standard_color_18"
         app:iconGravity="textStart"
-        app:iconSize="@dimen/_20sdp"
+        app:backgroundTint="#4385F4"
+        app:iconPadding="0dp"
         app:layout_constraintStart_toStartOf="@+id/guideline4"
         app:layout_constraintTop_toBottomOf="@+id/view2"
-        app:strokeColor="@color/primaryColor" />
+        app:iconSize="@dimen/_15sdp" />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/fb_signup"
+        android:layout_width="@dimen/_85sdp"
+        android:layout_height="@dimen/_45sdp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="@dimen/_18sdp"
+        android:textSize="@dimen/_12ssp"
+        app:backgroundTint="#3B5998"
+        app:cornerRadius="@dimen/_8sdp"
+        app:icon="@drawable/ic_fb"
+        app:iconGravity="textStart"
+        app:iconPadding="0dp"
+        app:layout_constraintStart_toEndOf="@+id/google_signup"
+        app:layout_constraintTop_toBottomOf="@+id/view2" />
 
 </androidx.constraintlayout.motion.widget.MotionLayout>

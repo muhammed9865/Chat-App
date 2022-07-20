@@ -62,6 +62,7 @@ class LoginFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         onInputFieldsTextChange()
         onStateChanged()
+        binding.forgotPasswordTv.setUnderline(true)
     }
 
     private fun tryLoggingInstantly() {

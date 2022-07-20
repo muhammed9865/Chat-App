@@ -1,12 +1,16 @@
 package com.muhammed.chatapp.presentation.common
 
 import android.content.Context
+import android.text.SpannableString
+import android.text.style.UnderlineSpan
 import android.util.Log
 import android.view.View
 import android.view.inputmethod.InputMethodManager
 import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageView
+import android.widget.TextView
+import androidx.databinding.BindingAdapter
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.FragmentManager
 import com.bumptech.glide.Glide
@@ -100,7 +104,7 @@ fun DialogFragment.showDialog(manager: FragmentManager, tag: String?) {
     if (isAdded) {
         Log.d("LoadingDialog", "showDialog: showing")
         dialog?.show()
-    }else {
+    } else {
         Log.d("LoadingDialog", "hideDialog: hiding")
         show(manager, tag)
     }
@@ -126,5 +130,28 @@ fun ImageView.loadImage(url: String) {
         .error(R.drawable.ic_baseline_broken_image_24)
         .into(this)
 
+}
+
+
+@BindingAdapter("setUnderline", requireAll = true)
+fun TextView.setUnderline(set: Boolean) {
+    if (set) {
+
+        // Declaring a string
+        val mString = text
+
+        // Creating a Spannable String
+        // from the above string
+        val mSpannableString = SpannableString(mString)
+
+        // Setting underline style from
+        // position 0 till length of
+        // the spannable string
+        mSpannableString.setSpan(UnderlineSpan(), 0, mSpannableString.length, 0)
+
+        // Displaying this spannable
+        // string in TextView
+        text = mSpannableString
+    }
 }
 
