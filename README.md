@@ -39,8 +39,8 @@ and States which the UI follows on a ScreenNameState.kt file
 ## Gallery
 
 <span>
- <image src="https://user-images.githubusercontent.com/84887514/179837326-87a1ff6c-597c-4517-b86e-0786b42a775b.png "width=20% height=15%/>
- <image src="https://user-images.githubusercontent.com/84887514/179837331-e6a492a1-26d8-4a05-a319-b6152ac9f0f9.png" width=20% height=15%/>
+ <image src="https://user-images.githubusercontent.com/84887514/179891211-f01ec9c2-6c73-4f96-9ca3-7f99c84b684d.png" width=20% height=15%/>
+ <image src="https://user-images.githubusercontent.com/84887514/179891201-6b50787a-8dda-4c91-85af-86b6fbf5dd2f.png" width=20% height=15%/>
  <image src="https://user-images.githubusercontent.com/84887514/179837338-2c17784d-ad6f-437e-bcf9-fe3909c2f1bd.png" width=20% height=15%/>
  <image src="https://user-images.githubusercontent.com/84887514/179837026-5334f554-2703-4477-af55-4bcd572bae6e.png" width=20% height=15%/>
  
