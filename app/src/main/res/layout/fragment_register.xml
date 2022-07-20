@@ -104,6 +104,7 @@
             android:inputType="textPassword"
             android:nextFocusLeft="@id/register_btn"
             android:nextFocusRight="@id/register_btn"
+            android:textSize="@dimen/_12ssp"
             android:nextFocusUp="@id/register_btn"
             android:nextFocusDown="@id/register_btn"
             android:nextFocusForward="@id/register_btn"
