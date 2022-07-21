@@ -47,6 +47,8 @@ class AuthRepository @Inject constructor(
         return null
     }
 
+    suspend fun resetPassword(email: String) = mEmailAndPasswordAuth.resetPassword(email)
+
     suspend fun loginUser(
         email: String,
         password: String

@@ -29,6 +29,7 @@ class LoginFragment : Fragment() {
     private val binding: FragmentLoginBinding by lazy { FragmentLoginBinding.inflate(layoutInflater) }
     private val viewModel: LoginViewModel by viewModels()
     private val loadingDialog: LoadingDialog by lazy { LoadingDialog.getInstance() }
+
     @SuppressLint("ClickableViewAccessibility")
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -37,24 +38,30 @@ class LoginFragment : Fragment() {
 
         tryLoggingInstantly()
 
-        binding.loginBtn.setOnTouchListener { view, motionEvent ->
-            if (motionEvent.action == MotionEvent.ACTION_UP) {
-                binding.loginMotionLayout.transitionToEnd()
-                viewModel.doOnEvent(AuthenticationEvent.Submit)
-                view.hideKeyboard()
+        with(binding) {
+            loginBtn.setOnTouchListener { view, motionEvent ->
+                if (motionEvent.action == MotionEvent.ACTION_UP) {
+                    binding.loginMotionLayout.transitionToEnd()
+                    viewModel.doOnEvent(AuthenticationEvent.Submit)
+                    view.hideKeyboard()
+                }
+                false
             }
-            false
+
+
+            googleSignin.setOnClickListener {
+                viewModel.doOnEvent(AuthenticationEvent.StartGoogleAuthentication)
+            }
+
+            loginToRegisterBtn.setOnClickListener {
+                findNavController().navigate(R.id.action_loginFragment_to_registerFragment)
+            }
+
+            forgotPasswordTv.setOnClickListener {
+                findNavController().navigate(R.id.action_loginFragment_to_restorePasswordDialog)
+            }
+
         }
-
-
-        binding.googleSignin.setOnClickListener {
-            viewModel.doOnEvent(AuthenticationEvent.StartGoogleAuthentication)
-        }
-
-        binding.loginToRegisterBtn.setOnClickListener {
-            findNavController().navigate(R.id.action_loginFragment_to_registerFragment)
-        }
-
         return binding.root
     }
 

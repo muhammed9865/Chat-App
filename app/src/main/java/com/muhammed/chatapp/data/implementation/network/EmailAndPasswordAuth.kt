@@ -1,13 +1,9 @@
 package com.muhammed.chatapp.data.implementation.network
 
 
-import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.firebase.auth.AuthResult
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
-import com.google.firebase.auth.GoogleAuthProvider
-import com.google.firebase.ktx.Firebase
-import com.google.firebase.ktx.app
 import kotlinx.coroutines.tasks.await
 import javax.inject.Inject
 
@@ -26,6 +22,11 @@ class EmailAndPasswordAuth @Inject constructor(private val mAuth: FirebaseAuth) 
 
     }
 
+
+    suspend fun resetPassword(email: String) {
+        mAuth.sendPasswordResetEmail(email).await()
+
+    }
 
 
     suspend fun sendVerificationMessage(user: FirebaseUser) {

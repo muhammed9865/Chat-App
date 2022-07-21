@@ -35,6 +35,12 @@
             app:enterAnim="@anim/slide_in_right"
             app:exitAnim="@anim/slide_out_left"
             app:popUpTo="@id/mainActivity" />
+        <action
+            android:id="@+id/action_loginFragment_to_restorePasswordDialog"
+            app:destination="@id/restorePasswordDialog"
+            app:enterAnim="@anim/slide_in_left"
+            app:exitAnim="@anim/slide_out_right"
+            app:popExitAnim="@anim/slide_out_left" />
     </fragment>
     <fragment
         android:id="@+id/registerCompleteFragment"
@@ -54,4 +60,8 @@
         android:name="com.muhammed.chatapp.presentation.activity.MainActivity"
         android:label="activity_main"
         tools:layout="@layout/activity_main" />
+    <fragment
+        android:id="@+id/restorePasswordDialog"
+        android:name="com.muhammed.chatapp.presentation.dialogs.RestorePasswordDialog"
+        android:label="RestorePasswordDialog" />
 </navigation>
