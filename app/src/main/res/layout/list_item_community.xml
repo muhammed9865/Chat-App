@@ -14,7 +14,7 @@
         android:scaleType="centerCrop"
         android:background="#fff"
         android:theme="@style/CustomCommunityCard"
-        app:srcCompat="@drawable/test2" />
+         />
 
     <TextView
         android:id="@+id/comm_title"

@@ -24,7 +24,7 @@
         android:layout_marginTop="@dimen/_20sdp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/top_line"
-        app:srcCompat="@drawable/test2" />
+         />
 
     <TextView
         android:id="@+id/group_title"
