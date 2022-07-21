@@ -3,4 +3,5 @@
     <dimen name="bot_nav_corners">20dp</dimen>
     <dimen name="default_corner_radius">@dimen/_23sdp</dimen>
     <dimen name="et_paddding_start">@dimen/_10sdp</dimen>
+
 </resources>

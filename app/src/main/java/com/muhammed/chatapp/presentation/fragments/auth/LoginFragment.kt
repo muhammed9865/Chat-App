@@ -107,6 +107,8 @@ class LoginFragment : Fragment() {
                     }
 
                     is AuthActivityState.EmailValid -> {
+                        // Clearing the image to avoid a bug "@ drawable not replaced"
+                        binding.loginEmail.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0)
                         binding.loginEmail.setCompoundDrawablesWithIntrinsicBounds(
                             0,
                             0,

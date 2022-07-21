@@ -87,6 +87,7 @@ class RegisterFragment : Fragment() {
     private fun onStateChanged() {
         lifecycleScope.launch {
             viewModel.authStates.collect {
+                Log.d("RegistrationState", "onStateChanged: ${it.javaClass.name}")
                 when (it) {
                     is AuthActivityState.Idle -> {}
 
@@ -95,6 +96,7 @@ class RegisterFragment : Fragment() {
                     }
 
                     is AuthActivityState.EmailValid -> {
+                        binding.registerEmail.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0)
                         binding.registerEmail.setCompoundDrawablesWithIntrinsicBounds(
                             0,
                             0,
