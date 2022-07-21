@@ -94,6 +94,15 @@ class RegisterFragment : Fragment() {
                         findNavController().navigate(R.id.action_registerFragment_to_registerCompleteFragment)
                     }
 
+                    is AuthActivityState.EmailValid -> {
+                        binding.registerEmail.setCompoundDrawablesWithIntrinsicBounds(
+                            0,
+                            0,
+                            R.drawable.ic_email_valid,
+                            0
+                        )
+                    }
+
                     is AuthActivityState.AuthActivityFailure -> {
                         Log.e("RegisterFragment", "onStateChanged: ${it.error}")
                         binding.root.showError(it.error)

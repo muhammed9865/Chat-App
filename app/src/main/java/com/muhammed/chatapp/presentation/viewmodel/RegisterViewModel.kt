@@ -95,6 +95,7 @@ class RegisterViewModel @Inject constructor(
                     _validation.value.repeatedPassword
                 )
 
+
             // Result errors if any.
             val hasErrors =
                 listOf(emailResult, passwordResult, repeatedPasswordResult, nicknameResult).any {
@@ -175,6 +176,7 @@ class RegisterViewModel @Inject constructor(
 
         viewModelScope.launch(Dispatchers.IO) {
             try {
+                _authStates.send(AuthActivityState.EmailValid)
                 authRepository.registerUser(nickName, email, password)
                 _authStates.send(AuthActivityState.AuthActivitySuccess)
             } catch (e: Exception) {

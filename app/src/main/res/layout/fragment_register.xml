@@ -43,20 +43,28 @@
         app:layout_constraintStart_toStartOf="@+id/guideline4"
         app:layout_constraintTop_toTopOf="@+id/guideline6">
 
-        <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/register_nickname"
+        <com.google.android.material.textfield.TextInputLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:backgroundTint="@color/white"
-            android:drawableEnd="@drawable/ic_baseline_person_24"
-            android:gravity="center_vertical"
-            android:hint="@string/nickname"
-            android:inputType="textPersonName"
-            android:nextFocusDown="@id/register_email"
-            android:paddingStart="@dimen/et_paddding_start"
-            android:paddingTop="@dimen/_10sdp"
-            android:paddingEnd="@dimen/_5sdp"
-            android:textSize="@dimen/_13ssp" />
+            app:boxStrokeWidth="0dp">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/register_nickname"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:backgroundTint="@color/white"
+                android:drawableEnd="@drawable/ic_baseline_person_24"
+                android:gravity="center_vertical"
+                android:hint="@string/nickname"
+                android:inputType="textPersonName"
+                android:nextFocusDown="@id/register_email"
+                android:paddingStart="@dimen/et_paddding_start"
+                android:paddingTop="@dimen/_10sdp"
+                android:paddingEnd="@dimen/_5sdp"
+                android:textSize="@dimen/_13ssp" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+
     </com.google.android.material.card.MaterialCardView>
     <!-- Password -->
     <com.google.android.material.card.MaterialCardView
@@ -70,18 +78,25 @@
         app:layout_constraintStart_toStartOf="@+id/guideline4"
         app:layout_constraintTop_toBottomOf="@+id/textInputLayout4">
 
-        <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/register_password"
+        <com.google.android.material.textfield.TextInputLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:backgroundTint="@color/white"
-            android:drawableEnd="@drawable/ic_baseline_lock_24"
-            android:hint="@string/password"
-            android:inputType="textPassword"
-            android:nextFocusDown="@id/register_repeated_password"
-            android:paddingStart="@dimen/et_paddding_start"
-            android:paddingEnd="@dimen/_5sdp"
-            android:textSize="@dimen/_12ssp" />
+            app:boxStrokeWidth="0dp"
+            app:passwordToggleEnabled="true">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/register_password"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:backgroundTint="@color/white"
+                android:hint="@string/password"
+                android:inputType="textPassword"
+                android:nextFocusDown="@id/register_repeated_password"
+                android:paddingStart="@dimen/et_paddding_start"
+                android:paddingEnd="@dimen/_5sdp"
+                android:textSize="@dimen/_12ssp" />
+        </com.google.android.material.textfield.TextInputLayout>
+
     </com.google.android.material.card.MaterialCardView>
 
     <!-- Repeated Password -->
@@ -95,20 +110,29 @@
         app:layout_constraintStart_toEndOf="@+id/textInputLayout2"
         app:layout_constraintTop_toTopOf="@+id/textInputLayout2">
 
-        <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/register_repeated_password"
+        <com.google.android.material.textfield.TextInputLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:backgroundTint="@color/white"
-            android:hint="@string/repeat_password"
-            android:inputType="textPassword"
-            android:nextFocusLeft="@id/register_btn"
-            android:nextFocusRight="@id/register_btn"
-            android:textSize="@dimen/_12ssp"
-            android:nextFocusUp="@id/register_btn"
-            android:nextFocusDown="@id/register_btn"
-            android:nextFocusForward="@id/register_btn"
-            android:paddingStart="@dimen/et_paddding_start" />
+            app:boxStrokeWidth="0dp"
+            app:passwordToggleEnabled="true">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/register_repeated_password"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:backgroundTint="@color/white"
+                android:hint="@string/repeat_password"
+                android:inputType="textPassword"
+                android:nextFocusLeft="@id/register_btn"
+                android:nextFocusRight="@id/register_btn"
+                android:nextFocusUp="@id/register_btn"
+                android:nextFocusDown="@id/register_btn"
+                android:nextFocusForward="@id/register_btn"
+                android:paddingStart="@dimen/et_paddding_start"
+                android:textSize="@dimen/_12ssp" />
+
+        </com.google.android.material.textfield.TextInputLayout>
+
     </com.google.android.material.card.MaterialCardView>
     <!-- Email -->
     <com.google.android.material.card.MaterialCardView
@@ -122,17 +146,23 @@
         app:layout_constraintStart_toStartOf="@+id/guideline4"
         app:layout_constraintTop_toBottomOf="@+id/nickname_layout">
 
-        <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/register_email"
+        <com.google.android.material.textfield.TextInputLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:backgroundTint="@color/white"
-            android:drawableEnd="@drawable/ic_baseline_alternate_email_24"
-            android:hint="@string/email_address"
-            android:inputType="textEmailAddress"
-            android:paddingStart="@dimen/et_paddding_start"
-            android:paddingEnd="@dimen/_5sdp"
-            android:textSize="@dimen/_12ssp" />
+            app:boxStrokeWidth="0dp">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/register_email"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:backgroundTint="@color/white"
+                android:drawableEnd="@drawable/ic_baseline_alternate_email_24"
+                android:hint="@string/email_address"
+                android:inputType="textEmailAddress"
+                android:paddingStart="@dimen/et_paddding_start"
+                android:paddingEnd="@dimen/_5sdp"
+                android:textSize="@dimen/_12ssp" />
+        </com.google.android.material.textfield.TextInputLayout>
     </com.google.android.material.card.MaterialCardView>
 
 

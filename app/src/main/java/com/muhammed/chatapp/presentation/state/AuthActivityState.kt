@@ -6,6 +6,7 @@ import com.google.android.gms.auth.api.signin.GoogleSignInClient
 sealed class AuthActivityState {
     object Idle : AuthActivityState()
     object AuthActivitySuccess : AuthActivityState()
+    object EmailValid : AuthActivityState()
     object ValidationSuccess : AuthActivityState()
     data class ValidationFailure(val validationState: ValidationState) : AuthActivityState()
     data class OnGoogleAuthStart(val client: GoogleSignInClient) : AuthActivityState()

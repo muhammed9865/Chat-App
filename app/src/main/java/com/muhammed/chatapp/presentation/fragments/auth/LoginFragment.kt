@@ -106,6 +106,15 @@ class LoginFragment : Fragment() {
 
                     }
 
+                    is AuthActivityState.EmailValid -> {
+                        binding.loginEmail.setCompoundDrawablesWithIntrinsicBounds(
+                            0,
+                            0,
+                            R.drawable.ic_email_valid,
+                            0
+                        )
+                    }
+
                     is AuthActivityState.AuthActivityFailure -> {
                         binding.root.showError(it.error)
                         binding.loginMotionLayout.transitionToStart()

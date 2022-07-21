@@ -52,6 +52,7 @@ class LoginViewModel @Inject constructor(
                 _validation.value = _validation.value.copy(password = event.password)
             }
 
+
             is AuthenticationEvent.StartGoogleAuthentication -> {
                 viewModelScope.launch(Dispatchers.IO) {
                     googleAuth.signIn()
@@ -122,6 +123,7 @@ class LoginViewModel @Inject constructor(
         val password = _validation.value.password
         viewModelScope.launch(Dispatchers.IO) {
             try {
+                _authStates.send(AuthActivityState.EmailValid)
                 authRepository.loginUser(email, password)
                 _authStates.send(AuthActivityState.AuthActivitySuccess)
             } catch (e: Exception) {

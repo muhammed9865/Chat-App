@@ -66,6 +66,12 @@ fun toggleAuthError(
 ) {
     with(validationState) {
         email?.error = emailError
+        email?.setCompoundDrawablesWithIntrinsicBounds(
+            0,
+            0,
+            R.drawable.ic_baseline_alternate_email_24,
+            0
+        )
         nickname?.error = nicknameError
         password?.error = passwordError
         repeatedPassword?.error = repeatedPasswordError

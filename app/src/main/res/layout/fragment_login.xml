@@ -36,18 +36,25 @@
             app:layout_constraintStart_toStartOf="@+id/guideline4"
             app:layout_constraintTop_toBottomOf="@+id/textInputLayout4">
 
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/login_password"
+            <com.google.android.material.textfield.TextInputLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:backgroundTint="@color/white"
-                android:drawableEnd="@drawable/ic_baseline_lock_24"
-                android:hint="@string/password"
-                android:inputType="textPassword"
-                android:nextFocusDown="@id/register_repeated_password"
-                android:paddingStart="@dimen/et_paddding_start"
-                android:paddingEnd="@dimen/_5sdp"
-                android:textSize="@dimen/_12ssp" />
+                app:boxStrokeWidth="0dp"
+                app:passwordToggleEnabled="true">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/login_password"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:backgroundTint="@color/white"
+                    android:hint="@string/password"
+                    android:inputType="textPassword"
+                    android:nextFocusDown="@id/register_repeated_password"
+                    android:paddingStart="@dimen/et_paddding_start"
+                    android:paddingEnd="@dimen/_5sdp"
+                    android:textSize="@dimen/_12ssp" />
+
+            </com.google.android.material.textfield.TextInputLayout>
         </com.google.android.material.card.MaterialCardView>
         <!-- Email -->
         <com.google.android.material.card.MaterialCardView
@@ -60,17 +67,23 @@
             app:layout_constraintStart_toStartOf="@+id/guideline4"
             app:layout_constraintTop_toTopOf="@+id/guideline6">
 
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/login_email"
+            <com.google.android.material.textfield.TextInputLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:backgroundTint="@color/white"
-                android:drawableEnd="@drawable/ic_baseline_alternate_email_24"
-                android:hint="@string/email_address"
-                android:inputType="textEmailAddress"
-                android:paddingStart="@dimen/et_paddding_start"
-                android:paddingEnd="@dimen/_5sdp"
-                android:textSize="@dimen/_12ssp" />
+                app:boxStrokeWidth="0dp">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/login_email"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:backgroundTint="@color/white"
+                    android:drawableEnd="@drawable/ic_baseline_alternate_email_24"
+                    android:hint="@string/email_address"
+                    android:inputType="textEmailAddress"
+                    android:paddingStart="@dimen/et_paddding_start"
+                    android:paddingEnd="@dimen/_5sdp"
+                    android:textSize="@dimen/_12ssp" />
+            </com.google.android.material.textfield.TextInputLayout>
         </com.google.android.material.card.MaterialCardView>
 
 
@@ -230,10 +243,10 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="15dp"
             android:alpha="0.5"
-            android:fontFamily="@font/sf_regular"
             android:background="?attr/selectableItemBackground"
             android:clickable="true"
             android:focusable="true"
+            android:fontFamily="@font/sf_regular"
             android:text="@string/forgot_password"
             android:textColor="#171930"
             app:layout_constraintEnd_toEndOf="@+id/view"
