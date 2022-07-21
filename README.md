@@ -40,9 +40,10 @@ and States which the UI follows on a ScreenNameState.kt file
 
 
 <span>
- <image src="https://user-images.githubusercontent.com/84887514/179891211-f01ec9c2-6c73-4f96-9ca3-7f99c84b684d.png" width=20% height=15%/>
- <image src="https://user-images.githubusercontent.com/84887514/179906127-b2505b8d-7b9d-4f41-b7c8-61f23a2bf66d.png" width=20% height=15%/>
- <image src="https://user-images.githubusercontent.com/84887514/179837338-2c17784d-ad6f-437e-bcf9-fe3909c2f1bd.png" width=20% height=15%/>
+ <image src="https://user-images.githubusercontent.com/84887514/180302090-89c56edf-61e7-49b7-b975-c3dd239f5340.png" width=20% height=15%/>
+ <image src="https://user-images.githubusercontent.com/84887514/180302101-9b4d1f14-dc1a-470a-ac19-7f4956c450bb.png" width=20% height=15%/>
+ <image src="https://user-images.githubusercontent.com/84887514/180302337-4116ef2f-6d17-448f-ba9a-84e26d18f725.png" width=20% height=15%/>
+ <image src="https://user-images.githubusercontent.com/84887514/180303121-1f43d457-a13a-4d16-a626-33ff21335009.png" width=20% height=15%/>
  <image src="https://user-images.githubusercontent.com/84887514/179837026-5334f554-2703-4477-af55-4bcd572bae6e.png" width=20% height=15%/>
  
 
