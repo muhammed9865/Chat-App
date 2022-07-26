@@ -142,20 +142,21 @@ class ChatsViewModel @Inject constructor(
             setState(ChatsActivityState.Loading)
             // if current user is not null, start creating the chat,
             // and then update the current chat list on fireStore.
-            userRepository.currentUser.filterNotNull().collect { user ->
-                val userPrivateChats = _userChats.value.filterIsInstance<PrivateChat>()
-                val room = createRoomUseCase.execute(otherUserEmail, user, userPrivateChats)
-                room?.let {
-                    userRepository.updateUserChatsList(
-                        user.email,
-                        user.collection,
-                        room.cid
-                    )
-                    setState(ChatsActivityState.PrivateRoomCreated(it))
-                    updateCurrentUserChatsListState(room.cid)
-                }
+
+            val userPrivateChats = _userChats.value.filterIsInstance<PrivateChat>()
+            val room =
+                createRoomUseCase.execute(otherUserEmail, _currentUser.value, userPrivateChats)
+            room?.let {
+                userRepository.updateUserChatsList(
+                    _currentUser.value.email,
+                    _currentUser.value.collection,
+                    room.cid
+                )
+                setState(ChatsActivityState.PrivateRoomCreated(it))
+                updateCurrentUserChatsListState(room.cid)
             }
         }
+
     }
 
     private fun searchList(query: String?) {

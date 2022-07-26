@@ -285,6 +285,7 @@ class FirestoreNetworkDatabaseImp @Inject constructor(private val mFirestore: Fi
             .update(Fields.MESSAGES, FieldValue.arrayUnion(message))
             .await()
 
+
         mFirestore.collection(Collections.CHATS)
             .document(chatId)
             .update(Fields.LAST_MESSAGE, message)

@@ -18,13 +18,15 @@ class MessagesRepository @Inject constructor(
         messagesId: String,
         onNewMessages: (messages: List<Message>) -> Unit
     ) {
-        mMessages.addAll(loadChatMessages(messagesId))
+        val cachedMessages = loadChatMessages(messagesId)
+        mMessages.addAll(cachedMessages)
         onNewMessages(mMessages.toList())
+
         networkDatabase.listenToChatMessages(messagesId) {
-            val newMsgs = it.messages.toSet().subtract(mMessages)
-            val msgsList = newMsgs.toList()
-            cacheDatabase.saveMessages(msgsList)
-            onNewMessages(msgsList)
+            val newMessages = it.messages.toSet().subtract(mMessages)
+            val messagesList = newMessages.toList()
+            onNewMessages(messagesList)
+            cacheDatabase.saveMessages(messagesList)
 
         }
     }
@@ -45,6 +47,7 @@ class MessagesRepository @Inject constructor(
         group: GroupChat? = null
     ) {
         networkDatabase.sendMessage(chatId, messagesId, message)
+
         val sendToId = if (group != null) {
             "/topics/${group.category}"
         } else token

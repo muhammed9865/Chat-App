@@ -56,6 +56,7 @@ interface NetworkDatabase {
         onUpdate: suspend (messages: Messages) -> Unit
     )
 
+
     fun cancelListeningToMessages()
 
     suspend fun joinCommunity(groupChat: GroupChat, user: User)
