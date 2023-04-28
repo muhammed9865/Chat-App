@@ -54,6 +54,7 @@ class MainActivity : AppCompatActivity(), NavigationBarView.OnItemSelectedListen
         //NavigationUI.setupWithNavController(binding, navController)
 
         binding.botNav.setOnItemSelectedListener(this)
+
         navController.addOnDestinationChangedListener(this)
 
         binding.newChatBtn.setOnClickListener {

@@ -50,17 +50,7 @@ class ChatsFragment : Fragment() {
 
             launch {
                 viewModel.userChats.collect {
-                    it.forEach { chat ->
-                        Log.d(
-                            "ChatsFragment",
-                            "listenToUserChatsCollected: ${chat.lastMessage.text}"
-                        )
-                    }
                     mAdapter.submitList(it)
-
-                    mAdapter.currentList.forEach { chat ->
-                        Log.d("ChatsFragment", "listenToUserChatsAdapter: ${chat.lastMessage.text}")
-                    }
                 }
             }
 

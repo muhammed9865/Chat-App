@@ -108,7 +108,7 @@ class ChatsViewModel @Inject constructor(
 
             is ChatsEvent.EnteredCommunityFragment -> {
                 if (!hasEnteredCommunityFragment) {
-                    loadRandomCommunitiesBasedOnFilter(Filter.All())
+                    loadRandomCommunitiesBasedOnFilter(Filter.All)
                     loadForUserCommunities()
                     hasEnteredCommunityFragment = true
                 }
@@ -129,7 +129,7 @@ class ChatsViewModel @Inject constructor(
                     subTitle = group.serializeMembersCount(),
                     isJoined = false
                 )
-                val chatAndRoom = ChatAndRoom<GroupChat>(group, room)
+                val chatAndRoom = ChatAndRoom(group, room)
                 val chatAndRoomSerialized = serializeEntityUseCase.toString(chatAndRoom)
                 setState(ChatsActivityState.EnterChat(chatAndRoomSerialized))
             }

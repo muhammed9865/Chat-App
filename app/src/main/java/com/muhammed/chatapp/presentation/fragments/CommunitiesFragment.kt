@@ -91,16 +91,16 @@ class CommunitiesFragment : Fragment(), OnItemClickListener<GroupChat>,
 
     override fun onCheckedChanged(group: ChipGroup, checkedIds: MutableList<Int>) {
         with(binding) {
-            var filter: Filter = Filter.Default()
+            var filter: Filter = Filter.Default
             if (checkedIds.isNotEmpty()) {
                 when (checkedIds[0]) {
-                    filterAll.id -> filter = Filter.All()
-                    filterArt.id -> filter = Filter.Art()
-                    filterHealth.id -> filter = Filter.Health()
-                    filterCrypto.id -> filter = Filter.Crypto()
-                    filterFinance.id -> filter = Filter.Finance()
-                    filterMovies.id -> filter = Filter.Movies()
-                    filterSports.id -> filter = Filter.Sports()
+                    filterAll.id -> filter = Filter.All
+                    filterArt.id -> filter = Filter.Art
+                    filterHealth.id -> filter = Filter.Health
+                    filterCrypto.id -> filter = Filter.Crypto
+                    filterFinance.id -> filter = Filter.Finance
+                    filterMovies.id -> filter = Filter.Movies
+                    filterSports.id -> filter = Filter.Sports
                 }
                 viewModel.lastFilterChecked = checkedIds[0]
                 changeFilterTo(filter)

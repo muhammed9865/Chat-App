@@ -30,6 +30,7 @@ class GroupChat(
             in 10000 until 100000 -> {
                 result = numAsString.slice(0..1) + "," + numAsString.drop(2)
             }
+
             in 100000 until 1000000 -> {
                 result = numAsString.slice(0..2) + "," + numAsString.drop(3)
             }
