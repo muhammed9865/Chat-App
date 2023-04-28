@@ -85,7 +85,7 @@ class MessagingService : FirebaseMessagingService() {
 
     private fun showNotification(title: String, message: Message) {
         CoroutineScope(Dispatchers.IO).launch {
-        val currUser = userRepository.currentUser.first()
+            val currUser = userRepository.currentUser.first()
             if (message.sender.email != currUser.email) {
                 val builder =
                     NotificationCompat.Builder(
@@ -109,8 +109,6 @@ class MessagingService : FirebaseMessagingService() {
             }
         }
     }
-
-
 
 
 }

@@ -1,6 +1,7 @@
 package com.muhammed.chatapp.presentation.viewmodel
 
 import android.content.Intent
+import android.graphics.Bitmap
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -29,6 +30,7 @@ class MessagingRoomViewModel @Inject constructor(
     private val userRepository: UserRepository,
     private val chatsRepository: ChatsRepository
 ) : ViewModel() {
+    // Room details like group members count..etc
     private val _room = MutableStateFlow(MessagingRoom())
     val room = _room.asStateFlow()
 
@@ -38,12 +40,18 @@ class MessagingRoomViewModel @Inject constructor(
     private val _states =
         MutableStateFlow<MessagingRoomActivityStates>(MessagingRoomActivityStates.Idle)
     val states = _states.asStateFlow()
+
     var currentUser = MutableStateFlow(User())
 
+    // if a private chat
     private var secondUser: User? = null
 
     private var group: GroupChat? = null
     private var private: PrivateChat? = null
+
+
+    // if a user sends an image, set this variable
+    var imageBitmap: Bitmap? = null
 
 
     init {
@@ -56,9 +64,12 @@ class MessagingRoomViewModel @Inject constructor(
 
     fun doOnEvent(event: MessagingRoomEvents) {
         when (event) {
-            is MessagingRoomEvents.SendUserDetails -> getUserDetailsFromIntent(event.intent)
-            is MessagingRoomEvents.SendMessage -> sendMessage(event.message)
-            is MessagingRoomEvents.JoinGroup -> joinGroup(event.group)
+            is MessagingRoomEvents.SendUserDetails -> getUserDetailsFromIntent(intent = event.intent)
+            is MessagingRoomEvents.SendMessage -> sendMessage(
+                message = event.message,
+                isImage = event.isImage
+            )
+            is MessagingRoomEvents.JoinGroup -> joinGroup(groupChat = event.group)
         }
     }
 
@@ -138,15 +149,17 @@ class MessagingRoomViewModel @Inject constructor(
         }
     }
 
-    private fun sendMessage(message: String) {
+    private fun sendMessage(message: String, isImage: Boolean) {
         tryAsync {
-            val msg = Message(
+            val msg = if (!isImage) Message(
                 messagesId = _room.value.messagesId,
                 sender = currentUser.value,
                 text = message
+            ) else Message(
+                messagesId = _room.value.messagesId,
+                sender = currentUser.value,
+                imageUrl = message,
             )
-            Log.d(TAG, "sendMessage: sec=${secondUser?.token}")
-            Log.d(TAG, "sendMessage: curr=${currentUser.value.token}")
 
             messagesRepository.sendMessage(
                 token = secondUser?.token ?: group?.category ?: "",

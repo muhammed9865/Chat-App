@@ -240,7 +240,7 @@ class FirestoreNetworkDatabaseImp @Inject constructor(private val mFirestore: Fi
                 "getRandomCommunitiesBasedOnCategory: ${userChatListChunks.isEmpty()}"
             )
             try {
-                val documents = if (category != Filter.All().title) {
+                val documents = if (category != Filter.All.title) {
                     mFirestore.collection(Collections.CHATS)
                         .whereEqualTo("category", category)
                         .orderBy("createdSince", Query.Direction.DESCENDING)
@@ -284,6 +284,7 @@ class FirestoreNetworkDatabaseImp @Inject constructor(private val mFirestore: Fi
             .document(messagesId)
             .update(Fields.MESSAGES, FieldValue.arrayUnion(message))
             .await()
+
 
         mFirestore.collection(Collections.CHATS)
             .document(chatId)

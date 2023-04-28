@@ -9,5 +9,5 @@ sealed class MessagingRoomEvents {
 
     data class JoinGroup(val group: GroupChat) : MessagingRoomEvents()
 
-    data class SendMessage(val message: String) : MessagingRoomEvents()
+    data class SendMessage(val message: String, val isImage: Boolean) : MessagingRoomEvents()
 }

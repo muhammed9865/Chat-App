@@ -15,6 +15,10 @@ import com.muhammed.chatapp.data.pojo.message.Messages
 import com.muhammed.chatapp.data.pojo.user.User
 import kotlinx.coroutines.flow.Flow
 
+/**
+ * This interface is used to abstract the network layer from the rest of the app
+ * [User], [Chat], [Message], [Interest], [Topic], [InterestWithTopics], [GroupChat], [NewGroupChat], [PrivateChat], [Messages]
+ */
 interface NetworkDatabase {
     suspend fun saveUser(user: User)
 
@@ -56,15 +60,16 @@ interface NetworkDatabase {
         onUpdate: suspend (messages: Messages) -> Unit
     )
 
+
     fun cancelListeningToMessages()
 
     suspend fun joinCommunity(groupChat: GroupChat, user: User)
 
     suspend fun getRandomMessages(messagesId: String): List<Message>
 
-    /*
-    @param ChatId to set the last chat message to the @param message
-    @param messagesId to add the message to the chat messages, should be a unique id to a unique messages document related to chatId
-    */
+    /**
+     * @param chatId to set the last chat message to the @param message
+     * @param messagesId to add the message to the chat messages, should be a unique id to a unique messages document related to chatId
+     */
     suspend fun sendMessage(chatId: String, messagesId: String, message: Message)
 }

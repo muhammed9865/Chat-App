@@ -8,6 +8,8 @@ import com.muhammed.chatapp.domain.Encoder
 import kotlinx.coroutines.tasks.await
 import javax.inject.Inject
 
+// Email and Password -> Firebase Authentication
+// Google Authentication
 class AuthRepository @Inject constructor(
     private val mEmailAndPasswordAuth: EmailAndPasswordAuth,
     private val mFirestoreNetworkDatabaseImp: FirestoreNetworkDatabaseImp,
@@ -26,10 +28,14 @@ class AuthRepository @Inject constructor(
             throw Exception("Email is already in use")
         }
 
+        // Registering the user with email and password on Firebase Authentication
         val fUser = mEmailAndPasswordAuth.registerNewUser(email, password).user
+
+
         fUser?.let {
-            // Getting the token
+            // Getting the token for notification
             val token = FirebaseMessaging.getInstance().token.await()
+
             // Creating the user object to save it into Firestore.
             val user = User(
                 uid = fUser.uid,
@@ -39,6 +45,7 @@ class AuthRepository @Inject constructor(
                 password = Encoder.encodePassword(password),
                 collection = FirestoreNetworkDatabaseImp.Collections.USERS
             )
+
             saveUserOnFirestore(user)
             // Sending Verification message and then send the user to Viewmodel
             mEmailAndPasswordAuth.sendVerificationMessage(fUser)
@@ -57,6 +64,7 @@ class AuthRepository @Inject constructor(
             if (fbUser != null) {
                 if (fbUser.isEmailVerified) {
                     val user = userRepository.getUser(fbUser.email!!)
+                    //  save user credentials to skip login the next time
                     userRepository.saveUserDetails(user)
                     return
                 }

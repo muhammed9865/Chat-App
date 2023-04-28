@@ -2,7 +2,6 @@ package com.muhammed.chatapp.presentation.dialogs
 
 import android.app.Dialog
 import android.content.Intent
-import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Bundle
 import android.util.Log
@@ -24,6 +23,7 @@ import com.google.android.material.chip.ChipDrawable
 import com.google.android.material.chip.ChipGroup
 import com.muhammed.chatapp.Filter
 import com.muhammed.chatapp.databinding.DialogCreateNewGroupBinding
+import com.muhammed.chatapp.presentation.common.PermissionManager
 import com.muhammed.chatapp.presentation.common.hideKeyboard
 import com.muhammed.chatapp.presentation.common.showError
 import com.muhammed.chatapp.presentation.common.showKeyboard
@@ -99,16 +99,16 @@ class CreateGroupDialog : BottomSheetDialogFragment(), ChipGroup.OnCheckedStateC
 
     override fun onCheckedChanged(group: ChipGroup, checkedIds: MutableList<Int>) {
         with(binding) {
-            var filter: Filter = Filter.Default()
+            var filter: Filter = Filter.Default
             addInterestText.clearFocus()
             if (checkedIds.isNotEmpty()) {
                 when (checkedIds[0]) {
-                    categoryArt.id -> filter = Filter.Art()
-                    categoryHealth.id -> filter = Filter.Health()
-                    categoryCrypto.id -> filter = Filter.Crypto()
-                    categoryFinance.id -> filter = Filter.Finance()
-                    categoryMovies.id -> filter = Filter.Movies()
-                    categorySports.id -> filter = Filter.Sports()
+                    categoryArt.id -> filter = Filter.Art
+                    categoryHealth.id -> filter = Filter.Health
+                    categoryCrypto.id -> filter = Filter.Crypto
+                    categoryFinance.id -> filter = Filter.Finance
+                    categoryMovies.id -> filter = Filter.Movies
+                    categorySports.id -> filter = Filter.Sports
                 }
                 viewModel.category = filter.title
             }
@@ -129,17 +129,25 @@ class CreateGroupDialog : BottomSheetDialogFragment(), ChipGroup.OnCheckedStateC
         }
 
     private fun uploadImage() {
-        if (requireActivity().checkSelfPermission(android.Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
+        if (PermissionManager.hasReadStoragePermission(requireContext())) {
             val intent = Intent().also {
                 it.type = "image/*"
                 it.action = Intent.ACTION_GET_CONTENT
             }
             selectPhotoLauncher.launch(intent)
         } else {
-            requireActivity().requestPermissions(
+            /*requireActivity().requestPermissions(
                 listOf(android.Manifest.permission.READ_EXTERNAL_STORAGE).toTypedArray(),
                 1
+            )*/
+            PermissionManager.requestPermission(
+                requireActivity(),
+                PermissionManager.Permissions.STORAGE
             )
+
+            PermissionManager.onPermissionResult(PermissionManager.Permissions.STORAGE) {
+                uploadImage()
+            }
         }
     }
 

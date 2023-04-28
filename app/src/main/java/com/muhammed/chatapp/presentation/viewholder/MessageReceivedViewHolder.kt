@@ -13,6 +13,9 @@ class MessageReceivedViewHolder(private val binding: ListItemMessageReceivedBind
             messageTxt.text = message.text
             messageDate.text = message.messageDate.toDateAsString()
             messageUserIcon.loadImage(message.sender.profile_picture)
+            if (message.hasImage()) {
+                messageImg.loadImage(message.imageUrl!!)
+            }
         }
     }
 }

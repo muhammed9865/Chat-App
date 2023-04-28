@@ -8,9 +8,9 @@ import com.muhammed.chatapp.domain.use_cases.SerializeEntityUseCase
 import javax.inject.Inject
 
 @Database(
-    version = 4,
+    version = 5,
     entities = [Message::class],
-    exportSchema = true
+    exportSchema = true,
 )
 @TypeConverters(ListConverter::class)
 abstract class RoomDB : RoomDatabase() {

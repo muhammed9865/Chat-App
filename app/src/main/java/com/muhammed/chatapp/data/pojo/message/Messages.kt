@@ -4,5 +4,7 @@ import com.muhammed.chatapp.data.pojo.ChatStatus
 
 data class Messages(
     val status: ChatStatus = ChatStatus(),
-    val messages: List<Message> = emptyList()
+    val messages: List<Message> = emptyList(),
+    val isGroupMessages: Boolean = false
+
 )

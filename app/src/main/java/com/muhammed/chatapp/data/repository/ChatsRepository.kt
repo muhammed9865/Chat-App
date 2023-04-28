@@ -36,6 +36,7 @@ class ChatsRepository @Inject constructor(
                     onChange(rooms)
                 }
             } else {
+                roomsError.printStackTrace()
                 throw FirebaseFirestoreException(
                     "Something went wrong",
                     FirebaseFirestoreException.Code.DATA_LOSS

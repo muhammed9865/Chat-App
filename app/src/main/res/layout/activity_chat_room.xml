@@ -47,6 +47,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/messaging_toolbar" />
 
+
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/messaging_layout"
         android:layout_width="match_parent"
@@ -55,24 +56,36 @@
         android:paddingBottom="@dimen/_10sdp"
         app:layout_constraintBottom_toBottomOf="parent">
 
+        <com.google.android.material.imageview.ShapeableImageView
+            android:id="@+id/camera_btn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/_4sdp"
+            android:theme="@style/CircularImageView"
+            app:layout_constraintBottom_toBottomOf="@+id/enter_msg_et"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/enter_msg_et"
+            app:srcCompat="@drawable/ic_baseline_photo_camera_24"
+            app:tint="@color/primaryColor" />
+
 
         <EditText
             android:id="@+id/enter_msg_et"
             android:layout_width="0dp"
             android:layout_height="0dp"
-            android:layout_marginStart="16dp"
+            android:layout_marginStart="8dp"
             android:background="@drawable/rounded_edittext"
             android:backgroundTint="#F4F4F4"
             android:fontFamily="@font/sf_regular"
             android:hint="@string/enter_message"
-            android:importantForAutofill="no"
 
+            android:importantForAutofill="no"
             android:inputType="textMultiLine"
             android:paddingStart="@dimen/_5sdp"
             android:textSize="@dimen/_13ssp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@+id/sendMessageBtn"
-            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/camera_btn"
             app:layout_constraintTop_toTopOf="parent" />
 
 

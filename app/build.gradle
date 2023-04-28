@@ -7,6 +7,14 @@ plugins {
 }
 
 android {
+    signingConfigs {
+        release {
+            storeFile file('E:\\AndroidStudioProjects\\NewKeyStore\\ChatOKey.jks')
+            storePassword 'QWas123456'
+            keyAlias 'ChatO'
+            keyPassword 'QWas123456'
+        }
+    }
     compileSdk 32
 
     defaultConfig {
@@ -30,8 +38,10 @@ android {
             buildConfigField("String", "FCM_BASE_URL", "\"https://fcm.googleapis.com/\"")
         }
         release {
-            minifyEnabled false
+            minifyEnabled true
+            shrinkResources true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.debug
         }
     }
     compileOptions {
